@@ -113,8 +113,6 @@ buildCurrentArchitecture__macos_clang()
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
     checkBuildStep
-
-
 }
 
 buildCurrentArchitecture__windows_mingw()

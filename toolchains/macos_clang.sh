@@ -46,19 +46,13 @@ esac
 
 initToolchainConfiguration()
 {
-    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -fPIC -Wextra -Wall -W"
-#    FM_CONFIG_COMMON_CXXFLAGS="-stdlib=libc++ -std=gnu++1y"
+    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -fPIC -Wextra -Wall -W -mmacosx-version-min=10.10"
     FM_CONFIG_COMMON_CXXFLAGS="-stdlib=libc++ -std=c++14"
     FM_CONFIG_COMMON_LDFLAGS="-L${FM_LIBS_INSTALL_LIBS}"
     
     FM_TARGET_TOOLCHAIN_CFLAGS="${FM_CONFIG_COMMON_CFLAGS} ${FM_CONFIG_ARCHITECTURE_CFLAGS} ${FM_CONFIG_BUILD_VARIANT_CFLAGS}"
     FM_TARGET_TOOLCHAIN_CXXFLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS} ${FM_CONFIG_COMMON_CXXFLAGS} ${FM_CONFIG_ARCHITECTURE_CXXFLAGS} ${FM_CONFIG_BUILD_VARIANT_CXXFLAGS}"
     FM_TARGET_TOOLCHAIN_LDFLAGS="${FM_CONFIG_COMMON_LDFLAGS} ${FM_CONFIG_ARCHITECTURE_LDFLAGS} ${FM_CONFIG_BUILD_VARIANT_LDFLAGS}"
-
-#/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
-#-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk
-#-mmacosx-version-min=10.10
-
 
     FM_TARGET_TOOLCHAIN_AR="ar"
     FM_TARGET_TOOLCHAIN_CC="clang"

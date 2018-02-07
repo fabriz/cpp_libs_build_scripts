@@ -19,7 +19,7 @@ buildCurrentArchitecture__linux_gcc()
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./Configure ${BUILD_PLATFORM} no-shared no-asm --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --openssldir=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/openssl > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./Configure ${BUILD_PLATFORM} no-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --openssldir=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/openssl > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -41,7 +41,7 @@ buildCurrentArchitecture__macos_clang()
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./Configure ${BUILD_PLATFORM} no-shared no-asm --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --openssldir=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/openssl > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./Configure ${BUILD_PLATFORM} no-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --openssldir=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/openssl > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -63,7 +63,7 @@ buildCurrentArchitecture__windows_mingw()
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./Configure ${BUILD_PLATFORM} no-shared no-asm --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --openssldir=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/openssl > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./Configure ${BUILD_PLATFORM} no-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --openssldir=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/openssl > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
