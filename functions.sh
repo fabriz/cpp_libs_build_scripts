@@ -139,8 +139,6 @@ initCurrentLibraryVariables()
     FM_CURRENT_LIB_INSTALL_CHECK="${!VAR_LIB_INSTALL_CHECK}"
     FM_CURRENT_LIB_TARBALL_HASH="${!VAR_LIB_HASH}"
     FM_CURRENT_LIB_TARBALL_HASH_TYPE="${!VAR_LIB_HASH_TYPE}"
-    
-    FM_CURRENT_LIB_SOURCE_DIR="${FM_LIBS_BUILD_SOURCE}/${FM_CURRENT_LIB_FULL_NAME}"
 }
 
 checkCurrentLibraryInstallStatus()
@@ -156,21 +154,44 @@ checkCurrentLibraryInstallStatus()
     fi
 }
 
-initCurrentArchitectureVariables()
+initCurrentArchitecture()
 {
-    [ $# = 1 ] || error "initCurrentLibTargetArchitectureVariables(): invalid number of arguments"
+    # Build tag
+    FM_TARGET_BUILD_TAG="${FM_TARGET_PLATFORM}_${FM_TARGET_ARCHITECTURE}_${FM_TARGET_BUILD_VARIANT}"
 
-    FM_CURRENT_ARCHITECTURE_NAME=$1
+    # Build folders
+    FM_LIBS_BUILD_FOLDER="${FM_GLOBAL_BUILD_ROOT}/${FM_TARGET_BUILD_TAG}"
+    FM_LIBS_BUILD_SOURCE="${FM_LIBS_BUILD_FOLDER}/source"
+    FM_LIBS_BUILD_LOGS="${FM_LIBS_BUILD_FOLDER}/logs"
+
+    createDirectory ${FM_LIBS_BUILD_FOLDER}
+    createDirectory ${FM_LIBS_BUILD_SOURCE}
+    createDirectory ${FM_LIBS_BUILD_LOGS}
+
+    # Install folders
+    FM_LIBS_INSTALL_PREFIX="${FM_GLOBAL_DEPLOY_ROOT}/${FM_TARGET_BUILD_TAG}"
+    FM_LIBS_INSTALL_INCLUDES="${FM_LIBS_INSTALL_PREFIX}/include"
+    FM_LIBS_INSTALL_LIBS="${FM_LIBS_INSTALL_PREFIX}/lib"
+    FM_LIBS_INSTALL_DLLS="${FM_LIBS_INSTALL_PREFIX}/dll"
+
+    createDirectory ${FM_LIBS_INSTALL_PREFIX}
+    createDirectory ${FM_LIBS_INSTALL_INCLUDES}
+    createDirectory ${FM_LIBS_INSTALL_LIBS}
+    if [ ${FM_TARGET_HAS_DLLS} = "true" ]; then
+        createDirectory ${FM_LIBS_INSTALL_DLLS}
+    fi
+
+    FM_CURRENT_LIB_SOURCE_DIR="${FM_LIBS_BUILD_SOURCE}/${FM_CURRENT_LIB_FULL_NAME}"
 
     local LOG_FILE_TIMESTAMP=$(date "+%Y_%m_%d__%H_%M_%S")
-    local LOG_FILE_PREFIX=${FM_LIBS_BUILD_LOGS}/${LOG_FILE_TIMESTAMP}__${FM_CURRENT_LIB_FULL_NAME}_${FM_CURRENT_ARCHITECTURE_NAME}
+    local LOG_FILE_PREFIX=${FM_LIBS_BUILD_LOGS}/${LOG_FILE_TIMESTAMP}__${FM_CURRENT_LIB_FULL_NAME}_${FM_TARGET_ARCHITECTURE}
 
     FM_STAGE_DIR_NAME="tmp_lib_stage"
     
-    FM_CURRENT_ARCHITECTURE_SOURCE_DIR="${FM_CURRENT_LIB_SOURCE_DIR}/${FM_CURRENT_ARCHITECTURE_NAME}"
+    FM_CURRENT_ARCHITECTURE_SOURCE_DIR="${FM_CURRENT_LIB_SOURCE_DIR}/${FM_TARGET_ARCHITECTURE}"
     FM_CURRENT_ARCHITECTURE_STAGE_DIR="${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/${FM_STAGE_DIR_NAME}"
     
-    FM_CURRENT_ARCHITECTURE_LIB_TAG="${FM_CURRENT_LIB_FULL_NAME}-${FM_CURRENT_ARCHITECTURE_NAME}-${FM_TARGET_BUILD_VARIANT}"
+    FM_CURRENT_ARCHITECTURE_LIB_TAG="${FM_CURRENT_LIB_FULL_NAME}-${FM_TARGET_ARCHITECTURE}-${FM_TARGET_BUILD_VARIANT}"
     
     FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE=${LOG_FILE_PREFIX}_configure.log
     FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE=${LOG_FILE_PREFIX}_make.log
@@ -281,16 +302,28 @@ buildLibrary()
     local CURRENT_LIBRARY_NAME=$1
 
     initCurrentLibraryVariables "${CURRENT_LIBRARY_NAME}"
-    checkCurrentLibraryInstallStatus
     downloadCurrentLibTarballIfMissing
 
-    initToolchainConfiguration
-    initCurrentArchitectureVariables "${FM_TARGET_ARCHITECTURE}"
-    decompressTarballForCurrentArchitecture
-    buildCurrentArchitecture
-    installLibraries
+    FM_ARG_BUILD_VARIANTS=(debug release)
+
+    for FM_ARG_BUILD_VARIANT in "${FM_ARG_BUILD_VARIANTS[@]}"
+    do
+        initToolchainConfiguration
+        initCurrentArchitecture
+        initToolchainTools
+
+        checkCurrentLibraryInstallStatus
+
+        decompressTarballForCurrentArchitecture
+        buildCurrentArchitecture
+        installLibraries
+
+        echo "Library variant ${FM_TARGET_BUILD_TAG} successfully installed"
+
+    done
 
     echo "Library ${FM_CURRENT_LIB_FULL_NAME} successfully installed"
 }
+
 
 

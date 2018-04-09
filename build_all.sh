@@ -21,7 +21,7 @@ LIBS_TO_BUILD=(
 
 # Check command line parameters
 if [ ! $# = 3 ]; then
-    echo "Usage: $0 <toolchain> <architecture> <variant>"
+    echo "Usage: $0 <toolchain> <architecture> <variant(s)>"
     printToolchains
     exit 1
 fi
