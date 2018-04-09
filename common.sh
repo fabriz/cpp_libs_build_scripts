@@ -70,9 +70,6 @@ FM_LIBS_INSTALL_LIBS="${FM_LIBS_INSTALL_PREFIX}/lib"
 FM_LIBS_INSTALL_DLLS="${FM_LIBS_INSTALL_PREFIX}/dll"
 
 
-initToolchainConfiguration
-
-
 # Directory creation
 createDirectory ${FM_GLOBAL_TARBALL_CACHE}
 

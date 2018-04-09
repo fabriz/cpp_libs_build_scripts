@@ -209,16 +209,17 @@ installFatLibraries()
     local LIB_FULL_NAME=$1
     local ARCHITECTURES_LIST=$2
 
-    pushd "${LIBS_MAKE_SOURCE}/${LIB_FULL_NAME}/${ARCHITECTURES_LIST[0]}/${FM_TEMP_LIB_STAGE_FOLDER}/lib"
-    THIN_LIBS=(*.a)
+    pushd "${FM_CURRENT_LIB_SOURCE_DIR}/${ARCHITECTURES_LIST[0]}/${FM_STAGE_DIR_NAME}/lib"
+    local THIN_LIBS=(*.a)
     popd
 
     # check that at least one found
 
+    local THIN_LIB
     for THIN_LIB in "${THIN_LIBS[@]}"
     do
         printf "Installing fat library ${THIN_LIB} ... "
-        ${TOOLCHAIN_LIPO} -create ${FM_LIBS_BUILD_SOURCE}/${LIB_FULL_NAME}/*/${FM_TEMP_LIB_STAGE_FOLDER}/lib/${THIN_LIB} -o "${LIBS_INSTALL_LIBS}/${THIN_LIB}"
+        ${FM_TARGET_TOOLCHAIN_LIPO} -create ${FM_CURRENT_LIB_SOURCE_DIR}/*/${FM_STAGE_DIR_NAME}/lib/${THIN_LIB} -o "${FM_LIBS_INSTALL_LIBS}/${THIN_LIB}"
         if [ $? -ne 0 ]; then
             error "FAILED"
         else
@@ -227,7 +228,7 @@ installFatLibraries()
     done
 
     printf "Installing include files ... "
-    cp -R "${FM_LIBS_BUILD_SOURCE}/${LIB_FULL_NAME}/${ARCHITECTURES_LIST[0]}/${FM_TEMP_LIB_STAGE_FOLDER}/include/." ${LIBS_INSTALL_INCLUDES}/
+    cp -R "${FM_CURRENT_LIB_SOURCE_DIR}/${ARCHITECTURES_LIST[0]}/${FM_STAGE_DIR_NAME}/include/." "${FM_LIBS_INSTALL_INCLUDES}/"
     echo "OK"
 }
 
@@ -283,6 +284,7 @@ buildLibrary()
     checkCurrentLibraryInstallStatus
     downloadCurrentLibTarballIfMissing
 
+    initToolchainConfiguration
     initCurrentArchitectureVariables "${FM_TARGET_ARCHITECTURE}"
     decompressTarballForCurrentArchitecture
     buildCurrentArchitecture

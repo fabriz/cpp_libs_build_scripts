@@ -53,6 +53,49 @@ buildCurrentArchitecture__macos_clang()
     checkBuildStep
 }
 
+buildCurrentArchitecture__ios_clang()
+{
+    local BUILD_PLATFORM=""
+    case ${FM_IOS_SDK_ARCHITECTURE} in
+        armv7)
+            BUILD_PLATFORM="ios-cross-armv7"
+        ;;
+        armv7s)
+            BUILD_PLATFORM="ios-cross-armv7s"
+        ;;
+        arm64)
+            BUILD_PLATFORM="ios64-cross-arm64"
+        ;;
+        i386)
+            BUILD_PLATFORM="ios-sim-cross-i386"
+        ;;
+        x86_64)
+            BUILD_PLATFORM="ios-sim-cross-x86_64"
+        ;;
+        *)
+            error "Unsupported architecture: ${FM_IOS_SDK_ARCHITECTURE}"
+    esac
+
+    export CROSS_TOP="${FM_IOS_XCODE_ROOT}/Platforms/${FM_IOS_SDK_PLATFORM}.platform/Developer"
+    export CROSS_SDK="${FM_IOS_SDK_PLATFORM}.sdk"
+
+    prepareBuildStep "Patching ${FM_CURRENT_ARCHITECTURE_LIB_TAG} configuration ... "
+    cp "${THIS_SCRIPT_DIR}/../support/openssl/20-ios-tvos-cross.conf" "./Configurations/"
+    checkBuildStep
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    ./Configure ${BUILD_PLATFORM} no-shared no-dso no-hw no-engine --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --openssldir=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/openssl > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+}
+
 buildCurrentArchitecture__windows_mingw()
 {
     local BUILD_PLATFORM=""

@@ -69,6 +69,31 @@ buildCurrentArchitecture__macos_clang()
     checkBuildStep
 }
 
+buildCurrentArchitecture__ios_clang()
+{
+    local BUILD_CONFIGURATION=""
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        BUILD_CONFIGURATION="Debug"
+    else
+        BUILD_CONFIGURATION="Release"
+    fi
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DWITH_STDTHREADS=ON -DWITH_LIBEVENT=OFF\
+        -DWITH_SHARED_LIB=OFF -DWITH_STATIC_LIB=ON -DWITH_CPP=ON -DWITH_C_GLIB=OFF -DWITH_JAVA=OFF -DWITH_PYTHON=OFF -DWITH_PERL=OFF\
+        -DBUILD_COMPILER=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DBUILD_TUTORIALS=OFF -DWITH_BOOST_STATIC=ON\
+        -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+}
+
 buildCurrentArchitecture__windows_mingw()
 {
     local BUILD_CONFIGURATION=""
