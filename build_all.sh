@@ -9,7 +9,7 @@ LIBS_TO_BUILD=(
     010_build_zlib
     020_build_bzip2
     030_build_sqlite
-#    040_build_openssl
+    040_build_openssl
     050_build_boost
     060_build_botan
     070_build_odb

@@ -304,9 +304,7 @@ buildLibrary()
     initCurrentLibraryVariables "${CURRENT_LIBRARY_NAME}"
     downloadCurrentLibTarballIfMissing
 
-    FM_ARG_BUILD_VARIANTS=(debug release)
-
-    for FM_ARG_BUILD_VARIANT in "${FM_ARG_BUILD_VARIANTS[@]}"
+    for FM_ARG_BUILD_VARIANT in ${FM_ARG_BUILD_VARIANTS}
     do
         initToolchainConfiguration
         initCurrentArchitecture
@@ -319,7 +317,6 @@ buildLibrary()
         installLibraries
 
         echo "Library variant ${FM_TARGET_BUILD_TAG} successfully installed"
-
     done
 
     echo "Library ${FM_CURRENT_LIB_FULL_NAME} successfully installed"

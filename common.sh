@@ -17,7 +17,7 @@ fi
 
 FM_ARG_TOOLCHAIN="$(echo $1 | tr '[:upper:]' '[:lower:]')"
 FM_ARG_ARCHITECTURE="$(echo $2 | tr '[:upper:]' '[:lower:]')"
-FM_ARG_BUILD_VARIANTS="$(echo $3 | tr '[:upper:]' '[:lower:]')"
+FM_ARG_BUILD_VARIANTS="$(echo $3 | tr '[:upper:]' '[:lower:]' | tr "," "\n")"
 
 
 # Disable the option to allow checks
