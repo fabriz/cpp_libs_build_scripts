@@ -144,13 +144,14 @@ initCurrentLibraryVariables()
 checkCurrentLibraryInstallStatus()
 {
     if [ -f "${FM_LIBS_INSTALL_PREFIX}/${FM_CURRENT_LIB_INSTALL_CHECK}" ]; then
-        echo "Library ${FM_CURRENT_LIB_FULL_NAME} already installed"
-        exit 0
-    fi
-    
-    if [ -d "${FM_CURRENT_LIB_SOURCE_DIR}" ]; then
-        echo "Removing previous build directory for library ${FM_CURRENT_LIB_FULL_NAME}"
-        rm -r "${FM_CURRENT_LIB_SOURCE_DIR}"
+        echo "Library variant ${FM_CURRENT_LIB_FULL_NAME} ${FM_TARGET_BUILD_TAG} already installed"
+        FM_IS_LIBRARY_VARIANT_INSTALLED="true"
+    else
+        FM_IS_LIBRARY_VARIANT_INSTALLED="false"
+        if [ -d "${FM_CURRENT_LIB_SOURCE_DIR}" ]; then
+            echo "Removing previous build directory for library ${FM_CURRENT_LIB_FULL_NAME} ${FM_TARGET_BUILD_VARIANT}"
+            rm -r "${FM_CURRENT_LIB_SOURCE_DIR}"
+        fi
     fi
 }
 
@@ -312,11 +313,12 @@ buildLibrary()
 
         checkCurrentLibraryInstallStatus
 
-        decompressTarballForCurrentArchitecture
-        buildCurrentArchitecture
-        installLibraries
-
-        echo "Library variant ${FM_TARGET_BUILD_TAG} successfully installed"
+        if [ ${FM_IS_LIBRARY_VARIANT_INSTALLED} = "false" ]; then
+            decompressTarballForCurrentArchitecture
+            buildCurrentArchitecture
+            installLibraries
+            echo "Library variant ${FM_CURRENT_LIB_FULL_NAME} ${FM_TARGET_BUILD_TAG} successfully installed"
+        fi
     done
 
     echo "Library ${FM_CURRENT_LIB_FULL_NAME} successfully installed"
