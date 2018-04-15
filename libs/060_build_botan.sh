@@ -22,10 +22,14 @@ beforeBuildCurrentArchitecture()
     FM_BOTAN_OPTIONAL_LIBS=""
     if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
         FM_BOTAN_OPTIONAL_LIBS="--with-external-includedir=${FM_LIBS_INSTALL_INCLUDES_WINDOWS} --with-external-libdir=${FM_LIBS_INSTALL_LIBS_WINDOWS}"
+
+        # The makefiles generated di configure.py causes linking problems with external libraries.
+        return
+
     else
         FM_BOTAN_OPTIONAL_LIBS="--with-external-includedir=${FM_LIBS_INSTALL_INCLUDES} --with-external-libdir=${FM_LIBS_INSTALL_LIBS}"
     fi
-    
+
     isLibraryInstalled "BZIP2"
     if [ ${FM_IS_LIBRARY_INSTALLED} = "true" ]; then
         echo "Enabling support for library bzip2"
