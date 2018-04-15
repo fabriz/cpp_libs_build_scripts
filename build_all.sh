@@ -6,16 +6,16 @@ source "${FM_BUILD_ALL_SCRIPT_DIR}/utility.sh"
 
 
 LIBS_TO_BUILD=(
-    010_build_zlib
-    020_build_bzip2
-    030_build_sqlite
-    040_build_openssl
-    050_build_boost
-    060_build_botan
-    070_build_odb
-    080_build_odb_sqlite
-    090_build_odb_boost
-    100_build_thrift
+    0100_build_zlib
+    0110_build_bzip2
+    0200_build_sqlite
+    0300_build_openssl
+    1100_build_boost
+    1200_build_botan
+    1300_build_odb
+    1310_build_odb_sqlite
+    1320_build_odb_boost
+    1400_build_thrift
 )
 
 
