@@ -16,6 +16,7 @@ LIBS_TO_BUILD=(
     1310_build_odb_sqlite
     1320_build_odb_boost
     1400_build_thrift
+    1900_build_ical
 )
 
 

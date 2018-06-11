@@ -4,6 +4,19 @@ THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${THIS_SCRIPT_DIR}/../common.sh"
 
 
+decompressTarballForCurrentArchitecture()
+{
+    local LIB_TARBALL_LOCAL_PATH="${FM_GLOBAL_TARBALL_CACHE}/${FM_CURRENT_LIB_TARBALL_NAME}"
+    
+    createDirectory "${FM_CURRENT_LIB_SOURCE_DIR}"
+
+    prepareBuildStep "Decompressing ${LIB_TARBALL_LOCAL_PATH} ... "
+    tar --exclude=*/ReadMe.md -xz -f ${LIB_TARBALL_LOCAL_PATH} -C ${FM_CURRENT_LIB_SOURCE_DIR} || error "Cannot decompress file ${LIB_TARBALL_LOCAL_PATH} to ${FM_CURRENT_LIB_SOURCE_DIR}"
+    checkBuildStep
+
+    mv "${FM_CURRENT_LIB_SOURCE_DIR}/${FM_CURRENT_LIB_NAME}"-* "${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}"
+}
+
 buildCurrentArchitecture__linux_gcc()
 {
     local BUILD_CONFIGURATION=""
@@ -90,6 +103,10 @@ buildCurrentArchitecture__windows_msvc()
         copyFile ./src/libicalss/CMakeFiles/icalss.dir/icalss.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
         copyFile ./src/libicalvcal/CMakeFiles/icalvcal.dir/icalvcal.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     fi
+    
+    rm ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/*-static.lib
+    rm -rf ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake
+    rm -rf ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig
 }
 
 
