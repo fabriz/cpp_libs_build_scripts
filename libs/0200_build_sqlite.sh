@@ -21,6 +21,23 @@ buildCurrentArchitecture__linux_gcc()
     checkBuildStep
 }
 
+buildCurrentArchitecture__android_clang()
+{
+    export CFLAGS="-DSQLITE_ENABLE_UNLOCK_NOTIFY=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+}
+
 buildCurrentArchitecture__macos_clang()
 {
     export CFLAGS="-DSQLITE_ENABLE_UNLOCK_NOTIFY=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
