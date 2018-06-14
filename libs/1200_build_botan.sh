@@ -100,6 +100,30 @@ buildCurrentArchitecture__linux_gcc()
     checkBuildStep
 }
 
+buildCurrentArchitecture__android_clang()
+{
+    local BUILD_PLATFORM="armv7"
+
+    local BUILD_DEBUG_MODE=""
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        BUILD_DEBUG_MODE="--debug-mode"
+    fi
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    ./configure.py --os=android --cc=clang --cpu=${BUILD_PLATFORM}\
+        --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
+        --link-method=copy --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+}
+
 buildCurrentArchitecture__macos_clang()
 {
     local BUILD_PLATFORM=""

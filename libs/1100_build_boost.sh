@@ -54,6 +54,21 @@ buildCurrentArchitecture__linux_gcc()
     checkBuildStep
 }
 
+buildCurrentArchitecture__android_clang()
+{
+    local BOOST_ANDROID_ARCH="arm"
+
+    prepareBuildStep "Bootstrapping ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    ./b2 -j${FM_GLOBAL_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths --disable-icu\
+        --toolset=clang variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} architecture=${BOOST_ANDROID_ARCH} target-os=android cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+}
+
 buildCurrentArchitecture__macos_clang()
 {
     prepareBuildStep "Bootstrapping ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
