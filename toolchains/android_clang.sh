@@ -21,7 +21,7 @@ initToolchainConfiguration()
     case ${FM_ARG_ARCHITECTURE} in
         armv7)
             FM_CONFIG_ARCHITECTURE="armv7"
-            FM_CONFIG_ARCHITECTURE_CFLAGS="-march=armv7"
+            FM_CONFIG_ARCHITECTURE_CFLAGS="-march=armv7-a"
             FM_CONFIG_ADDRESS_MODEL="32"
             FM_CONFIG_CROSS_COMPILER_HOST="arm-linux-androideabi"
         ;;
@@ -32,11 +32,11 @@ initToolchainConfiguration()
     case ${FM_ARG_BUILD_VARIANT} in
         debug)
             FM_CONFIG_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
-            FM_CONFIG_BUILD_VARIANT_CFLAGS="-g"
+            FM_CONFIG_BUILD_VARIANT_CFLAGS="-g -marm -O0"
         ;;
         release)
             FM_CONFIG_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
-            FM_CONFIG_BUILD_VARIANT_CFLAGS="-O2"
+            FM_CONFIG_BUILD_VARIANT_CFLAGS="-mthumb -Oz"
         ;;
         *)
             error "Invalid variant ${FM_ARG_BUILD_VARIANT}. Valid values are (debug, release)"
@@ -56,7 +56,9 @@ initToolchainConfiguration()
 
 initToolchainTools()
 {
-    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -fPIC -Wextra -Wall -W"
+    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -fPIC -Wextra -Wall -W\
+	-DANDROID -D__ANDROID_API__=${FM_GLOBAL_ANDROID_API_LEVEL} -DANDROID_HAS_WSTRING -D_REENTRANT -target armv7-none-linux-androideabi\
+	-fstack-protector-strong -mfloat-abi=softfp -mfpu=vfp -fno-builtin-memmove"
     FM_CONFIG_COMMON_CXXFLAGS="-std=gnu++1y"
     FM_CONFIG_COMMON_LDFLAGS="-L${FM_LIBS_INSTALL_LIBS}"
     
