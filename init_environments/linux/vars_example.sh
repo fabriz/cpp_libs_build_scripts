@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export FM_GLOBAL_ANDROID_API_LEVEL=24
-export FM_GLOBAL_ANDROID_STANDALONE_NDK_INSTALL_PATH=/home/fabrizio/Android/standalone/arm-linux-androideabi_24
+export FM_GLOBAL_ANDROID_API_LEVEL=21
+export FM_GLOBAL_ANDROID_STANDALONE_NDK_INSTALL_PATH=/home/fabrizio/Android/standalone/arm-linux-androideabi_21
 
 
 export FM_GLOBAL_TARBALL_CACHE=/home/fabrizio/libs/libs_source

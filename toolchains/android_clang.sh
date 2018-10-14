@@ -42,7 +42,7 @@ initToolchainConfiguration()
             error "Invalid variant ${FM_ARG_BUILD_VARIANT}. Valid values are (debug, release)"
     esac
 
-    FM_TARGET_PLATFORM="android_clang"
+    FM_TARGET_PLATFORM="android_clang_api${FM_GLOBAL_ANDROID_API_LEVEL}"
     FM_TARGET_TOOLCHAIN="android_clang"
     FM_TARGET_TOOLCHAIN_VERSION="6-0-2"
     FM_TARGET_TOOLCHAIN_HOST_OS="windows"
