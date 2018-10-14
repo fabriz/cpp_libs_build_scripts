@@ -1,11 +1,11 @@
 #!/bin/bash
 
+FM_SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${FM_SCRIPT_PATH}/vars.sh"
+
 export FM_GLOBAL_HOST=android
 export FM_GLOBAL_COMPILER=clang
 export FM_GLOBAL_ARCHITECTURE=armv7
-
-FM_SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${FM_SCRIPT_PATH}/vars.sh"
 
 export PATH=${FM_GLOBAL_ANDROID_STANDALONE_NDK_INSTALL_PATH}/bin:$PATH
 

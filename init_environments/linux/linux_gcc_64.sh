@@ -1,11 +1,11 @@
 #!/bin/bash
 
+FM_SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${FM_SCRIPT_PATH}/vars.sh"
+
 export FM_GLOBAL_HOST=linux
 export FM_GLOBAL_COMPILER=gcc
 export FM_GLOBAL_ARCHITECTURE=x64
-
-FM_SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${FM_SCRIPT_PATH}/vars.sh"
 
 cd "${FM_SCRIPT_PATH}/../.."
 

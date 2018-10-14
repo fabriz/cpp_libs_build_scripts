@@ -2,11 +2,11 @@
 
 set FM_SCRIPT_PATH=%~dp0
 
+call "windows_vars.bat"
+
 set FM_GLOBAL_HOST=windows
 set FM_GLOBAL_COMPILER=msvc2017
 set FM_GLOBAL_ARCHITECTURE=i386
-
-call "windows_vars.bat"
 
 call "%FM_GLOBAL_MSVC2017_INSTALL_PATH%\VC\Auxiliary\Build\vcvars32.bat"
 
