@@ -68,19 +68,3 @@ copyFile()
     
     cp "${COPY_SOURCE}" "${COPY_DESTINATION}" || error "Cannot copy file ${COPY_SOURCE} to ${COPY_DESTINATION}"
 }
-
-downloadFile()
-{
-    [ $# = 2 ] || error "downloadFile(): invalid number of arguments"
-
-    local DOWNLOAD_SOURCE=$1
-    local DOWNLOAD_DESTINATION=$2
-
-    echo "Downloading ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION}"
-
-    local DOWNLOAD_OPTIONS=""
-    #local DOWNLOAD_OPTIONS="--insecure"
-
-    curl ${DOWNLOAD_OPTIONS} -L -o ${DOWNLOAD_DESTINATION} ${DOWNLOAD_SOURCE} || error "Cannot download ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION}"
-}
-

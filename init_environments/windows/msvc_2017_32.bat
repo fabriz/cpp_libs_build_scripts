@@ -2,7 +2,7 @@
 
 set FM_SCRIPT_PATH=%~dp0
 
-call "windows_vars.bat"
+call "vars.bat"
 
 set FM_GLOBAL_HOST=windows
 set FM_GLOBAL_COMPILER=msvc2017

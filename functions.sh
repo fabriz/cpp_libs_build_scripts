@@ -1,6 +1,22 @@
 #!/bin/bash
 
 
+identifyExecutables()
+{
+    if [ -z "${FM_GLOBAL_CMD_CURL}" ]; then
+        FM_CMD_CURL="curl"
+    else
+        FM_CMD_CURL="${FM_GLOBAL_CMD_CURL}"
+    fi
+
+    if [ -z "${FM_GLOBAL_CMD_TAR}" ]; then
+        FM_CMD_TAR="tar"
+    else
+        FM_CMD_TAR="${FM_GLOBAL_CMD_TAR}"
+    fi
+}
+
+
 prepareBuildStep()
 {
     printf "$@"
@@ -25,9 +41,9 @@ decompressArchive()
     printf "Decompressing ${ARCHIVE_SOURCE} ... "
 
     if [ ${ARCHIVE_SOURCE: -7} = ".tar.gz" ] || [ ${ARCHIVE_SOURCE: -4} = ".tgz" ]; then
-        tar -xz -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
+        ${FM_CMD_TAR} -xz -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
     elif [ ${ARCHIVE_SOURCE: -8} = ".tar.bz2" ]; then
-        tar -xj -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
+        ${FM_CMD_TAR} -xj -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
     else
         error "Unsupported archive type"
     fi
@@ -100,6 +116,18 @@ checkCurrentLibTarballChecksum()
     else
         echo "Skipping checksum verification of file ${FM_CURRENT_LIB_TARBALL_NAME}"
     fi
+}
+
+downloadFile()
+{
+    [ $# = 2 ] || error "downloadFile(): invalid number of arguments"
+
+    local DOWNLOAD_SOURCE=$1
+    local DOWNLOAD_DESTINATION=$2
+
+    echo "Downloading ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION}"
+
+    ${FM_CMD_CURL} -L -o ${DOWNLOAD_DESTINATION} ${DOWNLOAD_SOURCE} || error "Cannot download ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION}"
 }
 
 downloadCurrentLibTarballIfMissing()

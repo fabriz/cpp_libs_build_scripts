@@ -43,6 +43,9 @@ fi
 # Enable the option again
 set -o nounset
 
+# Identify executables
+identifyExecutables
+
 # Directory creation
 createDirectory ${FM_GLOBAL_TARBALL_CACHE}
 createDirectory ${FM_GLOBAL_BUILD_ROOT}
