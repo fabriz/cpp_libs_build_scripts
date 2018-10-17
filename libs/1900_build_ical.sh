@@ -14,7 +14,7 @@ decompressTarballForCurrentArchitecture()
     ${FM_CMD_TAR} --exclude=*/ReadMe.md -xz -f ${LIB_TARBALL_LOCAL_PATH} -C ${FM_CURRENT_LIB_SOURCE_DIR} || error "Cannot decompress file ${LIB_TARBALL_LOCAL_PATH} to ${FM_CURRENT_LIB_SOURCE_DIR}"
     checkBuildStep
 
-    mv "${FM_CURRENT_LIB_SOURCE_DIR}/${FM_CURRENT_LIB_NAME}"-* "${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}"
+    moveDirectory "${FM_CURRENT_LIB_SOURCE_DIR}/${FM_CURRENT_LIB_NAME}"-* "${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}"
 }
 
 buildCurrentArchitecture__linux_gcc()

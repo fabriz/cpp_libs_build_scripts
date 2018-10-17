@@ -9,6 +9,12 @@ identifyExecutables()
         FM_CMD_CURL="${FM_GLOBAL_CMD_CURL}"
     fi
 
+    if [ -z "${FM_GLOBAL_OPTION_DISABLE_SSL_CERTIFICATE_VALIDATION}" ]; then
+        FM_OPTION_DISABLE_SSL_CERTIFICATE_VALIDATION="false"
+    else
+        FM_OPTION_DISABLE_SSL_CERTIFICATE_VALIDATION="${FM_GLOBAL_OPTION_DISABLE_SSL_CERTIFICATE_VALIDATION}"
+    fi
+
     if [ -z "${FM_GLOBAL_CMD_TAR}" ]; then
         FM_CMD_TAR="tar"
     else
@@ -127,7 +133,13 @@ downloadFile()
 
     echo "Downloading ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION}"
 
-    ${FM_CMD_CURL} -L -o ${DOWNLOAD_DESTINATION} ${DOWNLOAD_SOURCE} || error "Cannot download ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION}"
+    local DOWNLOAD_OPTIONS=""
+    if [ ${FM_OPTION_DISABLE_SSL_CERTIFICATE_VALIDATION} = "true" ]; then
+        DOWNLOAD_OPTIONS="--insecure"
+        echo "WARNING: Insecure mode, SSL certificate validation disabled"
+    fi
+
+    ${FM_CMD_CURL} ${DOWNLOAD_OPTIONS} -L -o ${DOWNLOAD_DESTINATION} ${DOWNLOAD_SOURCE} || error "Cannot download ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION}"
 }
 
 downloadCurrentLibTarballIfMissing()
@@ -249,7 +261,7 @@ decompressTarballForCurrentArchitecture()
 
     decompressArchive "${LIB_TARBALL_LOCAL_PATH}" "${FM_CURRENT_LIB_SOURCE_DIR}"
 
-    mv "${FM_CURRENT_LIB_SOURCE_DIR}/${FM_CURRENT_LIB_FULL_NAME}" "${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}"
+    moveDirectory "${FM_CURRENT_LIB_SOURCE_DIR}/${FM_CURRENT_LIB_FULL_NAME}" "${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}"
 }
 
 installFatLibraries()

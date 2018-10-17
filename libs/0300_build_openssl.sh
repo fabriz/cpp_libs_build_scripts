@@ -6,7 +6,7 @@ source "${THIS_SCRIPT_DIR}/../common.sh"
 
 afterBuildCurrentArchitecture()
 {
-    mv "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"/lib/engines* "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"
+    moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"/lib/engines* "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"
 }
 
 buildCurrentArchitecture__linux_gcc()

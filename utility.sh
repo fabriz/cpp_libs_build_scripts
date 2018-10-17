@@ -59,6 +59,27 @@ createDirectory()
     fi
 }
 
+deleteDirectory()
+{
+    [ $# = 1 ] || error "deleteDirectory(): invalid number of arguments"
+
+    local DIRECTORY_PATH=$1
+
+    if [ -d "${DIRECTORY_PATH}" ]; then
+        rmdir "${DIRECTORY_PATH}" || error "Cannot delete directory ${DIRECTORY_PATH}"
+    fi
+}
+
+moveDirectory()
+{
+    [ $# = 2 ] || error "moveDirectory(): invalid number of arguments"
+
+    local MOVE_SOURCE=$1
+    local MOVE_DESTINATION=$2
+
+    mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" || error "Cannot move directory ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
+}
+
 copyFile()
 {
     [ $# = 2 ] || error "copyFile(): invalid number of arguments"
@@ -68,3 +89,4 @@ copyFile()
     
     cp "${COPY_SOURCE}" "${COPY_DESTINATION}" || error "Cannot copy file ${COPY_SOURCE} to ${COPY_DESTINATION}"
 }
+

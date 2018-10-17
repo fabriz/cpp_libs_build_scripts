@@ -166,8 +166,8 @@ buildCurrentArchitecture__windows_msvc()
     checkBuildStep
 
     local BASE_INCLUDE_DIR="${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include"
-    mv ${BASE_INCLUDE_DIR}/boost-*/boost ${BASE_INCLUDE_DIR}
-    rmdir ${BASE_INCLUDE_DIR}/boost-*
+    moveDirectory ${BASE_INCLUDE_DIR}/boost-*/boost ${BASE_INCLUDE_DIR}
+    deleteDirectory ${BASE_INCLUDE_DIR}/boost-*
 }
 
 

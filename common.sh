@@ -40,11 +40,11 @@ if [ -z "${FM_GLOBAL_NUM_PROCESSES}" ]; then
     FM_GLOBAL_NUM_PROCESSES=8
 fi
 
-# Enable the option again
-set -o nounset
-
 # Identify executables
 identifyExecutables
+
+# Enable the option again
+set -o nounset
 
 # Directory creation
 createDirectory ${FM_GLOBAL_TARBALL_CACHE}
