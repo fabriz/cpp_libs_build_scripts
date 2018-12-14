@@ -31,6 +31,30 @@ buildCurrentArchitecture__linux_gcc()
     checkBuildStep
 }
 
+buildCurrentArchitecture__android_clang()
+{
+    local BUILD_PLATFORM=""
+    if [ ${FM_TARGET_ARCHITECTURE} = "armv7" ]; then
+        BUILD_PLATFORM="linux-generic32"
+        #BUILD_PLATFORM="android-arm"
+    else
+        BUILD_PLATFORM="linux-generic64"
+        #BUILD_PLATFORM="android-arm64"
+    fi
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    ./Configure ${BUILD_PLATFORM} no-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --openssldir=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/openssl > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+}
+
 buildCurrentArchitecture__macos_clang()
 {
     local BUILD_PLATFORM=""
