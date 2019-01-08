@@ -86,7 +86,7 @@ copyFile()
 
     local COPY_SOURCE=$1
     local COPY_DESTINATION=$2
-    
+
     cp "${COPY_SOURCE}" "${COPY_DESTINATION}" || error "Cannot copy file ${COPY_SOURCE} to ${COPY_DESTINATION}"
 }
 

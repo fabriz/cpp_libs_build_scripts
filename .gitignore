@@ -1,3 +1,2 @@
 /init_environments/linux/vars.sh
-/init_environments/windows/windows_vars.bat
-
+/init_environments/windows/vars.bat
