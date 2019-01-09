@@ -130,6 +130,7 @@ downloadFile()
 
     local DOWNLOAD_SOURCE=$1
     local DOWNLOAD_DESTINATION=$2
+    local DOWNLOAD_DESTINATION_TEMP="${DOWNLOAD_DESTINATION}.temp"
 
     echo "Downloading ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION}"
 
@@ -139,7 +140,13 @@ downloadFile()
         echo "WARNING: Insecure mode, SSL certificate validation disabled"
     fi
 
-    ${FM_CMD_CURL} ${DOWNLOAD_OPTIONS} -L -o ${DOWNLOAD_DESTINATION} ${DOWNLOAD_SOURCE} || error "Cannot download ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION}"
+    ${FM_CMD_CURL} ${DOWNLOAD_OPTIONS} -L -o "${DOWNLOAD_DESTINATION_TEMP}" "${DOWNLOAD_SOURCE}"
+    if [ $? -ne 0 ]; then
+        rm -f "${DOWNLOAD_DESTINATION_TEMP}"
+        error "Cannot download ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION_TEMP}"
+    fi
+
+    mv "${DOWNLOAD_DESTINATION_TEMP}" "${DOWNLOAD_DESTINATION}" || error "Cannot rename file ${DOWNLOAD_DESTINATION_TEMP} to ${DOWNLOAD_DESTINATION}"
 }
 
 downloadCurrentLibTarballIfMissing()
