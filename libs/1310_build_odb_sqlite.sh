@@ -97,6 +97,15 @@ buildCurrentArchitecture__windows_msvc()
         BUILD_CONFIGURATION="Release"
     fi
 
+    local TOOLS_VERSION=""
+    if [ ${FM_TARGET_TOOLCHAIN_VERSION} = "14.0" ]; then
+        TOOLS_VERSION="14.0"
+    elif [ ${FM_TARGET_TOOLCHAIN_VERSION} = "14.1" ]; then
+        TOOLS_VERSION="15.0"
+    else
+        error "Unsupported MSVC toolchain: ${FM_TARGET_TOOLCHAIN_VERSION}."
+    fi
+
     local LIBS_INTERMEDIATE_BUILD_WIN=`cygpath -w ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/intermediate/`
     local LIBS_OUT_BUILD_WIN=`cygpath -w ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/`
     
@@ -109,7 +118,7 @@ buildCurrentArchitecture__windows_msvc()
     devenv ./libodb-sqlite-vc12.sln -upgrade
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    msbuild.exe libodb-sqlite-vc12.sln /toolsversion:${FM_TARGET_TOOLCHAIN_VERSION} /target:Build /property:Platform=${BUILD_PLATFORM}\
+    msbuild.exe libodb-sqlite-vc12.sln /toolsversion:${TOOLS_VERSION} /target:Build /property:Platform=${BUILD_PLATFORM}\
         /property:Configuration=${BUILD_CONFIGURATION} /property:TargetName="odb-sqlite" /property:IntermediateOutputPath="${LIBS_INTERMEDIATE_BUILD_WIN}"\
         /property:OutDir="${LIBS_OUT_BUILD_WIN}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
