@@ -10,6 +10,7 @@ LIBS_TO_BUILD=(
     0110_build_bzip2
     0200_build_sqlite
     0300_build_openssl
+    0400_build_libzip
     1050_build_icu4c
     1100_build_boost
     1200_build_botan
@@ -17,6 +18,7 @@ LIBS_TO_BUILD=(
     1310_build_odb_sqlite
     1320_build_odb_boost
     1400_build_thrift
+    1800_build_wt
     1900_build_ical
 )
 
