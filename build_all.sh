@@ -12,6 +12,7 @@ LIBS_TO_BUILD=(
     0300_build_openssl
     0400_build_libzip
     1050_build_icu4c
+    1060_build_libzippp
     1100_build_boost
     1200_build_botan
     1300_build_odb
