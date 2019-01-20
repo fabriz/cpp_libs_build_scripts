@@ -14,8 +14,10 @@ buildCurrentArchitecture__linux_gcc()
     local BUILD_PLATFORM=""
     if [ ${FM_TARGET_ARCHITECTURE} = "i386" ]; then
         BUILD_PLATFORM="linux-x86"
-    else
+    elif [ ${FM_TARGET_ARCHITECTURE} = "x64" ]; then
         BUILD_PLATFORM="linux-x86_64"
+    elif [ ${FM_TARGET_ARCHITECTURE} = "armv7rpi3" ]; then
+        BUILD_PLATFORM="linux-generic32"
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

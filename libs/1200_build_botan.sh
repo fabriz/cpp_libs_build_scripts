@@ -74,8 +74,10 @@ buildCurrentArchitecture__linux_gcc()
     local BUILD_PLATFORM=""
     if [ ${FM_TARGET_ARCHITECTURE} = "i386" ]; then
         BUILD_PLATFORM="x86"
-    else
+    elif [ ${FM_TARGET_ARCHITECTURE} = "x64" ]; then
         BUILD_PLATFORM="x86_64"
+    elif [ ${FM_TARGET_ARCHITECTURE} = "armv7rpi3" ]; then
+        BUILD_PLATFORM="armv7"
     fi
 
     local BUILD_DEBUG_MODE=""
