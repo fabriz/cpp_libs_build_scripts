@@ -15,15 +15,8 @@ beforeBuildCurrentArchitecture()
 
 buildCurrentArchitecture__linux_gcc()
 {
-    local BUILD_CONFIGURATION=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
-    else
-        BUILD_CONFIGURATION="Release"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DBUILD_SHARED_LIBS=False\
+    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DBUILD_SHARED_LIBS=False\
         -DENABLE_COMMONCRYPTO=False -DENABLE_GNUTLS=False -DENABLE_OPENSSL=True \
         -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -39,15 +32,8 @@ buildCurrentArchitecture__linux_gcc()
 
 buildCurrentArchitecture__android_clang()
 {
-    local BUILD_CONFIGURATION=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
-    else
-        BUILD_CONFIGURATION="Release"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DBUILD_SHARED_LIBS=False\
+    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DBUILD_SHARED_LIBS=False\
         -DENABLE_COMMONCRYPTO=False -DENABLE_GNUTLS=False -DENABLE_OPENSSL=True \
         -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -73,15 +59,8 @@ buildCurrentArchitecture__ios_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
-    local BUILD_CONFIGURATION=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
-    else
-        BUILD_CONFIGURATION="Release"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    cmake -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DBUILD_SHARED_LIBS=False\
+    cmake -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DBUILD_SHARED_LIBS=False\
         -DENABLE_COMMONCRYPTO=False -DENABLE_GNUTLS=False -DENABLE_OPENSSL=True \
         -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -97,15 +76,8 @@ buildCurrentArchitecture__windows_mingw()
 
 buildCurrentArchitecture__windows_msvc()
 {
-    local BUILD_CONFIGURATION=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
-    else
-        BUILD_CONFIGURATION="Release"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DBUILD_SHARED_LIBS=False\
+    cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DBUILD_SHARED_LIBS=False\
         -DENABLE_COMMONCRYPTO=False -DENABLE_GNUTLS=False -DENABLE_OPENSSL=True \
         -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep

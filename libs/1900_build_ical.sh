@@ -19,15 +19,8 @@ decompressTarballForCurrentArchitecture()
 
 buildCurrentArchitecture__linux_gcc()
 {
-    local BUILD_CONFIGURATION=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
-    else
-        BUILD_CONFIGURATION="Release"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DSTATIC_ONLY=True\
+    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DSTATIC_ONLY=True\
         -DCMAKE_DISABLE_FIND_PACKAGE_ICU=True -DWITH_CXX_BINDINGS=False -DGOBJECT_INTROSPECTION=False\
         -DICAL_GLIB_VAPI=False -DICAL_GLIB=False -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -43,19 +36,12 @@ buildCurrentArchitecture__linux_gcc()
 
 buildCurrentArchitecture__android_clang()
 {
-    local BUILD_CONFIGURATION=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
-    else
-        BUILD_CONFIGURATION="Release"
-    fi
-
     prepareBuildStep "Patching ${FM_CURRENT_ARCHITECTURE_LIB_TAG} makefile ... "
     sed -i.orig 's/add_subdirectory(test)/#add_subdirectory(test)/' ./src/CMakeLists.txt
     checkBuildStep
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DSTATIC_ONLY=True\
+    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DSTATIC_ONLY=True\
         -DCMAKE_DISABLE_FIND_PACKAGE_ICU=True -DWITH_CXX_BINDINGS=False -DGOBJECT_INTROSPECTION=False -DICAL_BUILD_DOCS=False\
         -DICAL_GLIB_VAPI=False -DICAL_GLIB=False -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -81,15 +67,8 @@ buildCurrentArchitecture__ios_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
-    local BUILD_CONFIGURATION=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
-    else
-        BUILD_CONFIGURATION="Release"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    cmake -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DSTATIC_ONLY=True\
+    cmake -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DSTATIC_ONLY=True\
         -DCMAKE_DISABLE_FIND_PACKAGE_ICU=True -DWITH_CXX_BINDINGS=False -DGOBJECT_INTROSPECTION=False\
         -DICAL_GLIB_VAPI=False -DICAL_GLIB=False -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -105,15 +84,8 @@ buildCurrentArchitecture__windows_mingw()
 
 buildCurrentArchitecture__windows_msvc()
 {
-    local BUILD_CONFIGURATION=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
-    else
-        BUILD_CONFIGURATION="Release"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DSTATIC_ONLY=True\
+    cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DSTATIC_ONLY=True\
         -DCMAKE_DISABLE_FIND_PACKAGE_ICU=True -DWITH_CXX_BINDINGS=False -DGOBJECT_INTROSPECTION=False\
         -DICAL_GLIB_VAPI=False -DICAL_GLIB=False -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep

@@ -44,8 +44,12 @@ initToolchainConfiguration()
             FM_CONFIG_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
             FM_CONFIG_BUILD_VARIANT_CFLAGS="-O2"
         ;;
+        profile)
+            FM_CONFIG_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
+            FM_CONFIG_BUILD_VARIANT_CFLAGS="-O2 -g"
+        ;;
         *)
-            error "Invalid variant ${FM_ARG_BUILD_VARIANT}. Valid values are (debug, release)"
+            error "Invalid variant ${FM_ARG_BUILD_VARIANT}. Valid values are (debug, release, profile)"
     esac
 
     FM_TARGET_PLATFORM="linux_gcc"

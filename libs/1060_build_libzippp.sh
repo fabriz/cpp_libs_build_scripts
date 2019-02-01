@@ -76,15 +76,8 @@ buildCurrentArchitecture__windows_msvc()
     sed -i.orig 's/SET_TARGET_PROPERTIES/#SET_TARGET_PROPERTIES/' ./CMakeLists.txt
     sed -i.orig '/TARGET_LINK_LIBRARIES(/,/)/d' ./CMakeLists.txt
 
-    local BUILD_CONFIGURATION=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
-    else
-        BUILD_CONFIGURATION="Release"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_CONFIGURATION} -DBUILD_SHARED_LIBS=False\
+    cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DBUILD_SHARED_LIBS=False\
         -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 

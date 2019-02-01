@@ -244,6 +244,18 @@ initCurrentArchitecture()
     FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE=${LOG_FILE_PREFIX}_configure.log
     FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE=${LOG_FILE_PREFIX}_make.log
     FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE=${LOG_FILE_PREFIX}_stage.log
+
+    # Corresponding build type for CMake
+    FM_CMAKE_TARGET_VARIANT_BUILD_TYPE=""
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        FM_CMAKE_TARGET_VARIANT_BUILD_TYPE="Debug"
+    elif [ ${FM_TARGET_BUILD_VARIANT} = "release" ]; then
+        FM_CMAKE_TARGET_VARIANT_BUILD_TYPE="Release"
+    elif [ ${FM_TARGET_BUILD_VARIANT} = "profile" ]; then
+        FM_CMAKE_TARGET_VARIANT_BUILD_TYPE="RelWithDebInfo"
+    else
+        error "Unsupported build variant: ${FM_TARGET_BUILD_VARIANT}."
+    fi
 }
 
 isLibraryInstalled()
