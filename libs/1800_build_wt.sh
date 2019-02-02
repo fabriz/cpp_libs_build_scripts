@@ -4,6 +4,19 @@ THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${THIS_SCRIPT_DIR}/../common.sh"
 
 
+beforeBuildCurrentArchitecture()
+{
+    # Avoid the "d" suffix for debug libraries
+    sed -i.orig 's/DEBUG_LIB_POSTFIX "d"/DEBUG_LIB_POSTFIX ""/' ./CMakeLists.txt
+
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/CMakeLists.txt
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/Wt/Dbo/CMakeLists.txt
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/Wt/Dbo/backend/CMakeLists.txt
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/fcgi/CMakeLists.txt
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/http/CMakeLists.txt
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/isapi/CMakeLists.txt
+}
+
 buildCurrentArchitecture__linux_gcc()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
