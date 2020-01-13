@@ -48,6 +48,8 @@ decompressArchive()
 
     if [ ${ARCHIVE_SOURCE: -7} = ".tar.gz" ] || [ ${ARCHIVE_SOURCE: -4} = ".tgz" ]; then
         ${FM_CMD_TAR} -xz -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
+    elif [ ${ARCHIVE_SOURCE: -7} = ".tar.xz" ]; then
+        ${FM_CMD_TAR} -xJ -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
     elif [ ${ARCHIVE_SOURCE: -8} = ".tar.bz2" ]; then
         ${FM_CMD_TAR} -xj -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
     else

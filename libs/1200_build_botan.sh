@@ -11,7 +11,7 @@ decompressTarballForCurrentArchitecture()
     createDirectory "${FM_CURRENT_LIB_SOURCE_DIR}"
 
     prepareBuildStep "Decompressing ${LIB_TARBALL_LOCAL_PATH} ... "
-    ${FM_CMD_TAR} --exclude=*/.travis.yml -xz -f ${LIB_TARBALL_LOCAL_PATH} -C ${FM_CURRENT_LIB_SOURCE_DIR} || error "Cannot decompress file ${LIB_TARBALL_LOCAL_PATH} to ${FM_CURRENT_LIB_SOURCE_DIR}"
+    ${FM_CMD_TAR} --exclude=*/.travis.yml -x -f ${LIB_TARBALL_LOCAL_PATH} -C ${FM_CURRENT_LIB_SOURCE_DIR} || error "Cannot decompress file ${LIB_TARBALL_LOCAL_PATH} to ${FM_CURRENT_LIB_SOURCE_DIR}"
     checkBuildStep
 
     moveDirectory "${FM_CURRENT_LIB_SOURCE_DIR}/${FM_CURRENT_LIB_FULL_NAME}" "${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}"
@@ -66,7 +66,9 @@ afterBuildCurrentArchitecture()
     moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/botan-2/botan" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include"
     deleteDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/botan-2"
 
-    moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"/lib/python* "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"
+    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"/lib/python* ]; then
+        moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"/lib/python* "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"
+    fi
 }
 
 buildCurrentArchitecture__linux_gcc()
