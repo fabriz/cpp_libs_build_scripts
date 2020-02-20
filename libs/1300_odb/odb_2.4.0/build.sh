@@ -1,7 +1,8 @@
 #!/bin/bash
+# Build script for odb 2.4.0
 
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${THIS_SCRIPT_DIR}/../common.sh"
+source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 
 buildCurrentArchitecture__linux_gcc()
@@ -145,4 +146,3 @@ buildCurrentArchitecture__windows_msvc()
 
 
 buildLibrary "ODB"
-
