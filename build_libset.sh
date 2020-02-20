@@ -31,7 +31,11 @@ LIBS_CHECK_OK="true"
 for LIB_TO_BUILD in "${FM_LIBS_TO_BUILD[@]}"
 do
     printf "Checking ${LIB_TO_BUILD} ... "
-    LIB_INFO_FILE="${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/libs/${LIB_TO_BUILD}/config.sh"
+
+    LIB_TO_BUILD_TAG="${LIB_TO_BUILD%%/*}"
+    LIB_TO_BUILD_NAME="${LIB_TO_BUILD_TAG#*_}"
+    LIB_TO_BUILD_VERSION="${LIB_TO_BUILD#*/}"
+    LIB_INFO_FILE="${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/libs/${LIB_TO_BUILD_TAG}/${LIB_TO_BUILD_NAME}_${LIB_TO_BUILD_VERSION}/config.sh"
 
     if [ ! -f ${LIB_INFO_FILE} ]; then
         LIBS_CHECK_OK="false"
@@ -55,7 +59,12 @@ fi
 for LIB_TO_BUILD in "${FM_LIBS_TO_BUILD[@]}"
 do
     echo ${BLOCK_SEPARATOR}
-    ./libs/${LIB_TO_BUILD}/build.sh "$@"
+
+    LIB_TO_BUILD_TAG="${LIB_TO_BUILD%%/*}"
+    LIB_TO_BUILD_NAME="${LIB_TO_BUILD_TAG#*_}"
+    LIB_TO_BUILD_VERSION="${LIB_TO_BUILD#*/}"
+
+    ./libs/${LIB_TO_BUILD_TAG}/${LIB_TO_BUILD_NAME}_${LIB_TO_BUILD_VERSION}/build.sh "$@"
     if [ $? -ne 0 ]; then
         error "Build failed"
     fi

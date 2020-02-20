@@ -1,7 +1,8 @@
 #!/bin/bash
+# Build script for zlib openssl 1.1.1d
 
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${THIS_SCRIPT_DIR}/../common.sh"
+source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 
 afterBuildCurrentArchitecture()
@@ -171,4 +172,3 @@ buildCurrentArchitecture__windows_msvc()
 
 
 buildLibrary "OPENSSL"
-
