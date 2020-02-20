@@ -11,11 +11,13 @@ FM_LIBS_TO_BUILD=(
 #    0300_openssl/1.1.0h
 #    0300_openssl/1.1.1a
     0300_openssl/1.1.1d
-
 #    0400_libzip/1.5.1
     0400_libzip/1.5.2
 
-#    1050_icu4c
+#    1050_icu4c/62.1
+#    1050_icu4c/63.1
+    1050_icu4c/65.1
+
 #    1060_libzippp
 #    1100_boost
 #    1200_botan

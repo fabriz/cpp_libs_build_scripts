@@ -1,7 +1,8 @@
 #!/bin/bash
+# Build script for icu4c 63.1
 
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${THIS_SCRIPT_DIR}/../common.sh"
+source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 
 decompressTarballForCurrentArchitecture()
@@ -96,4 +97,3 @@ buildCurrentArchitecture__windows_msvc()
 
 
 buildLibrary "ICU4C"
-
