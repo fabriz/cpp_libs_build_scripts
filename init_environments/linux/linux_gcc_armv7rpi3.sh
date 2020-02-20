@@ -12,11 +12,10 @@ cd "${FM_SCRIPT_PATH}/../.."
 
 echo
 echo To build all libraries:
-echo ./build_all.sh ${FM_GLOBAL_HOST}_${FM_GLOBAL_COMPILER} ${FM_GLOBAL_ARCHITECTURE} debug,release
+echo ./build_libset.sh latest ${FM_GLOBAL_HOST}_${FM_GLOBAL_COMPILER} ${FM_GLOBAL_ARCHITECTURE} debug,release
 echo
 echo To build a single library:
-echo cd libs
-echo ./nnnn_build_libname.sh ${FM_GLOBAL_HOST}_${FM_GLOBAL_COMPILER} ${FM_GLOBAL_ARCHITECTURE} debug,release
+echo ./build_lib.sh "LIBNAME/LIBVERSION" ${FM_GLOBAL_HOST}_${FM_GLOBAL_COMPILER} ${FM_GLOBAL_ARCHITECTURE} debug,release
 echo
 
 /bin/bash

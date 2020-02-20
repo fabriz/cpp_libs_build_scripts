@@ -35,6 +35,19 @@ popd()
     command popd "$@" > /dev/null
 }
 
+printLibsets()
+{
+    pushd "${FM_UTILITY_SCRIPT_DIR}/libsets"
+    local FM_AVAILABLE_LIBSETS=(*.sh)
+    popd
+
+    echo "Available libsets are: "
+    for FM_AVAILABLE_LIBSET in "${FM_AVAILABLE_LIBSETS[@]}"
+    do
+        echo "    ${FM_AVAILABLE_LIBSET%.*}"
+    done
+}
+
 printToolchains()
 {
     pushd "${FM_UTILITY_SCRIPT_DIR}/toolchains"

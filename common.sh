@@ -6,18 +6,19 @@ set -o nounset
 FM_COMMON_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_COMMON_SCRIPT_DIR}/utility.sh"
 source "${FM_COMMON_SCRIPT_DIR}/functions.sh"
-source "${FM_COMMON_SCRIPT_DIR}/versions.sh"
 
 # Get command line parameters
-if [ ! $# = 3 ]; then
-    echo "Usage: $0 <toolchain> <architecture> <variant(s)>"
+if [ ! $# = 4 ]; then
+    echo "Usage: $0 <libset> <toolchain> <architecture> <variant(s)>"
+    printLibsets
     printToolchains
     exit 1
 fi
 
-FM_ARG_TOOLCHAIN="$(echo $1 | tr '[:upper:]' '[:lower:]')"
-FM_ARG_ARCHITECTURE="$(echo $2 | tr '[:upper:]' '[:lower:]')"
-FM_ARG_BUILD_VARIANTS="$(echo $3 | tr '[:upper:]' '[:lower:]' | tr "," "\n")"
+FM_ARG_LIBSET="$(echo $1 | tr '[:upper:]' '[:lower:]')"
+FM_ARG_TOOLCHAIN="$(echo $2 | tr '[:upper:]' '[:lower:]')"
+FM_ARG_ARCHITECTURE="$(echo $3 | tr '[:upper:]' '[:lower:]')"
+FM_ARG_BUILD_VARIANTS="$(echo $4 | tr '[:upper:]' '[:lower:]' | tr "," "\n")"
 
 
 # Disable the option to allow checks
