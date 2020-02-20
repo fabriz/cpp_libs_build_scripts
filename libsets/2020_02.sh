@@ -16,9 +16,11 @@ FM_LIBS_TO_BUILD=(
 
 #    1050_icu4c/62.1
 #    1050_icu4c/63.1
-    1050_icu4c/65.1
+#    1050_icu4c/65.1
 
-#    1060_libzippp
+#    1060_libzippp/2.1-1.5.1
+    1060_libzippp/2.1-1.5.2
+
 #    1100_boost
 #    1200_botan
 #    1300_odb

@@ -1,7 +1,8 @@
 #!/bin/bash
+# Build script for libzippp 2.1-1.5.2
 
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${THIS_SCRIPT_DIR}/../common.sh"
+source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 
 decompressTarballForCurrentArchitecture()
@@ -88,4 +89,3 @@ buildCurrentArchitecture__windows_msvc()
 
 
 buildLibrary "LIBZIPPP"
-
