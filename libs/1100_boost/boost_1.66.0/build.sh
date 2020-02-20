@@ -1,7 +1,8 @@
 #!/bin/bash
+# Build script for boost 1.66.0
 
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${THIS_SCRIPT_DIR}/../common.sh"
+source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 
 # Useful bjam flags
