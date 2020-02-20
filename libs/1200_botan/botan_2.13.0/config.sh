@@ -1,0 +1,11 @@
+#!/bin/bash
+# Configuration script for botan 2.13.0
+
+export FM_BOTAN_NAME="Botan"
+export FM_BOTAN_VERSION="2.13.0"
+export FM_BOTAN_FULL_NAME="${FM_BOTAN_NAME}-${FM_BOTAN_VERSION}"
+export FM_BOTAN_TARBALL_NAME="${FM_BOTAN_FULL_NAME}.tar.xz"
+export FM_BOTAN_TARBALL_DOWNLOAD_URL="https://botan.randombit.net/releases/${FM_BOTAN_TARBALL_NAME}"
+export FM_BOTAN_INSTALL_CHECK="include/botan/botan.h"
+export FM_BOTAN_HASH="f57ae42a41e1091bca58f44f41addebd9a390b651603952c881ec89d50187e90"
+export FM_BOTAN_HASH_TYPE="SHA-256"
