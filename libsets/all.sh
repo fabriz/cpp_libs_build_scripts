@@ -21,18 +21,19 @@ FM_LIBS_TO_BUILD=(
 #    1100_boost/1.66.0
 #    1100_boost/1.69.0
     1100_boost/1.72.0
-
 #    1200_botan/2.4.0
 #    1200_botan/2.6.0
 #    1200_botan/2.8.0
 #    1200_botan/2.9.0
     1200_botan/2.13.0
-
     1300_odb/2.4.0
     1310_odb_sqlite/2.4.0
     1320_odb_boost/2.4.0
 
-#    1400_thrift
+#    1400_thrift/0.11.0
+#    1400_thrift/0.12.0
+    1400_thrift/0.13.0
+
 #    1800_wt
 #    1900_ical
 )
