@@ -18,10 +18,26 @@ playBeep()
     fi
 }
 
+success()
+{
+    playBeep
+
+    if [ -n "${FM_GLOBAL_ON_BUILD_SUCCESS}" ]; then
+        eval "${FM_GLOBAL_ON_BUILD_SUCCESS}"
+    fi
+
+    exit 0
+}
+
 error()
 {
     playBeep
     echo "ERROR: $@"
+
+    if [ -n "${FM_GLOBAL_ON_BUILD_ERROR}" ]; then
+        eval "${FM_GLOBAL_ON_BUILD_ERROR}"
+    fi
+
     exit 1
 }
 

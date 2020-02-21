@@ -70,7 +70,8 @@ do
     fi
 done
 
-playBeep
 echo ${BLOCK_SEPARATOR}
 echo "OK: All libraries built successfully"
 echo
+
+success
