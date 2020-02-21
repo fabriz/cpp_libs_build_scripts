@@ -13,6 +13,9 @@ beforeBuildCurrentArchitecture()
 
 afterBuildCurrentArchitecture()
 {
+    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake"
+    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig"
+
     local CONFIG_FILE="${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/thrift/config.h"
 
     if [ -f "${CONFIG_FILE}" ]; then

@@ -5,6 +5,11 @@ THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 
+afterBuildCurrentArchitecture()
+{
+    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig"
+}
+
 buildCurrentArchitecture__linux_gcc()
 {
     export CFLAGS="-DSQLITE_ENABLE_UNLOCK_NOTIFY=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"

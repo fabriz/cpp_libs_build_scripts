@@ -99,6 +99,22 @@ deleteDirectory()
     fi
 }
 
+deleteDirectoryRecursive()
+{
+    [ $# = 1 ] || error "deleteDirectoryRecursive(): invalid number of arguments"
+
+    local DIRECTORY_PATH=$1
+
+    # Sanity check: refuse to delete if path is too short
+    if [ ${#DIRECTORY_PATH} -le 20 ]; then
+        error "deleteDirectoryRecursive(): path too short: ${DIRECTORY_PATH}"
+    fi
+
+    if [ -d "${DIRECTORY_PATH}" ]; then
+        rm -rf "${DIRECTORY_PATH}" || error "Cannot delete directory ${DIRECTORY_PATH}"
+    fi
+}
+
 moveDirectory()
 {
     [ $# = 2 ] || error "moveDirectory(): invalid number of arguments"

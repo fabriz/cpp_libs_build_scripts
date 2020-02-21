@@ -199,7 +199,7 @@ checkCurrentLibraryInstallStatus()
         FM_IS_LIBRARY_VARIANT_INSTALLED="false"
         if [ -d "${FM_CURRENT_LIB_SOURCE_DIR}" ]; then
             echo "Removing previous build directory for library ${FM_CURRENT_LIB_FULL_NAME} ${FM_TARGET_BUILD_VARIANT}"
-            rm -r "${FM_CURRENT_LIB_SOURCE_DIR}"
+            deleteDirectoryRecursive "${FM_CURRENT_LIB_SOURCE_DIR}"
         fi
     fi
 }

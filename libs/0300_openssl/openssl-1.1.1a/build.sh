@@ -7,6 +7,7 @@ source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 afterBuildCurrentArchitecture()
 {
+    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig"
     moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"/lib/engines* "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"
 }
 
