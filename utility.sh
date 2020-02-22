@@ -22,7 +22,7 @@ success()
 {
     playBeep
 
-    if [ -n "${FM_GLOBAL_ON_BUILD_SUCCESS}" ]; then
+    if [ -n "${FM_GLOBAL_ON_BUILD_SUCCESS-}" ]; then
         eval "${FM_GLOBAL_ON_BUILD_SUCCESS}"
     fi
 
@@ -34,7 +34,7 @@ error()
     playBeep
     echo "ERROR: $@"
 
-    if [ -n "${FM_GLOBAL_ON_BUILD_ERROR}" ]; then
+    if [ -n "${FM_GLOBAL_ON_BUILD_ERROR-}" ]; then
         eval "${FM_GLOBAL_ON_BUILD_ERROR}"
     fi
 

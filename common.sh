@@ -15,7 +15,7 @@ if [ ! $# = 4 ]; then
     exit 1
 fi
 
-FM_ARG_LIBSET="$(echo $1 | tr '[:upper:]' '[:lower:]')"
+FM_ARG_TO_BUILD="$(echo $1 | tr '[:upper:]' '[:lower:]')"
 FM_ARG_TOOLCHAIN="$(echo $2 | tr '[:upper:]' '[:lower:]')"
 FM_ARG_ARCHITECTURE="$(echo $3 | tr '[:upper:]' '[:lower:]')"
 FM_ARG_BUILD_VARIANTS="$(echo $4 | tr '[:upper:]' '[:lower:]' | tr "," "\n")"
