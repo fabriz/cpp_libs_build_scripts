@@ -14,5 +14,9 @@ set FM_GLOBAL_TARBALL_CACHE=/c/libs_build/cache
 set FM_GLOBAL_BUILD_ROOT=/c/libs_build/build
 set FM_GLOBAL_DEPLOY_ROOT=/c/libs
 
+REM Optional commands to execute when the build completes
+REM set FM_GLOBAL_ON_BUILD_SUCCESS=
+REM set FM_GLOBAL_ON_BUILD_ERROR=
+
 REM To disable certificate validation:
 REM set FM_GLOBAL_OPTION_DISABLE_SSL_CERTIFICATE_VALIDATION=true
