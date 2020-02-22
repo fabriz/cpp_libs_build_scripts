@@ -266,11 +266,13 @@ isLibraryInstalled()
     
     local LIBRARY_NAME_TO_CHECK=$1
     local VAR_LIB_INSTALL_CHECK="FM_${LIBRARY_NAME_TO_CHECK}_INSTALL_CHECK"
-    
-    if [ -f "${FM_LIBS_INSTALL_PREFIX}/${!VAR_LIB_INSTALL_CHECK}" ]; then
-        FM_IS_LIBRARY_INSTALLED="true"
-    else
-        FM_IS_LIBRARY_INSTALLED="false"
+    local LIB_INSTALL_CHECK_FILE="${!VAR_LIB_INSTALL_CHECK-}"
+
+    FM_IS_LIBRARY_INSTALLED="false"
+    if [ -n "${LIB_INSTALL_CHECK_FILE}" ]; then
+        if [ -f "${FM_LIBS_INSTALL_PREFIX}/${LIB_INSTALL_CHECK_FILE}" ]; then
+            FM_IS_LIBRARY_INSTALLED="true"
+        fi
     fi
 }
 

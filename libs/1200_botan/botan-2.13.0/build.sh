@@ -12,7 +12,7 @@ decompressTarballForCurrentArchitecture()
     createDirectory "${FM_CURRENT_LIB_SOURCE_DIR}"
 
     prepareBuildStep "Decompressing ${LIB_TARBALL_LOCAL_PATH} ... "
-    ${FM_CMD_TAR} --exclude=*/.travis.yml -x -f ${LIB_TARBALL_LOCAL_PATH} -C ${FM_CURRENT_LIB_SOURCE_DIR} || error "Cannot decompress file ${LIB_TARBALL_LOCAL_PATH} to ${FM_CURRENT_LIB_SOURCE_DIR}"
+    ${FM_CMD_TAR} --exclude=*/.lgtm.yml --exclude=*/.travis.yml -x -f ${LIB_TARBALL_LOCAL_PATH} -C ${FM_CURRENT_LIB_SOURCE_DIR} || error "Cannot decompress file ${LIB_TARBALL_LOCAL_PATH} to ${FM_CURRENT_LIB_SOURCE_DIR}"
     checkBuildStep
 
     moveDirectory "${FM_CURRENT_LIB_SOURCE_DIR}/${FM_CURRENT_LIB_FULL_NAME}" "${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}"

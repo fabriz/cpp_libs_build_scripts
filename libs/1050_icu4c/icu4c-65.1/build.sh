@@ -67,7 +67,7 @@ buildCurrentArchitecture__android_clang()
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
-        --with-cross-build=/fabri_libs/build/linux_gcc_x64_release/source/icu4c-63_1/x64/source\
+        --with-cross-build=${FM_GLOBAL_BUILD_ROOT}/linux_gcc_x64_release/source/${FM_ICU4C_FULL_NAME}/x64/source\
         --enable-tools=no --enable-tests=no --enable-samples=no --with-data-packaging=static\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
