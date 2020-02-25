@@ -6,8 +6,8 @@ source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/utility.sh"
 BLOCK_SEPARATOR="------------------------------------------------------------"
 
 # Check command line parameters
-if [ ! $# = 4 ]; then
-    echo "Usage: $0 <libset> <toolchain> <architecture> <variant(s)>"
+if [ ! $# = 2 ]; then
+    echo "Usage: $0 <libset> <variant(s)>"
     printLibsets
     printToolchains
     exit 1
@@ -62,7 +62,7 @@ do
     LIB_TO_BUILD_NAME="${LIB_TO_BUILD%%/*}"
     LIB_TO_BUILD_VERSION="${LIB_TO_BUILD#*/}"
 
-    ./libs/${LIB_TO_BUILD_NAME}/${LIB_TO_BUILD_NAME}-${LIB_TO_BUILD_VERSION}/build.sh "$@"
+    ./libs/${LIB_TO_BUILD_NAME}/${LIB_TO_BUILD_NAME}-${LIB_TO_BUILD_VERSION}/build.sh "${FM_GLOBAL_TOOLCHAIN}" "${FM_GLOBAL_ARCHITECTURE}" "$2"
     if [ $? -ne 0 ]; then
         error "Build failed"
     fi
