@@ -12,6 +12,9 @@ afterBuildCurrentArchitecture()
 
 beforeBuildCurrentArchitecture()
 {
+    # Patch a file that doesn't build with MSVC
+    sed -i.orig 's/data + ret/(zip_uint8_t *)data + ret/' ./lib/zip_source_winzip_aes_encode.c
+
     # Build just the library
     sed -i.orig 's/ADD_SUBDIRECTORY(man)/#ADD_SUBDIRECTORY(man)/' ./CMakeLists.txt
     sed -i.orig 's/ADD_SUBDIRECTORY(src)/#ADD_SUBDIRECTORY(src)/' ./CMakeLists.txt
