@@ -106,7 +106,12 @@ buildCurrentArchitecture__linux_gcc()
 
 buildCurrentArchitecture__android_clang()
 {
-    local BUILD_PLATFORM="armv7"
+    local BUILD_PLATFORM=""
+    if [ ${FM_TARGET_ARCHITECTURE} = "armv7" ]; then
+        BUILD_PLATFORM="armv7"
+    elif [ ${FM_TARGET_ARCHITECTURE} = "armv8" ]; then
+        BUILD_PLATFORM="armv8"
+    fi
 
     local BUILD_DEBUG_MODE=""
     if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
