@@ -75,7 +75,18 @@ buildCurrentArchitecture__android_clang()
     local BOOST_ANDROID_ARCH="arm"
 
     prepareBuildStep "Bootstrapping ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    (
+        unset AR
+        unset CC
+        unset CXX
+        unset NM
+        unset RANLIB
+        unset CFLAGS
+        unset CXXFLAGS
+        unset LDFLAGS
+
+        ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    )
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
