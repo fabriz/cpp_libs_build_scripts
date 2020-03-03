@@ -8,19 +8,7 @@ source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 beforeBuildCurrentArchitecture()
 {
     # Avoid the "d" suffix for debug libraries
-    sed -i.orig 's/CMAKE_DEBUG_POSTFIX "d"/CMAKE_DEBUG_POSTFIX ""/' ./build/cmake/ThriftMacros.cmake
-}
-
-afterBuildCurrentArchitecture()
-{
-    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake"
-    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig"
-
-    local CONFIG_FILE="${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/thrift/config.h"
-
-    if [ -f "${CONFIG_FILE}" ]; then
-        sed -i.orig 's/\/\* #undef USE_STD_THREAD \*\//#define USE_STD_THREAD 1/' "${CONFIG_FILE}"
-    fi
+    sed -i.orig 's/CMAKE_DEBUG_POSTFIX "d"/CMAKE_DEBUG_POSTFIX ""/' ./build/cmake/DefinePlatformSpecifc.cmake
 }
 
 buildCurrentArchitecture__linux_gcc()

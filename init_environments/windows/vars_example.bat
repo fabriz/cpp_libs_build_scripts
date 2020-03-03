@@ -1,6 +1,6 @@
 set FM_GLOBAL_CMAKE_INSTALL_PATH=C:\Program Files\CMake
 set FM_GLOBAL_MSYS64_INSTALL_PATH=C:\msys64
-set FM_GLOBAL_PERL_INSTALL_PATH=C:\Perl64
+set FM_GLOBAL_PERL_INSTALL_PATH=C:\Strawberry\perl
 
 set FM_GLOBAL_MSVC2015_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio 14.0
 set FM_GLOBAL_MSVC2017_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional

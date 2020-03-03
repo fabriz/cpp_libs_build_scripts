@@ -148,6 +148,8 @@ buildCurrentArchitecture__windows_mingw()
 
 buildCurrentArchitecture__windows_msvc()
 {
+    export PATH=`cygpath ${FM_GLOBAL_PERL_INSTALL_PATH}`/bin:$PATH
+
     export _CL_="${FM_TARGET_TOOLCHAIN_CFLAGS}"
     export _LINK_="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
     
