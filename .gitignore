@@ -1,3 +1,5 @@
 /init_environments/linux/vars.sh
+/init_environments/macos/vars.sh
 /init_environments/windows/vars.bat
 /libsets/local_*.sh
+.DS_Store
