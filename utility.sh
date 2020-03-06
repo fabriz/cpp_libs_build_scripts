@@ -77,6 +77,15 @@ printToolchains()
     done
 }
 
+isFunctionDefined()
+{
+    [ $# = 1 ] || error "isFunctionDefined(): invalid number of arguments"
+
+    local FUNCTION_NAME=$1
+
+    declare -Ff "${FUNCTION_NAME}" >/dev/null;
+}
+
 createDirectory()
 {
     [ $# = 1 ] || error "createDirectory(): invalid number of arguments"

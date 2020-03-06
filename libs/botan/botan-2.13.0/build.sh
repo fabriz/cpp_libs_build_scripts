@@ -29,32 +29,27 @@ beforeBuildCurrentArchitecture()
         FM_BOTAN_OPTIONAL_LIBS="--with-external-includedir=${FM_LIBS_INSTALL_INCLUDES} --with-external-libdir=${FM_LIBS_INSTALL_LIBS}"
     fi
 
-    isLibraryInstalled "BZIP2"
-    if [ ${FM_IS_LIBRARY_INSTALLED} = "true" ]; then
+    if isLibraryInstalled "BZIP2"; then
         echo "Enabling support for library bzip2"
         FM_BOTAN_OPTIONAL_LIBS="${FM_BOTAN_OPTIONAL_LIBS} --with-bzip2"
     fi
 
-    isLibraryInstalled "ZLIB"
-    if [ ${FM_IS_LIBRARY_INSTALLED} = "true" ]; then
+    if isLibraryInstalled "ZLIB"; then
         echo "Enabling support for library zlib"
         FM_BOTAN_OPTIONAL_LIBS="${FM_BOTAN_OPTIONAL_LIBS} --with-zlib"
     fi
 
-    isLibraryInstalled "SQLITE"
-    if [ ${FM_IS_LIBRARY_INSTALLED} = "true" ]; then
+    if isLibraryInstalled "SQLITE"; then
         echo "Enabling support for library sqlite"
         FM_BOTAN_OPTIONAL_LIBS="${FM_BOTAN_OPTIONAL_LIBS} --with-sqlite3"
     fi
 
-    isLibraryInstalled "OPENSSL"
-    if [ ${FM_IS_LIBRARY_INSTALLED} = "true" ]; then
+    if isLibraryInstalled "OPENSSL"; then
         echo "Enabling support for library openssl"
         FM_BOTAN_OPTIONAL_LIBS="${FM_BOTAN_OPTIONAL_LIBS} --with-openssl"
     fi
 
-    isLibraryInstalled "BOOST"
-    if [ ${FM_IS_LIBRARY_INSTALLED} = "true" ]; then
+    if isLibraryInstalled "BOOST"; then
         echo "Enabling support for library boost"
         FM_BOTAN_OPTIONAL_LIBS="${FM_BOTAN_OPTIONAL_LIBS} --with-boost"
         if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then

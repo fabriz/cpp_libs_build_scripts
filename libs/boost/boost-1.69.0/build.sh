@@ -13,8 +13,7 @@ beforeBuildCurrentArchitecture()
 {
     FM_BOOST_OPTIONAL_LIBS=""
 
-    isLibraryInstalled "BZIP2"
-    if [ ${FM_IS_LIBRARY_INSTALLED} = "true" ]; then
+    if isLibraryInstalled "BZIP2"; then
         echo "Enabling support for library bzip2"
         if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
             export BZIP2_INCLUDE="${FM_LIBS_INSTALL_INCLUDES_WINDOWS}"
@@ -28,8 +27,7 @@ beforeBuildCurrentArchitecture()
         fi
     fi
 
-    isLibraryInstalled "ZLIB"
-    if [ ${FM_IS_LIBRARY_INSTALLED} = "true" ]; then
+    if isLibraryInstalled "ZLIB"; then
         echo "Enabling support for library zlib"
         if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
             export ZLIB_INCLUDE="${FM_LIBS_INSTALL_INCLUDES_WINDOWS}"
@@ -43,8 +41,7 @@ beforeBuildCurrentArchitecture()
         fi
     fi
 
-    isLibraryInstalled "ICU4C"
-    if [ ${FM_IS_LIBRARY_INSTALLED} = "true" ]; then
+    if isLibraryInstalled "ICU4C"; then
         echo "Enabling support for library icu4c"
         export ICU_PATH="${FM_LIBS_INSTALL_PREFIX}"
     else

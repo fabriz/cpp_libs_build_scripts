@@ -262,17 +262,18 @@ initCurrentArchitecture()
 isLibraryInstalled()
 {
     [ $# = 1 ] || error "isLibraryInstalled(): invalid number of arguments"
-    
+
     local LIBRARY_NAME_TO_CHECK=$1
     local VAR_LIB_INSTALL_CHECK="FM_${LIBRARY_NAME_TO_CHECK}_INSTALL_CHECK"
     local LIB_INSTALL_CHECK_FILE="${!VAR_LIB_INSTALL_CHECK-}"
 
-    FM_IS_LIBRARY_INSTALLED="false"
     if [ -n "${LIB_INSTALL_CHECK_FILE}" ]; then
         if [ -f "${FM_LIBS_INSTALL_PREFIX}/${LIB_INSTALL_CHECK_FILE}" ]; then
-            FM_IS_LIBRARY_INSTALLED="true"
+            return 0
         fi
     fi
+
+    return 1
 }
 
 decompressTarballForCurrentArchitecture()
@@ -365,6 +366,11 @@ buildLibrary()
     local CURRENT_LIBRARY_NAME=$1
 
     initCurrentLibraryVariables "${CURRENT_LIBRARY_NAME}"
+
+    if ! isFunctionDefined "buildCurrentArchitecture__${FM_TARGET_TOOLCHAIN}"; then
+        echo "Library ${FM_CURRENT_LIB_FULL_NAME} (${FM_TARGET_TOOLCHAIN} ${FM_TARGET_TOOLCHAIN_VERSION}) skipped"
+        return
+    fi
     downloadCurrentLibTarballIfMissing
 
     local LIBRARY_BUILT="false"
@@ -387,9 +393,6 @@ buildLibrary()
     done
 
     if [ ${LIBRARY_BUILT} = "true" ]; then
-        echo "Library ${FM_CURRENT_LIB_FULL_NAME} successfully installed"
+        echo "Library ${FM_CURRENT_LIB_FULL_NAME} (${FM_TARGET_TOOLCHAIN} ${FM_TARGET_TOOLCHAIN_VERSION}) successfully installed"
     fi
 }
-
-
-

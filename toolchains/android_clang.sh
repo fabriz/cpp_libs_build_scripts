@@ -62,17 +62,12 @@ initToolchainConfiguration()
             error "Invalid variant ${FM_ARG_BUILD_VARIANT}. Valid values are (debug, release)"
     esac
 
-    FM_TARGET_PLATFORM="android_clang_api${FM_GLOBAL_ANDROID_API_LEVEL}"
-    FM_TARGET_TOOLCHAIN="android_clang"
-    FM_TARGET_TOOLCHAIN_VERSION=`${FM_CONFIG_CROSS_COMPILER_HOST}-clang -dumpversion`
-    FM_TARGET_TOOLCHAIN_HOST_OS="linux"
     FM_TARGET_HAS_DLLS="false"
     FM_TARGET_ARCHITECTURE="${FM_CONFIG_ARCHITECTURE}"
     FM_TARGET_ADDRESS_MODEL="${FM_CONFIG_ADDRESS_MODEL}"
     FM_TARGET_CROSS_COMPILER_HOST="${FM_CONFIG_CROSS_COMPILER_HOST}"
     FM_TARGET_BUILD_VARIANT="${FM_CONFIG_BUILD_VARIANT}"
 }
-
 
 initToolchainTools()
 {
@@ -101,3 +96,8 @@ initToolchainTools()
     export LDFLAGS="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
 }
 
+
+FM_TARGET_PLATFORM="android_clang_api${FM_GLOBAL_ANDROID_API_LEVEL}"
+FM_TARGET_TOOLCHAIN="android_clang"
+FM_TARGET_TOOLCHAIN_VERSION="$(${FM_CONFIG_CROSS_COMPILER_HOST}-clang -dumpversion)"
+FM_TARGET_TOOLCHAIN_HOST_OS="linux"

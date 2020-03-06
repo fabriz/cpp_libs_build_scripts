@@ -43,16 +43,11 @@ initToolchainConfiguration()
             error "Invalid variant ${FM_ARG_BUILD_VARIANT}. Valid values are (debug, release)"
     esac
 
-    FM_TARGET_PLATFORM="windows_mingw"
-    FM_TARGET_TOOLCHAIN="windows_mingw"
-    FM_TARGET_TOOLCHAIN_VERSION=`gcc -dumpversion`
-    FM_TARGET_TOOLCHAIN_HOST_OS="windows"
     FM_TARGET_HAS_DLLS="false"
     FM_TARGET_ARCHITECTURE="${FM_CONFIG_ARCHITECTURE}"
     FM_TARGET_ADDRESS_MODEL="${FM_CONFIG_ADDRESS_MODEL}"
     FM_TARGET_BUILD_VARIANT="${FM_CONFIG_BUILD_VARIANT}"
 }
-
 
 initToolchainTools()
 {
@@ -81,3 +76,8 @@ initToolchainTools()
     export LDFLAGS="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
 }
 
+
+FM_TARGET_PLATFORM="windows_mingw"
+FM_TARGET_TOOLCHAIN="windows_mingw"
+FM_TARGET_TOOLCHAIN_VERSION="$(gcc -dumpversion)"
+FM_TARGET_TOOLCHAIN_HOST_OS="windows"
