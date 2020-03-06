@@ -81,25 +81,25 @@ buildCurrentArchitecture__android_clang()
     checkBuildStep
 }
 
-buildCurrentArchitecture__macos_clang()
-{
-    :
-}
+#buildCurrentArchitecture__macos_clang()
+#{
+#    :
+#}
 
-buildCurrentArchitecture__ios_clang()
-{
-    :
-}
+#buildCurrentArchitecture__ios_clang()
+#{
+#    :
+#}
 
-buildCurrentArchitecture__windows_mingw()
-{
-    :
-}
+#buildCurrentArchitecture__windows_mingw()
+#{
+#    :
+#}
 
-buildCurrentArchitecture__windows_msvc()
-{
-    :
-}
+#buildCurrentArchitecture__windows_msvc()
+#{
+#    :
+#}
 
 
 buildLibrary "ICU4C"

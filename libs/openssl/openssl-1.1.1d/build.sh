@@ -40,10 +40,8 @@ buildCurrentArchitecture__android_clang()
     local BUILD_PLATFORM=""
     if [ ${FM_TARGET_ARCHITECTURE} = "armv7" ]; then
         BUILD_PLATFORM="linux-generic32"
-        #BUILD_PLATFORM="android-arm"
     else
         BUILD_PLATFORM="linux-generic64"
-        #BUILD_PLATFORM="android-arm64"
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

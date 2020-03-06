@@ -58,10 +58,10 @@ buildCurrentArchitecture__macos_clang()
     checkBuildStep
 }
 
-buildCurrentArchitecture__ios_clang()
-{
-    :
-}
+#buildCurrentArchitecture__ios_clang()
+#{
+#    :
+#}
 
 buildCurrentArchitecture__windows_mingw()
 {
