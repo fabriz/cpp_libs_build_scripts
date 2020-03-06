@@ -125,6 +125,16 @@ moveDirectory()
     mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" || error "Cannot move directory ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
 }
 
+moveFile()
+{
+    [ $# = 2 ] || error "moveFile(): invalid number of arguments"
+
+    local MOVE_SOURCE=$1
+    local MOVE_DESTINATION=$2
+
+    mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" || error "Cannot move file ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
+}
+
 copyFile()
 {
     [ $# = 2 ] || error "copyFile(): invalid number of arguments"

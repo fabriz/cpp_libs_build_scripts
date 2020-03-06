@@ -47,7 +47,7 @@ initToolchainConfiguration()
 
     FM_TARGET_PLATFORM="macos_clang"
     FM_TARGET_TOOLCHAIN="macos_clang"
-    FM_TARGET_TOOLCHAIN_VERSION="8.0.0"
+    FM_TARGET_TOOLCHAIN_VERSION=`clang -dumpversion`
     FM_TARGET_TOOLCHAIN_HOST_OS="macos"
     FM_TARGET_HAS_DLLS="false"
     FM_TARGET_ARCHITECTURE="${FM_CONFIG_ARCHITECTURE}"

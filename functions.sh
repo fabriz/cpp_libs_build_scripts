@@ -158,11 +158,10 @@ downloadCurrentLibTarballIfMissing()
     if [ ! -f ${LIB_TARBALL_LOCAL_PATH} ]; then
         echo "File ${FM_CURRENT_LIB_TARBALL_NAME} is missing"
         downloadFile ${FM_CURRENT_LIB_TARBALL_DOWNLOAD_URL} ${LIB_TARBALL_LOCAL_PATH}
+        checkCurrentLibTarballChecksum
     else
         echo "File ${FM_CURRENT_LIB_TARBALL_NAME} already cached"
     fi
-    
-    checkCurrentLibTarballChecksum
 }
 
 initCurrentLibraryVariables()
@@ -368,6 +367,7 @@ buildLibrary()
     initCurrentLibraryVariables "${CURRENT_LIBRARY_NAME}"
     downloadCurrentLibTarballIfMissing
 
+    local LIBRARY_BUILT="false"
     for FM_ARG_BUILD_VARIANT in ${FM_ARG_BUILD_VARIANTS}
     do
         initToolchainConfiguration
@@ -377,14 +377,18 @@ buildLibrary()
         checkCurrentLibraryInstallStatus
 
         if [ ${FM_IS_LIBRARY_VARIANT_INSTALLED} = "false" ]; then
+            checkCurrentLibTarballChecksum
             decompressTarballForCurrentArchitecture
             buildCurrentArchitecture
             installLibraries
+            LIBRARY_BUILT="true"
             echo "Library variant ${FM_CURRENT_LIB_FULL_NAME} ${FM_TARGET_BUILD_TAG} successfully installed"
         fi
     done
 
-    echo "Library ${FM_CURRENT_LIB_FULL_NAME} successfully installed"
+    if [ ${LIBRARY_BUILT} = "true" ]; then
+        echo "Library ${FM_CURRENT_LIB_FULL_NAME} successfully installed"
+    fi
 }
 
 

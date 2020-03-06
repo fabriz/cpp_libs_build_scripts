@@ -54,7 +54,7 @@ initToolchainConfiguration()
 
     FM_TARGET_PLATFORM="linux_gcc"
     FM_TARGET_TOOLCHAIN="linux_gcc"
-    FM_TARGET_TOOLCHAIN_VERSION="7.2.0"
+    FM_TARGET_TOOLCHAIN_VERSION=`gcc -dumpversion`
     FM_TARGET_TOOLCHAIN_HOST_OS="linux"
     FM_TARGET_HAS_DLLS="false"
     FM_TARGET_ARCHITECTURE="${FM_CONFIG_ARCHITECTURE}"
