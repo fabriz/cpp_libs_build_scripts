@@ -13,6 +13,10 @@ beforeBuildCurrentArchitecture()
 
 buildCurrentArchitecture__linux_gcc()
 {
+    if [ ${FM_TARGET_ARCHITECTURE} = "armv7rpi3" ]; then
+        sed -i.orig 's/include(StaticCodeAnalysis)/#include(StaticCodeAnalysis)/' ./CMakeLists.txt
+    fi
+
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DWITH_STDTHREADS=ON -DWITH_LIBEVENT=OFF\
         -DWITH_SHARED_LIB=OFF -DWITH_STATIC_LIB=ON -DWITH_CPP=ON -DWITH_C_GLIB=OFF -DWITH_JAVA=OFF -DWITH_PYTHON=OFF -DWITH_PERL=OFF\
