@@ -71,6 +71,9 @@ buildCurrentArchitecture__android_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
+    export CFLAGS=""
+    export CXXFLAGS=""
+
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     cmake -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DSHARED_LIBS=False\
         -DCONNECTOR_FCGI=True -DCONNECTOR_HTTP=True -DMULTI_THREADED=True\

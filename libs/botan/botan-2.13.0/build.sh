@@ -218,7 +218,7 @@ buildCurrentArchitecture__windows_mingw()
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure.py --os=mingw --cc=gcc --cpu=${BUILD_PLATFORM} --cc-abi-flags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} -UUNICODE -U_UNICODE"\
-        --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
+        --build-targets=static --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
         --link-method=copy --without-stack-protector --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -247,13 +247,13 @@ buildCurrentArchitecture__windows_msvc()
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure.py --os=windows --cc=msvc --cpu=${BUILD_PLATFORM} --cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} -DBOOST_ALL_NO_LIB"\
-        --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS}\
+        --build-targets=static --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS}\
         --link-method=copy --without-documentation --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     sed -E -i.orig1 's/LIB_FLAGS( +)=(.+)/LIB_FLAGS = \/Fd\"build\/botan.pdb\"/' ./Makefile
-    sed -E -i.orig2 's/bz2.lib/libbz2.lib/' ./Makefile
-    sed -E -i.orig3 's/libeay32.lib/libcrypto.lib libssl.lib advapi32.lib/' ./Makefile
+#    sed -E -i.orig2 's/bz2.lib/libbz2.lib/' ./Makefile
+#    sed -E -i.orig3 's/libeay32.lib/libcrypto.lib libssl.lib advapi32.lib/' ./Makefile
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     nmake > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
