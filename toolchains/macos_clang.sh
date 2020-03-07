@@ -81,5 +81,5 @@ initToolchainTools()
 
 FM_TARGET_PLATFORM="macos_clang"
 FM_TARGET_TOOLCHAIN="macos_clang"
-FM_TARGET_TOOLCHAIN_VERSION="$(clang -dumpversion)"
 FM_TARGET_TOOLCHAIN_HOST_OS="macos"
+FM_TARGET_TOOLCHAIN_VERSION="$(clang -dumpversion)"

@@ -79,5 +79,5 @@ initToolchainTools()
 
 FM_TARGET_PLATFORM="windows_mingw"
 FM_TARGET_TOOLCHAIN="windows_mingw"
-FM_TARGET_TOOLCHAIN_VERSION="$(gcc -dumpversion)"
 FM_TARGET_TOOLCHAIN_HOST_OS="windows"
+FM_TARGET_TOOLCHAIN_VERSION="$(gcc -dumpversion)"

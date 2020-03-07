@@ -88,5 +88,8 @@ initToolchainTools()
 
 FM_TARGET_PLATFORM="linux_gcc"
 FM_TARGET_TOOLCHAIN="linux_gcc"
-FM_TARGET_TOOLCHAIN_VERSION="$(gcc -dumpfullversion)"
 FM_TARGET_TOOLCHAIN_HOST_OS="linux"
+FM_TARGET_TOOLCHAIN_VERSION="$(gcc -dumpversion)"
+if [ ${#FM_TARGET_TOOLCHAIN_VERSION} -le 2 ]; then
+    FM_TARGET_TOOLCHAIN_VERSION="$(gcc -dumpfullversion)"
+fi
