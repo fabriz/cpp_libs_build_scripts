@@ -11,6 +11,12 @@ beforeBuildCurrentArchitecture()
     sed -i.orig 's/CMAKE_DEBUG_POSTFIX "d"/CMAKE_DEBUG_POSTFIX ""/' ./build/cmake/DefinePlatformSpecifc.cmake
 }
 
+afterBuildCurrentArchitecture()
+{
+    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake"
+    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig"
+}
+
 buildCurrentArchitecture__linux_gcc()
 {
     if [ ${FM_TARGET_ARCHITECTURE} = "armv7rpi3" ]; then
