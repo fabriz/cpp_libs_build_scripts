@@ -20,7 +20,10 @@ decompressTarballForCurrentArchitecture()
 
 beforeBuildCurrentArchitecture()
 {
-    sed -i.orig 's/CertOpenSystemStore/CertOpenSystemStoreA/' ./src/lib/x509/certstor_system_windows/certstor_windows.cpp
+    FM_BUILD_DEBUG_MODE=""
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        FM_BUILD_DEBUG_MODE="--debug-mode"
+    fi
 
     FM_BOTAN_OPTIONAL_LIBS=""
     if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
@@ -78,14 +81,9 @@ buildCurrentArchitecture__linux_gcc()
         BUILD_PLATFORM="armv7"
     fi
 
-    local BUILD_DEBUG_MODE=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_DEBUG_MODE="--debug-mode"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure.py --os=linux --cc=gcc --cpu=${BUILD_PLATFORM}\
-        --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
+        --disable-shared ${FM_BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
         --link-method=copy --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -107,14 +105,9 @@ buildCurrentArchitecture__android_clang()
         BUILD_PLATFORM="armv8"
     fi
 
-    local BUILD_DEBUG_MODE=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_DEBUG_MODE="--debug-mode"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure.py --os=android --cc=clang --cpu=${BUILD_PLATFORM}\
-        --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
+        --disable-shared ${FM_BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
         --link-method=copy --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -136,14 +129,9 @@ buildCurrentArchitecture__macos_clang()
         BUILD_PLATFORM="x86_64"
     fi
 
-    local BUILD_DEBUG_MODE=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_DEBUG_MODE="--debug-mode"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure.py --os=macos --cc=clang --cpu=${BUILD_PLATFORM}\
-        --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
+        --disable-shared ${FM_BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
         --link-method=copy --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -179,14 +167,9 @@ buildCurrentArchitecture__ios_clang()
             error "Unsupported architecture: ${FM_IOS_SDK_ARCHITECTURE}"
     esac
 
-    local BUILD_DEBUG_MODE=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_DEBUG_MODE="--debug-mode"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure.py --os=ios --cc=clang --cpu=${BUILD_PLATFORM}\
-        --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
+        --disable-shared ${FM_BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
         --link-method=copy --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -208,17 +191,9 @@ buildCurrentArchitecture__windows_mingw()
         BUILD_PLATFORM="x86_64"
     fi
     
-    local BUILD_DEBUG_MODE=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_DEBUG_MODE="--debug-mode"
-    fi
-
-    export CFLAGS=""
-    export CXXFLAGS=""
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure.py --os=mingw --cc=gcc --cpu=${BUILD_PLATFORM} --cc-abi-flags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} -UUNICODE -U_UNICODE"\
-        --build-targets=static --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
+    ./configure.py --os=mingw --cc=gcc --cpu=${BUILD_PLATFORM}\
+        --build-targets=static --disable-shared ${FM_BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS} --without-documentation\
         --link-method=copy --without-stack-protector --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -240,20 +215,13 @@ buildCurrentArchitecture__windows_msvc()
         BUILD_PLATFORM="x86_64"
     fi
 
-    local BUILD_DEBUG_MODE=""
-    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_DEBUG_MODE="--debug-mode"
-    fi
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure.py --os=windows --cc=msvc --cpu=${BUILD_PLATFORM} --cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} -DBOOST_ALL_NO_LIB"\
-        --build-targets=static --disable-shared ${BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS}\
+        --build-targets=static --disable-shared ${FM_BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS}\
         --link-method=copy --without-documentation --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     sed -E -i.orig1 's/LIB_FLAGS( +)=(.+)/LIB_FLAGS = \/Fd\"build\/botan.pdb\"/' ./Makefile
-#    sed -E -i.orig2 's/bz2.lib/libbz2.lib/' ./Makefile
-#    sed -E -i.orig3 's/libeay32.lib/libcrypto.lib libssl.lib advapi32.lib/' ./Makefile
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     nmake > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1

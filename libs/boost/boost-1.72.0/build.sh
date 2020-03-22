@@ -155,13 +155,7 @@ EOF
 buildCurrentArchitecture__windows_mingw()
 {
     prepareBuildStep "Bootstrapping ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    (
-        unset CFLAGS
-        unset CXXFLAGS
-        unset LDFLAGS
-
-        ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
-    )
+    ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     local PYTON_HEADER_FIX="-D_hypot=hypot"

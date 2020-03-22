@@ -5,6 +5,11 @@ THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 
+beforeBuildCurrentArchitecture()
+{
+    export CFLAGS="${CFLAGS} -DSQLITE_ENABLE_UNLOCK_NOTIFY=1"
+}
+
 afterBuildCurrentArchitecture()
 {
     deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig"
@@ -12,8 +17,6 @@ afterBuildCurrentArchitecture()
 
 buildCurrentArchitecture__linux_gcc()
 {
-    export CFLAGS="-DSQLITE_ENABLE_UNLOCK_NOTIFY=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --disable-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -29,8 +32,6 @@ buildCurrentArchitecture__linux_gcc()
 
 buildCurrentArchitecture__android_clang()
 {
-    export CFLAGS="-DSQLITE_ENABLE_UNLOCK_NOTIFY=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -46,8 +47,6 @@ buildCurrentArchitecture__android_clang()
 
 buildCurrentArchitecture__macos_clang()
 {
-    export CFLAGS="-DSQLITE_ENABLE_UNLOCK_NOTIFY=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --disable-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -63,8 +62,6 @@ buildCurrentArchitecture__macos_clang()
 
 buildCurrentArchitecture__ios_clang()
 {
-    export CFLAGS="-DSQLITE_ENABLE_UNLOCK_NOTIFY=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --disable-shared --host=arm-apple-darwin --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -80,8 +77,6 @@ buildCurrentArchitecture__ios_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
-    export CFLAGS="-DSQLITE_ENABLE_UNLOCK_NOTIFY=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --disable-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep

@@ -51,7 +51,7 @@ initToolchainConfiguration()
 
 initToolchainTools()
 {
-    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -fno-keep-inline-dllexport -Wextra -Wall -W -fexceptions -mthreads -DUNICODE -D_UNICODE -DNOMINMAX -DSTRICT -DWIN32_LEAN_AND_MEAN -D_WIN32_WINNT=0x0601"
+    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -Wextra -Wall -W -fexceptions -mthreads -D_WIN32_WINNT=0x0601"
     FM_CONFIG_COMMON_CXXFLAGS="-std=gnu++1y"
     FM_CONFIG_COMMON_LDFLAGS="-L${FM_LIBS_INSTALL_LIBS}"
     
