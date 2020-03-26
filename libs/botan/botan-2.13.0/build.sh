@@ -216,12 +216,12 @@ buildCurrentArchitecture__windows_msvc()
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure.py --os=windows --cc=msvc --cpu=${BUILD_PLATFORM} --cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} -DBOOST_ALL_NO_LIB"\
+    ./configure.py --os=windows --cc=msvc --cpu=${BUILD_PLATFORM} --cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} -DBOOST_ALL_NO_LIB -UUNICODE"\
         --build-targets=static --disable-shared ${FM_BUILD_DEBUG_MODE} ${FM_BOTAN_OPTIONAL_LIBS}\
         --link-method=copy --without-documentation --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
-    sed -E -i.orig1 's/LIB_FLAGS( +)=(.+)/LIB_FLAGS = \/Fd\"build\/botan.pdb\"/' ./Makefile
+    sed -E -i.orig 's/LIB_FLAGS( +)=(.+)/LIB_FLAGS = \/Fd\"build\/botan.pdb\"/' ./Makefile
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     nmake > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1

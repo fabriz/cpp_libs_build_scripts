@@ -7,7 +7,7 @@ source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 beforeBuildCurrentArchitecture()
 {
-    export CFLAGS="${CFLAGS} -DSQLITE_ENABLE_UNLOCK_NOTIFY=1"
+    export CFLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS} -DSQLITE_ENABLE_UNLOCK_NOTIFY=1"
 }
 
 afterBuildCurrentArchitecture()

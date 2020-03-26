@@ -131,7 +131,22 @@ moveDirectory()
     local MOVE_SOURCE=$1
     local MOVE_DESTINATION=$2
 
-    mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" || error "Cannot move directory ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
+    local MAX_TRY=10
+    local I_TRY=1
+    while true; do
+        mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" > /dev/null 2>&1 && break || {
+            echo "Move directory failed ($I_TRY/$MAX_TRY)"
+            echo "    From: ${MOVE_SOURCE}"
+            echo "      To: ${MOVE_DESTINATION}"
+            if [ $I_TRY -lt $MAX_TRY ]; then
+              ((I_TRY++))
+              playBeep
+              sleep 5
+            else
+                error "Cannot move directory ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
+            fi
+        }
+    done
 }
 
 moveFile()
@@ -141,7 +156,22 @@ moveFile()
     local MOVE_SOURCE=$1
     local MOVE_DESTINATION=$2
 
-    mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" || error "Cannot move file ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
+    local MAX_TRY=10
+    local I_TRY=1
+    while true; do
+        mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" > /dev/null 2>&1 && break || {
+            echo "Move file failed ($I_TRY/$MAX_TRY)"
+            echo "    From: ${MOVE_SOURCE}"
+            echo "      To: ${MOVE_DESTINATION}"
+            if [ $I_TRY -lt $MAX_TRY ]; then
+              ((I_TRY++))
+              playBeep
+              sleep 5
+            else
+                error "Cannot move file ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
+            fi
+        }
+    done
 }
 
 copyFile()
