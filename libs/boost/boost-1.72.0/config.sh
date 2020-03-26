@@ -3,7 +3,6 @@
 
 export FM_BOOST_NAME="boost"
 export FM_BOOST_VERSION="1.72.0"
-export FM_BOOST_SHORT_VERSION="1.72"
 export FM_BOOST_FULL_NAME="${FM_BOOST_NAME}_${FM_BOOST_VERSION//./_}"
 export FM_BOOST_TARBALL_NAME="${FM_BOOST_FULL_NAME}.tar.bz2"
 export FM_BOOST_TARBALL_DOWNLOAD_URL="https://dl.bintray.com/boostorg/release/${FM_BOOST_VERSION}/source/${FM_BOOST_TARBALL_NAME}"

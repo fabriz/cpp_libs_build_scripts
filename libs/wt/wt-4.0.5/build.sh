@@ -61,15 +61,15 @@ buildCurrentArchitecture__android_clang()
     checkBuildStep
 }
 
-buildCurrentArchitecture__macos_clang()
-{
-    :
-}
+#buildCurrentArchitecture__macos_clang()
+#{
+#    :
+#}
 
-buildCurrentArchitecture__ios_clang()
-{
-    :
-}
+#buildCurrentArchitecture__ios_clang()
+#{
+#    :
+#}
 
 buildCurrentArchitecture__windows_mingw()
 {
@@ -94,7 +94,7 @@ buildCurrentArchitecture__windows_msvc()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DSHARED_LIBS=False\
-        -DWT_BOOST_DISCOVERY=True -DBOOST_PREFIX=${FM_LIBS_INSTALL_PREFIX} -DBOOST_VERSION=${FM_BOOST_SHORT_VERSION//./_}\
+        -DBOOST_PREFIX=${FM_LIBS_INSTALL_PREFIX}\
         -DCONNECTOR_FCGI=True -DCONNECTOR_HTTP=True -DMULTI_THREADED=True\
         -DBUILD_EXAMPLES=False -DINSTALL_DOCUMENTATION=False -DENABLE_LIBWTTEST=False -DINSTALL_EXAMPLES=False -DINSTALL_RESOURCES=True\
         -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}\
