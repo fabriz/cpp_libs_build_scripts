@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for odb_boost 2.4.0
+# Library release date: 2015/02/11
 
 export FM_ODBBOOST_NAME="libodb-boost"
 export FM_ODBBOOST_VERSION="2.4.0"

@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for boost 1.71.0
+# Library release date: 2019/08/19
 
 export FM_BOOST_NAME="boost"
 export FM_BOOST_VERSION="1.71.0"

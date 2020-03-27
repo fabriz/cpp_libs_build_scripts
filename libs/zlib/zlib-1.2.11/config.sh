@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for zlib 1.2.11
+# Library release date: 2017/01/15
 
 export FM_ZLIB_NAME="zlib"
 export FM_ZLIB_VERSION="1.2.11"

@@ -3,7 +3,7 @@
 FM_LIBS_TO_BUILD=(
     zlib/1.2.11
     bzip2/1.0.8
-    sqlite/3.30.1
+    sqlite/3.31.1
     openssl/1.1.1d
     libzip/1.5.2
     icu4c/65.1

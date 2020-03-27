@@ -9,7 +9,6 @@ BLOCK_SEPARATOR="------------------------------------------------------------"
 if [ ! $# = 2 ]; then
     echo "Usage: $0 LIBNAME/LIBVERSION <variant(s)>"
     printLibsets
-    printToolchains
     exit 1
 fi
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for botan 2.13.0
+# Library release date: 2020/01/06
 
 export FM_BOTAN_NAME="Botan"
 export FM_BOTAN_VERSION="2.13.0"

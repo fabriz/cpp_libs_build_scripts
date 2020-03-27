@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for thrift 0.13.0
+# Library release date: 2019/10/16
 
 export FM_THRIFT_NAME="thrift"
 export FM_THRIFT_VERSION="0.13.0"

@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for openssl 1.1.1a
+# Library release date: 2018/11/20
 
 export FM_OPENSSL_NAME="openssl"
 export FM_OPENSSL_VERSION="1.1.1a"

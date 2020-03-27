@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for sqlite 3.26.0
+# Library release date: 2018/12/01
 
 export FM_SQLITE_NAME="sqlite-autoconf"
 export FM_SQLITE_VERSION="3260000"

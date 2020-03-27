@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for libzippp 2.1-1.5.1
+# Library release date: 2018/05/01
 
 export FM_LIBZIPPP_NAME="libzippp"
 export FM_LIBZIPPP_VERSION="2.1-1.5.1"

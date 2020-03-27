@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for odb 2.4.0
+# Library release date: 2015/02/11
 
 export FM_ODB_NAME="libodb"
 export FM_ODB_VERSION="2.4.0"

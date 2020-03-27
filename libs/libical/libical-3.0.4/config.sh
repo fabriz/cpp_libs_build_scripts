@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for ical 3.0.4
+# Library release date: 2018/08/14
 
 export FM_ICAL_NAME="libical"
 export FM_ICAL_VERSION="3.0.4"

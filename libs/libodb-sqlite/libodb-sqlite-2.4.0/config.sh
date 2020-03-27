@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for odb_sqlite 2.4.0
+# Library release date: 2015/02/11
 
 export FM_ODBSQLITE_NAME="libodb-sqlite"
 export FM_ODBSQLITE_VERSION="2.4.0"

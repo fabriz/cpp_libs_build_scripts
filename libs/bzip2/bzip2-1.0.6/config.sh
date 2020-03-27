@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for bzip2 1.0.6
+# Library release date: 2010/09/06
 
 export FM_BZIP2_NAME="bzip2"
 export FM_BZIP2_VERSION="1.0.6"

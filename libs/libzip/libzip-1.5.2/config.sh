@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for libzip 1.5.2
+# Library release date: 2019/03/12
 
 export FM_LIBZIP_NAME="libzip"
 export FM_LIBZIP_VERSION="1.5.2"

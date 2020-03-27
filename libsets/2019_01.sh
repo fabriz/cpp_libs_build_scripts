@@ -1,0 +1,19 @@
+#!/bin/bash
+
+FM_LIBS_TO_BUILD=(
+    zlib/1.2.11
+    bzip2/1.0.6
+    sqlite/3.26.0
+    openssl/1.1.1a
+    libzip/1.5.1
+    icu4c/63.1
+    libzippp/2.1-1.5.1
+    boost/1.69.0
+    botan/2.9.0
+    libodb/2.4.0
+    libodb-sqlite/2.4.0
+    libodb-boost/2.4.0
+    thrift/0.12.0
+    wt/4.0.5
+    libical/3.0.4
+)

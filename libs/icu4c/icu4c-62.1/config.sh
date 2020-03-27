@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for icu4c 62.1
+# Library release date: 2018/06/20
 
 export FM_ICU4C_NAME="icu4c"
 export FM_ICU4C_VERSION="62.1"

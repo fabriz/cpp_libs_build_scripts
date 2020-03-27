@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for botan 2.6.0
+# Library release date: 2018/04/10
 
 export FM_BOTAN_NAME="Botan"
 export FM_BOTAN_VERSION="2.6.0"

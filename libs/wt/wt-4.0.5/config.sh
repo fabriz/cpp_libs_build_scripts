@@ -1,5 +1,6 @@
 #!/bin/bash
 # Configuration script for wt 4.0.5
+# Library release date: 2018/12/14
 
 export FM_WT_NAME="wt"
 export FM_WT_VERSION="4.0.5"
