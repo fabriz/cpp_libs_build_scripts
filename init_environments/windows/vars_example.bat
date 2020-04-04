@@ -4,6 +4,7 @@ set FM_GLOBAL_PERL_INSTALL_PATH=C:\Strawberry\perl
 
 set FM_GLOBAL_MSVC2015_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio 14.0
 set FM_GLOBAL_MSVC2017_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional
+set FM_GLOBAL_MSVC2019_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional
 
 set FM_GLOBAL_MINGW_32_INSTALL_PATH=C:\Qt\Tools\mingw730_32
 set FM_GLOBAL_MINGW_64_INSTALL_PATH=C:\Qt\Tools\mingw730_64

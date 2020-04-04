@@ -113,6 +113,8 @@ buildCurrentArchitecture__windows_msvc()
         TOOLS_VERSION="14.0"
     elif [ ${FM_TARGET_TOOLCHAIN_VERSION} = "14.1" ]; then
         TOOLS_VERSION="15.0"
+    elif [ ${FM_TARGET_TOOLCHAIN_VERSION} = "14.2" ]; then
+        TOOLS_VERSION="16.0"
     else
         error "Unsupported MSVC toolchain: ${FM_TARGET_TOOLCHAIN_VERSION}."
     fi
