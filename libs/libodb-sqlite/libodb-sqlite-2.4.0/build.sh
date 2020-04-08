@@ -103,20 +103,14 @@ buildCurrentArchitecture__windows_msvc()
         BUILD_CONFIGURATION="Release"
     fi
 
-    local TOOLS_VERSION=""
-    if [ ${FM_TARGET_TOOLCHAIN_VERSION} = "14.0" ]; then
-        TOOLS_VERSION="14.0"
-    elif [ ${FM_TARGET_TOOLCHAIN_VERSION} = "14.1" ]; then
-        TOOLS_VERSION="15.0"
-    else
-        error "Unsupported MSVC toolchain: ${FM_TARGET_TOOLCHAIN_VERSION}."
-    fi
-
     local LIBS_INTERMEDIATE_BUILD_WIN=`cygpath -w ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/intermediate/`
     local LIBS_OUT_BUILD_WIN=`cygpath -w ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/`
     
     # Patch files
-    sed -i.orig -e '/<ImportLibrary>/d' -e 's/odb-d.lib/odb.lib/' ./odb/sqlite/libodb-sqlite-vc12.vcxproj
+    sed -i.orig -e '/<ImportLibrary>/d' -e '/<WholeProgramOptimization>/d' -e 's/DynamicLibrary/StaticLibrary/'\
+        -e 's/_USRDLL;LIBODB_SQLITE_DYNAMIC_LIB/LIBODB_SQLITE_STATIC_LIB/'\
+        -e '/<SDLCheck>/a <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>'\
+        ./odb/sqlite/libodb-sqlite-vc12.vcxproj
 
     export _CL_="${FM_TARGET_TOOLCHAIN_CFLAGS}"
     export _LINK_="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
@@ -124,7 +118,7 @@ buildCurrentArchitecture__windows_msvc()
     devenv ./libodb-sqlite-vc12.sln -upgrade
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    msbuild.exe libodb-sqlite-vc12.sln /toolsversion:${TOOLS_VERSION} /target:Build /property:Platform=${BUILD_PLATFORM}\
+    msbuild.exe libodb-sqlite-vc12.sln /target:Build /property:Platform=${BUILD_PLATFORM}\
         /property:Configuration=${BUILD_CONFIGURATION} /property:TargetName="odb-sqlite" /property:IntermediateOutputPath="${LIBS_INTERMEDIATE_BUILD_WIN}"\
         /property:OutDir="${LIBS_OUT_BUILD_WIN}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
@@ -133,11 +127,9 @@ buildCurrentArchitecture__windows_msvc()
     createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}
     createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/odb
     createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/dll
     /usr/bin/find ./odb \( -name "*.h" -o -name "*.hxx" -o -name "*.ixx" -o -name "*.txx" \) -exec cp --parents "{}" ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/ ';'
     copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/odb-sqlite.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-    copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/odb-sqlite.dll ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/dll
-    copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/odb-sqlite.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/dll
+    copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/odb-sqlite.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     checkBuildStep
 }
 
