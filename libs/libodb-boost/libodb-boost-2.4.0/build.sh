@@ -108,7 +108,7 @@ buildCurrentArchitecture__windows_msvc()
     
     # Patch files
     sed -i.orig -e '/<ImportLibrary>/d' -e '/<WholeProgramOptimization>/d' -e 's/DynamicLibrary/StaticLibrary/'\
-        -e 's/_USRDLL;LIBODB_BOOST_DYNAMIC_LIB/LIBODB_BOOST_STATIC_LIB/'\
+        -e 's/_USRDLL;LIBODB_BOOST_DYNAMIC_LIB/LIBODB_STATIC_LIB;LIBODB_BOOST_STATIC_LIB/'\
         -e '/<SDLCheck>/a <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>'\
         ./odb/boost/libodb-boost-vc12.vcxproj
     
