@@ -102,12 +102,11 @@ buildCurrentArchitecture__windows_msvc()
     else
         BUILD_CONFIGURATION="Release"
     fi
-
-    local LIBS_INTERMEDIATE_BUILD_WIN=`cygpath -w ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/intermediate/`
-    local LIBS_OUT_BUILD_WIN=`cygpath -w ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/`
     
     # Patch files
     sed -i.orig -e '/<ImportLibrary>/d' -e '/<WholeProgramOptimization>/d' -e 's/DynamicLibrary/StaticLibrary/'\
+        -e '/<OutDir>/c\<OutDir>..\\..\\tmp_build\\</OutDir>'\
+        -e '/<TargetName>/c\<TargetName>odb-boost</TargetName>'\
         -e 's/_USRDLL;LIBODB_BOOST_DYNAMIC_LIB/LIBODB_STATIC_LIB;LIBODB_BOOST_STATIC_LIB/'\
         -e '/<SDLCheck>/a <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>'\
         ./odb/boost/libodb-boost-vc12.vcxproj
@@ -118,9 +117,7 @@ buildCurrentArchitecture__windows_msvc()
     devenv ./libodb-boost-vc12.sln -upgrade
     
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    msbuild.exe libodb-boost-vc12.sln /target:Build /property:Platform=${BUILD_PLATFORM}\
-        /property:Configuration=${BUILD_CONFIGURATION} /property:TargetName="odb-boost" /property:IntermediateOutputPath="${LIBS_INTERMEDIATE_BUILD_WIN}"\
-        /property:OutDir="${LIBS_OUT_BUILD_WIN}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    devenv ./libodb-boost-vc12.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
