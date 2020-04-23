@@ -95,6 +95,10 @@ buildCurrentArchitecture__android_clang()
 
 buildCurrentArchitecture__macos_clang()
 {
+    prepareBuildStep "Patching ${FM_CURRENT_ARCHITECTURE_LIB_TAG} darwin.jam ... "
+    sed -i.orig -e '/-fcoalesce-templates/d' -e '/-Wno-long-double/d' "./tools/build/src/tools/darwin.jam"
+    checkBuildStep
+
     prepareBuildStep "Bootstrapping ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep

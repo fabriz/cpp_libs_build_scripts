@@ -57,7 +57,20 @@ buildCurrentArchitecture__android_clang()
 
 buildCurrentArchitecture__macos_clang()
 {
-    :
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DBUILD_SHARED_LIBS=False\
+        -DENABLE_COMMONCRYPTO=False -DENABLE_GNUTLS=False -DENABLE_OPENSSL=True \
+        -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}\
+        -S . -B . > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
 }
 
 buildCurrentArchitecture__ios_clang()

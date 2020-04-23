@@ -51,10 +51,12 @@ buildCurrentArchitecture__android_clang()
     checkBuildStep
 }
 
-#buildCurrentArchitecture__macos_clang()
-#{
-#    :
-#}
+buildCurrentArchitecture__macos_clang()
+{
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make libzippp-static -j${FM_GLOBAL_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+}
 
 #buildCurrentArchitecture__ios_clang()
 #{

@@ -83,7 +83,30 @@ buildCurrentArchitecture__android_clang()
 
 buildCurrentArchitecture__macos_clang()
 {
-    :
+    export CFLAGS="-DU_CHARSET_IS_UTF8=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
+
+    local BUILD_CONFIGURATION=""
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        BUILD_CONFIGURATION="--enable-debug=yes --enable-release=no"
+    else
+        BUILD_CONFIGURATION="--enable-debug=no --enable-release=yes"
+    fi
+
+    cd ./source
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    ./configure ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
+        --with-data-packaging=static\
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
 }
 
 buildCurrentArchitecture__ios_clang()
