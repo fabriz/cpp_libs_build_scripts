@@ -52,16 +52,11 @@ initToolchainConfiguration()
             error "Invalid variant ${FM_ARG_BUILD_VARIANT}. Valid values are (debug, release, profile)"
     esac
 
-    FM_TARGET_PLATFORM="linux_gcc"
-    FM_TARGET_TOOLCHAIN="linux_gcc"
-    FM_TARGET_TOOLCHAIN_VERSION="7.2.0"
-    FM_TARGET_TOOLCHAIN_HOST_OS="linux"
     FM_TARGET_HAS_DLLS="false"
     FM_TARGET_ARCHITECTURE="${FM_CONFIG_ARCHITECTURE}"
     FM_TARGET_ADDRESS_MODEL="${FM_CONFIG_ADDRESS_MODEL}"
     FM_TARGET_BUILD_VARIANT="${FM_CONFIG_BUILD_VARIANT}"
 }
-
 
 initToolchainTools()
 {
@@ -90,3 +85,11 @@ initToolchainTools()
     export LDFLAGS="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
 }
 
+
+FM_TARGET_PLATFORM="linux_gcc"
+FM_TARGET_TOOLCHAIN="linux_gcc"
+FM_TARGET_TOOLCHAIN_HOST_OS="linux"
+FM_TARGET_TOOLCHAIN_VERSION="$(gcc -dumpversion)"
+if [ ${#FM_TARGET_TOOLCHAIN_VERSION} -le 2 ]; then
+    FM_TARGET_TOOLCHAIN_VERSION="$(gcc -dumpfullversion)"
+fi

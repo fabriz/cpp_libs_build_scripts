@@ -48,6 +48,8 @@ decompressArchive()
 
     if [ ${ARCHIVE_SOURCE: -7} = ".tar.gz" ] || [ ${ARCHIVE_SOURCE: -4} = ".tgz" ]; then
         ${FM_CMD_TAR} -xz -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
+    elif [ ${ARCHIVE_SOURCE: -7} = ".tar.xz" ]; then
+        ${FM_CMD_TAR} -xJ -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
     elif [ ${ARCHIVE_SOURCE: -8} = ".tar.bz2" ]; then
         ${FM_CMD_TAR} -xj -f ${ARCHIVE_SOURCE} -C ${ARCHIVE_DESTINATION} || error "Cannot decompress file ${ARCHIVE_SOURCE} to ${ARCHIVE_DESTINATION}"
     else
@@ -156,11 +158,10 @@ downloadCurrentLibTarballIfMissing()
     if [ ! -f ${LIB_TARBALL_LOCAL_PATH} ]; then
         echo "File ${FM_CURRENT_LIB_TARBALL_NAME} is missing"
         downloadFile ${FM_CURRENT_LIB_TARBALL_DOWNLOAD_URL} ${LIB_TARBALL_LOCAL_PATH}
+        checkCurrentLibTarballChecksum
     else
         echo "File ${FM_CURRENT_LIB_TARBALL_NAME} already cached"
     fi
-    
-    checkCurrentLibTarballChecksum
 }
 
 initCurrentLibraryVariables()
@@ -197,7 +198,7 @@ checkCurrentLibraryInstallStatus()
         FM_IS_LIBRARY_VARIANT_INSTALLED="false"
         if [ -d "${FM_CURRENT_LIB_SOURCE_DIR}" ]; then
             echo "Removing previous build directory for library ${FM_CURRENT_LIB_FULL_NAME} ${FM_TARGET_BUILD_VARIANT}"
-            rm -r "${FM_CURRENT_LIB_SOURCE_DIR}"
+            deleteDirectoryRecursive "${FM_CURRENT_LIB_SOURCE_DIR}"
         fi
     fi
 }
@@ -261,15 +262,18 @@ initCurrentArchitecture()
 isLibraryInstalled()
 {
     [ $# = 1 ] || error "isLibraryInstalled(): invalid number of arguments"
-    
+
     local LIBRARY_NAME_TO_CHECK=$1
     local VAR_LIB_INSTALL_CHECK="FM_${LIBRARY_NAME_TO_CHECK}_INSTALL_CHECK"
-    
-    if [ -f "${FM_LIBS_INSTALL_PREFIX}/${!VAR_LIB_INSTALL_CHECK}" ]; then
-        FM_IS_LIBRARY_INSTALLED="true"
-    else
-        FM_IS_LIBRARY_INSTALLED="false"
+    local LIB_INSTALL_CHECK_FILE="${!VAR_LIB_INSTALL_CHECK-}"
+
+    if [ -n "${LIB_INSTALL_CHECK_FILE}" ]; then
+        if [ -f "${FM_LIBS_INSTALL_PREFIX}/${LIB_INSTALL_CHECK_FILE}" ]; then
+            return 0
+        fi
     fi
+
+    return 1
 }
 
 decompressTarballForCurrentArchitecture()
@@ -362,8 +366,14 @@ buildLibrary()
     local CURRENT_LIBRARY_NAME=$1
 
     initCurrentLibraryVariables "${CURRENT_LIBRARY_NAME}"
+
+    if ! isFunctionDefined "buildCurrentArchitecture__${FM_TARGET_TOOLCHAIN}"; then
+        echo "Library ${FM_CURRENT_LIB_FULL_NAME} (${FM_TARGET_TOOLCHAIN} ${FM_TARGET_TOOLCHAIN_VERSION}) skipped"
+        return
+    fi
     downloadCurrentLibTarballIfMissing
 
+    local LIBRARY_BUILT="false"
     for FM_ARG_BUILD_VARIANT in ${FM_ARG_BUILD_VARIANTS}
     do
         initToolchainConfiguration
@@ -373,15 +383,16 @@ buildLibrary()
         checkCurrentLibraryInstallStatus
 
         if [ ${FM_IS_LIBRARY_VARIANT_INSTALLED} = "false" ]; then
+            checkCurrentLibTarballChecksum
             decompressTarballForCurrentArchitecture
             buildCurrentArchitecture
             installLibraries
+            LIBRARY_BUILT="true"
             echo "Library variant ${FM_CURRENT_LIB_FULL_NAME} ${FM_TARGET_BUILD_TAG} successfully installed"
         fi
     done
 
-    echo "Library ${FM_CURRENT_LIB_FULL_NAME} successfully installed"
+    if [ ${LIBRARY_BUILT} = "true" ]; then
+        echo "Library ${FM_CURRENT_LIB_FULL_NAME} (${FM_TARGET_TOOLCHAIN} ${FM_TARGET_TOOLCHAIN_VERSION}) successfully installed"
+    fi
 }
-
-
-

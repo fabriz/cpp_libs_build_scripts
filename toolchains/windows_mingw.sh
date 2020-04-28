@@ -43,20 +43,15 @@ initToolchainConfiguration()
             error "Invalid variant ${FM_ARG_BUILD_VARIANT}. Valid values are (debug, release)"
     esac
 
-    FM_TARGET_PLATFORM="windows_mingw"
-    FM_TARGET_TOOLCHAIN="windows_mingw"
-    FM_TARGET_TOOLCHAIN_VERSION="${FM_GLOBAL_COMPILER_VERSION}"
-    FM_TARGET_TOOLCHAIN_HOST_OS="windows"
     FM_TARGET_HAS_DLLS="false"
     FM_TARGET_ARCHITECTURE="${FM_CONFIG_ARCHITECTURE}"
     FM_TARGET_ADDRESS_MODEL="${FM_CONFIG_ADDRESS_MODEL}"
     FM_TARGET_BUILD_VARIANT="${FM_CONFIG_BUILD_VARIANT}"
 }
 
-
 initToolchainTools()
 {
-    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -fno-keep-inline-dllexport -Wextra -Wall -W -fexceptions -mthreads -DUNICODE -D_UNICODE -DNOMINMAX -DSTRICT -DWIN32_LEAN_AND_MEAN -D_WIN32_WINNT=0x0601"
+    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -Wextra -Wall -W -fexceptions -mthreads -D_WIN32_WINNT=0x0601"
     FM_CONFIG_COMMON_CXXFLAGS="-std=gnu++1y"
     FM_CONFIG_COMMON_LDFLAGS="-L${FM_LIBS_INSTALL_LIBS}"
     
@@ -81,3 +76,8 @@ initToolchainTools()
     export LDFLAGS="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
 }
 
+
+FM_TARGET_PLATFORM="windows_mingw"
+FM_TARGET_TOOLCHAIN="windows_mingw"
+FM_TARGET_TOOLCHAIN_HOST_OS="windows"
+FM_TARGET_TOOLCHAIN_VERSION="$(gcc -dumpversion)"

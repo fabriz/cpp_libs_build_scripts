@@ -6,7 +6,7 @@ call "vars.bat"
 
 set FM_GLOBAL_HOST=windows
 set FM_GLOBAL_COMPILER=mingw
-set FM_GLOBAL_COMPILER_VERSION=%FM_GLOBAL_MINGW_64_VERSION%
+set FM_GLOBAL_TOOLCHAIN=%FM_GLOBAL_HOST%_%FM_GLOBAL_COMPILER%
 set FM_GLOBAL_ARCHITECTURE=x64
 
 set PATH=%FM_GLOBAL_MINGW_64_INSTALL_PATH%\bin;^
@@ -21,11 +21,10 @@ cd /D %FM_SCRIPT_PATH%\..\..
 
 echo.
 echo To build all libraries:
-echo ./build_all.sh %FM_GLOBAL_HOST%_%FM_GLOBAL_COMPILER% %FM_GLOBAL_ARCHITECTURE% debug,release
+echo ./build_libset.sh latest debug,release
 echo.
 echo To build a single library:
-echo cd libs
-echo ./nnnn_build_libname.sh %FM_GLOBAL_HOST%_%FM_GLOBAL_COMPILER% %FM_GLOBAL_ARCHITECTURE% debug,release
+echo ./build_lib.sh "LIBNAME/LIBVERSION" debug,release
 echo.
 
 %FM_GLOBAL_MSYS64_INSTALL_PATH%\usr\bin\bash.exe

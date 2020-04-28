@@ -6,11 +6,11 @@ set -o nounset
 FM_COMMON_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_COMMON_SCRIPT_DIR}/utility.sh"
 source "${FM_COMMON_SCRIPT_DIR}/functions.sh"
-source "${FM_COMMON_SCRIPT_DIR}/versions.sh"
 
 # Get command line parameters
 if [ ! $# = 3 ]; then
     echo "Usage: $0 <toolchain> <architecture> <variant(s)>"
+    printLibsets
     printToolchains
     exit 1
 fi

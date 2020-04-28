@@ -18,10 +18,26 @@ playBeep()
     fi
 }
 
+success()
+{
+    playBeep
+
+    if [ -n "${FM_GLOBAL_ON_BUILD_SUCCESS-}" ]; then
+        eval "${FM_GLOBAL_ON_BUILD_SUCCESS}"
+    fi
+
+    exit 0
+}
+
 error()
 {
     playBeep
     echo "ERROR: $@"
+
+    if [ -n "${FM_GLOBAL_ON_BUILD_ERROR-}" ]; then
+        eval "${FM_GLOBAL_ON_BUILD_ERROR}"
+    fi
+
     exit 1
 }
 
@@ -35,6 +51,19 @@ popd()
     command popd "$@" > /dev/null
 }
 
+printLibsets()
+{
+    pushd "${FM_UTILITY_SCRIPT_DIR}/libsets"
+    local FM_AVAILABLE_LIBSETS=(*.sh)
+    popd
+
+    echo "Available libsets are: "
+    for FM_AVAILABLE_LIBSET in "${FM_AVAILABLE_LIBSETS[@]}"
+    do
+        echo "    ${FM_AVAILABLE_LIBSET%.*}"
+    done
+}
+
 printToolchains()
 {
     pushd "${FM_UTILITY_SCRIPT_DIR}/toolchains"
@@ -46,6 +75,15 @@ printToolchains()
     do
         echo "    ${FM_AVAILABLE_TOOLCHAIN%.*}"
     done
+}
+
+isFunctionDefined()
+{
+    [ $# = 1 ] || error "isFunctionDefined(): invalid number of arguments"
+
+    local FUNCTION_NAME=$1
+
+    declare -Ff "${FUNCTION_NAME}" >/dev/null;
 }
 
 createDirectory()
@@ -70,6 +108,22 @@ deleteDirectory()
     fi
 }
 
+deleteDirectoryRecursive()
+{
+    [ $# = 1 ] || error "deleteDirectoryRecursive(): invalid number of arguments"
+
+    local DIRECTORY_PATH=$1
+
+    # Sanity check: refuse to delete if path is too short
+    if [ ${#DIRECTORY_PATH} -le 20 ]; then
+        error "deleteDirectoryRecursive(): path too short: ${DIRECTORY_PATH}"
+    fi
+
+    if [ -d "${DIRECTORY_PATH}" ]; then
+        rm -rf "${DIRECTORY_PATH}" || error "Cannot delete directory ${DIRECTORY_PATH}"
+    fi
+}
+
 moveDirectory()
 {
     [ $# = 2 ] || error "moveDirectory(): invalid number of arguments"
@@ -77,7 +131,47 @@ moveDirectory()
     local MOVE_SOURCE=$1
     local MOVE_DESTINATION=$2
 
-    mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" || error "Cannot move directory ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
+    local MAX_TRY=10
+    local I_TRY=1
+    while true; do
+        mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" > /dev/null 2>&1 && break || {
+            echo "Move directory failed ($I_TRY/$MAX_TRY)"
+            echo "    From: ${MOVE_SOURCE}"
+            echo "      To: ${MOVE_DESTINATION}"
+            if [ $I_TRY -lt $MAX_TRY ]; then
+              ((I_TRY++))
+              playBeep
+              sleep 5
+            else
+                error "Cannot move directory ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
+            fi
+        }
+    done
+}
+
+moveFile()
+{
+    [ $# = 2 ] || error "moveFile(): invalid number of arguments"
+
+    local MOVE_SOURCE=$1
+    local MOVE_DESTINATION=$2
+
+    local MAX_TRY=10
+    local I_TRY=1
+    while true; do
+        mv "${MOVE_SOURCE}" "${MOVE_DESTINATION}" > /dev/null 2>&1 && break || {
+            echo "Move file failed ($I_TRY/$MAX_TRY)"
+            echo "    From: ${MOVE_SOURCE}"
+            echo "      To: ${MOVE_DESTINATION}"
+            if [ $I_TRY -lt $MAX_TRY ]; then
+              ((I_TRY++))
+              playBeep
+              sleep 5
+            else
+                error "Cannot move file ${MOVE_SOURCE} to ${MOVE_DESTINATION}"
+            fi
+        }
+    done
 }
 
 copyFile()
