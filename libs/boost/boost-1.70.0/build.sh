@@ -57,27 +57,69 @@ afterBuildCurrentArchitecture()
 buildCurrentArchitecture__linux_gcc()
 {
     prepareBuildStep "Bootstrapping ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    (
+        unset AR
+        unset CC
+        unset CXX
+        unset NM
+        unset RANLIB
+        unset CFLAGS
+        unset CXXFLAGS
+        unset LDFLAGS
+
+        ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    )
     checkBuildStep
+
+cat > ./user-cross-config.jam <<EOF
+using gcc : ${FM_TARGET_ARCHITECTURE} : ${FM_TARGET_TOOLCHAIN_CXX} ;
+EOF
+
+    local TOOLSET_NAME="gcc"
+    local CROSS_COMPILE_OPTIONS=""
+    if [ -n "${FM_TARGET_CROSS_COMPILER_HOST-}" ]; then
+        TOOLSET_NAME="gcc-${FM_TARGET_ARCHITECTURE}"
+        CROSS_COMPILE_OPTIONS="-sBOOST_BUILD_USER_CONFIG=./user-cross-config.jam"
+    fi
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./b2 -j${FM_GLOBAL_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${FM_BOOST_OPTIONAL_LIBS}\
-        --toolset=gcc variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
+        --toolset=${TOOLSET_NAME} ${CROSS_COMPILE_OPTIONS} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }
 
 buildCurrentArchitecture__android_clang()
 {
-    local BOOST_ANDROID_ARCH="arm"
-
     prepareBuildStep "Bootstrapping ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    (
+        unset AR
+        unset CC
+        unset CXX
+        unset NM
+        unset RANLIB
+        unset CFLAGS
+        unset CXXFLAGS
+        unset LDFLAGS
+
+        ./bootstrap.sh > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    )
     checkBuildStep
+
+cat > ./user-cross-config.jam <<EOF
+using clang : ${FM_TARGET_ARCHITECTURE} : ${FM_TARGET_TOOLCHAIN_CXX} ;
+EOF
+
+    local TOOLSET_NAME="clang"
+    local CROSS_COMPILE_OPTIONS=""
+    if [ -n "${FM_TARGET_CROSS_COMPILER_HOST-}" ]; then
+        TOOLSET_NAME="clang-${FM_TARGET_ARCHITECTURE}"
+        CROSS_COMPILE_OPTIONS="-sBOOST_BUILD_USER_CONFIG=./user-cross-config.jam"
+    fi
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./b2 -j${FM_GLOBAL_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${FM_BOOST_OPTIONAL_LIBS} --without-python\
-        --toolset=clang variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} architecture=${BOOST_ANDROID_ARCH} target-os=android cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
+        --toolset=${TOOLSET_NAME} ${CROSS_COMPILE_OPTIONS} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} target-os=android cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }

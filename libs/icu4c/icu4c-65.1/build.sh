@@ -5,6 +5,11 @@ THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 
+beforeBuildCurrentArchitecture()
+{
+    cd ./source
+}
+
 afterBuildCurrentArchitecture()
 {
     deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/icu"
@@ -28,6 +33,11 @@ buildCurrentArchitecture__linux_gcc()
 {
     export CFLAGS="-DU_CHARSET_IS_UTF8=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
 
+    local CROSS_COMPILER_HOST=""
+    if [ -n "${FM_TARGET_CROSS_COMPILER_HOST-}" ]; then
+        CROSS_COMPILER_HOST="--host=${FM_TARGET_CROSS_COMPILER_HOST} --with-cross-build=${FM_GLOBAL_BUILD_ROOT}/linux_gcc_x64_release/source/${FM_ICU4C_FULL_NAME}/x64/source"
+    fi
+
     local BUILD_CONFIGURATION=""
     if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
         BUILD_CONFIGURATION="--enable-debug=yes --enable-release=no"
@@ -35,10 +45,8 @@ buildCurrentArchitecture__linux_gcc()
         BUILD_CONFIGURATION="--enable-debug=no --enable-release=yes"
     fi
 
-    cd ./source
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
+    ./configure ${CROSS_COMPILER_HOST} ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
         --with-data-packaging=static\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -62,8 +70,6 @@ buildCurrentArchitecture__android_clang()
     else
         BUILD_CONFIGURATION="--enable-debug=no --enable-release=yes"
     fi
-
-    cd ./source
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
@@ -91,8 +97,6 @@ buildCurrentArchitecture__macos_clang()
     else
         BUILD_CONFIGURATION="--enable-debug=no --enable-release=yes"
     fi
-
-    cd ./source
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\

@@ -77,7 +77,7 @@ buildCurrentArchitecture__linux_gcc()
         BUILD_PLATFORM="x86"
     elif [ ${FM_TARGET_ARCHITECTURE} = "x64" ]; then
         BUILD_PLATFORM="x86_64"
-    elif [ ${FM_TARGET_ARCHITECTURE} = "armv7rpi3" ]; then
+    elif [ ${FM_TARGET_ARCHITECTURE} = "armv7" ]; then
         BUILD_PLATFORM="armv7"
     fi
 
@@ -88,7 +88,7 @@ buildCurrentArchitecture__linux_gcc()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -112,7 +112,7 @@ buildCurrentArchitecture__android_clang()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -136,7 +136,7 @@ buildCurrentArchitecture__macos_clang()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -174,7 +174,7 @@ buildCurrentArchitecture__ios_clang()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -198,7 +198,7 @@ buildCurrentArchitecture__windows_mingw()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

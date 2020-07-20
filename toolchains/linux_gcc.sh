@@ -26,13 +26,13 @@ initToolchainConfiguration()
             FM_CONFIG_ARCHITECTURE="x64"
             FM_CONFIG_ADDRESS_MODEL="64"
         ;;
-        armv7rpi3)
-            FM_CONFIG_ARCHITECTURE="armv7rpi3"
+        armv7)
+            FM_CONFIG_ARCHITECTURE="armv7"
             FM_CONFIG_ARCHITECTURE_CFLAGS="-march=armv8-a -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -D_REENTRANT"
             FM_CONFIG_ADDRESS_MODEL="32"
         ;;
         *)
-            error "Invalid architecture ${FM_ARG_ARCHITECTURE}. Valid values are (i386, x64, armv7rpi3)"
+            error "Invalid architecture ${FM_ARG_ARCHITECTURE}. Valid values are (i386, x64, armv7)"
     esac
 
     case ${FM_ARG_BUILD_VARIANT} in

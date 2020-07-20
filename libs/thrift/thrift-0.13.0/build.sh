@@ -19,7 +19,7 @@ afterBuildCurrentArchitecture()
 
 buildCurrentArchitecture__linux_gcc()
 {
-    if [ ${FM_TARGET_ARCHITECTURE} = "armv7rpi3" ]; then
+    if [ ${FM_TARGET_ARCHITECTURE} = "armv7" ]; then
         sed -i.orig 's/include(StaticCodeAnalysis)/#include(StaticCodeAnalysis)/' ./CMakeLists.txt
     fi
 

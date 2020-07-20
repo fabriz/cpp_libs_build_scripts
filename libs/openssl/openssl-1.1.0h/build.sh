@@ -18,7 +18,7 @@ buildCurrentArchitecture__linux_gcc()
         BUILD_PLATFORM="linux-x86"
     elif [ ${FM_TARGET_ARCHITECTURE} = "x64" ]; then
         BUILD_PLATFORM="linux-x86_64"
-    elif [ ${FM_TARGET_ARCHITECTURE} = "armv7rpi3" ]; then
+    elif [ ${FM_TARGET_ARCHITECTURE} = "armv7" ]; then
         BUILD_PLATFORM="linux-generic32"
     fi
 

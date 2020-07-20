@@ -5,7 +5,7 @@ initToolchainConfiguration()
 {
     FM_CONFIG_ARCHITECTURE=""
     FM_CONFIG_ADDRESS_MODEL=""
-    FM_CONFIG_CROSS_COMPILER_HOST=""
+    FM_CONFIG_CROSS_COMPILER_HOST="${FM_GLOBAL_CROSS_COMPILER_HOST}"
     FM_CONFIG_BUILD_VARIANT=""
 
     FM_CONFIG_COMMON_CFLAGS=""
@@ -21,15 +21,13 @@ initToolchainConfiguration()
     case ${FM_ARG_ARCHITECTURE} in
         armv7)
             FM_CONFIG_ARCHITECTURE="armv7"
-            FM_CONFIG_ARCHITECTURE_CFLAGS="-target armv7-none-linux-androideabi -march=armv7-a -mfloat-abi=softfp -mfpu=vfp -fno-builtin-memmove"
+            FM_CONFIG_ARCHITECTURE_CFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=vfp -fno-builtin-memmove"
             FM_CONFIG_ADDRESS_MODEL="32"
-            FM_CONFIG_CROSS_COMPILER_HOST="arm-linux-androideabi"
         ;;
         armv8)
             FM_CONFIG_ARCHITECTURE="armv8"
-            FM_CONFIG_ARCHITECTURE_CFLAGS="-target aarch64-none-linux-android"
+            FM_CONFIG_ARCHITECTURE_CFLAGS=""
             FM_CONFIG_ADDRESS_MODEL="64"
-            FM_CONFIG_CROSS_COMPILER_HOST="aarch64-linux-android"
         ;;
         *)
             error "Invalid architecture ${FM_ARG_ARCHITECTURE}. Valid values are (armv7, armv8)"
@@ -71,7 +69,7 @@ initToolchainConfiguration()
 
 initToolchainTools()
 {
-    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -fPIC -Wextra -Wall -W -DANDROID -D__ANDROID_API__=${FM_GLOBAL_ANDROID_API_LEVEL} -DANDROID_HAS_WSTRING -D_REENTRANT -fstack-protector-strong"
+    FM_CONFIG_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES} -fPIC -Wextra -Wall -W -DANDROID -DANDROID_HAS_WSTRING -D_REENTRANT -fstack-protector-strong"
     FM_CONFIG_COMMON_CXXFLAGS="-std=gnu++1y"
     FM_CONFIG_COMMON_LDFLAGS="-L${FM_LIBS_INSTALL_LIBS}"
 
@@ -80,8 +78,8 @@ initToolchainTools()
     FM_TARGET_TOOLCHAIN_LDFLAGS="${FM_CONFIG_COMMON_LDFLAGS} ${FM_CONFIG_ARCHITECTURE_LDFLAGS} ${FM_CONFIG_BUILD_VARIANT_LDFLAGS}"
 
     FM_TARGET_TOOLCHAIN_AR="${FM_CONFIG_CROSS_COMPILER_HOST}-ar"
-    FM_TARGET_TOOLCHAIN_CC="${FM_CONFIG_CROSS_COMPILER_HOST}-clang"
-    FM_TARGET_TOOLCHAIN_CXX="${FM_CONFIG_CROSS_COMPILER_HOST}-clang++"
+    FM_TARGET_TOOLCHAIN_CC="${FM_GLOBAL_CROSS_COMPILER_ROOT_NAME}-clang"
+    FM_TARGET_TOOLCHAIN_CXX="${FM_GLOBAL_CROSS_COMPILER_ROOT_NAME}-clang++"
     FM_TARGET_TOOLCHAIN_NM="${FM_CONFIG_CROSS_COMPILER_HOST}-nm"
     FM_TARGET_TOOLCHAIN_RANLIB="${FM_CONFIG_CROSS_COMPILER_HOST}-ranlib"
 
@@ -100,4 +98,4 @@ initToolchainTools()
 FM_TARGET_PLATFORM="android_clang_api${FM_GLOBAL_ANDROID_API_LEVEL}"
 FM_TARGET_TOOLCHAIN="android_clang"
 FM_TARGET_TOOLCHAIN_HOST_OS="linux"
-FM_TARGET_TOOLCHAIN_VERSION="$(${FM_CONFIG_CROSS_COMPILER_HOST}-clang -dumpversion)"
+FM_TARGET_TOOLCHAIN_VERSION="$(${FM_GLOBAL_CROSS_COMPILER_ROOT_NAME}-clang -dumpversion)"

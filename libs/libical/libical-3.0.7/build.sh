@@ -129,8 +129,6 @@ buildCurrentArchitecture__windows_msvc()
     fi
     
     rm ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/*-static.lib
-    rm -rf ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake
-    rm -rf ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig
 }
 
 

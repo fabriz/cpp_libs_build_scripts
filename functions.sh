@@ -119,10 +119,30 @@ checkCurrentLibTarballChecksum()
         if [ "${LIB_TARBALL_CHECKSUM}" = "${FM_CURRENT_LIB_TARBALL_HASH}" ]; then
             echo "OK"
         else
-            error "FAILED"
+            echo "FAILED"
+            error "Actual checksum is ${LIB_TARBALL_CHECKSUM}"
         fi
     else
         echo "Skipping checksum verification of file ${FM_CURRENT_LIB_TARBALL_NAME}"
+    fi
+}
+
+downloadFileFromLanCache()
+{
+    [ $# = 2 ] || error "downloadFileFromLanCache(): invalid number of arguments"
+
+    local TARBALL_NAME=$1
+    local DESTINATION_PATH_FINAL=$2
+    local DESTINATION_PATH="${DESTINATION_PATH_FINAL}.temp"
+
+    echo "LAN cache: Downloading ${TARBALL_NAME} to ${DESTINATION_PATH_FINAL}"
+
+    eval ${FM_GLOBAL_LAN_TARBALL_CACHE_GET_CMD}
+    if [ $? -ne 0 ]; then
+        rm -f "${DESTINATION_PATH}"
+        echo "LAN cache: Cannot download ${TARBALL_NAME} to ${DESTINATION_PATH}"
+    else
+        mv "${DESTINATION_PATH}" "${DESTINATION_PATH_FINAL}" || error "Cannot rename file ${DESTINATION_PATH} to ${DESTINATION_PATH_FINAL}"
     fi
 }
 
@@ -145,7 +165,7 @@ downloadFile()
     ${FM_CMD_CURL} ${DOWNLOAD_OPTIONS} -L -o "${DOWNLOAD_DESTINATION_TEMP}" "${DOWNLOAD_SOURCE}"
     if [ $? -ne 0 ]; then
         rm -f "${DOWNLOAD_DESTINATION_TEMP}"
-        error "Cannot download ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION_TEMP}"
+        echo "Cannot download ${DOWNLOAD_SOURCE} to ${DOWNLOAD_DESTINATION_TEMP}"
     fi
 
     mv "${DOWNLOAD_DESTINATION_TEMP}" "${DOWNLOAD_DESTINATION}" || error "Cannot rename file ${DOWNLOAD_DESTINATION_TEMP} to ${DOWNLOAD_DESTINATION}"
@@ -157,8 +177,43 @@ downloadCurrentLibTarballIfMissing()
 
     if [ ! -f ${LIB_TARBALL_LOCAL_PATH} ]; then
         echo "File ${FM_CURRENT_LIB_TARBALL_NAME} is missing"
-        downloadFile ${FM_CURRENT_LIB_TARBALL_DOWNLOAD_URL} ${LIB_TARBALL_LOCAL_PATH}
-        checkCurrentLibTarballChecksum
+
+        local DOWNLOAD_FROM_LAN_CACHE=false
+        local DOWNLOAD_FROM_INTERNET=true
+
+        case ${FM_GLOBAL_LAN_TARBALL_CACHE_USE} in
+            "NO")
+                DOWNLOAD_FROM_LAN_CACHE=false
+                DOWNLOAD_FROM_INTERNET=true
+            ;;
+            "YES")
+                DOWNLOAD_FROM_LAN_CACHE=true
+                DOWNLOAD_FROM_INTERNET=true
+            ;;
+            "ONLY")
+                DOWNLOAD_FROM_LAN_CACHE=true
+                DOWNLOAD_FROM_INTERNET=false
+            ;;
+        esac
+
+        if [ ${DOWNLOAD_FROM_LAN_CACHE} = true ]; then
+            downloadFileFromLanCache ${FM_CURRENT_LIB_TARBALL_NAME} ${LIB_TARBALL_LOCAL_PATH}
+            if [ ! -f ${LIB_TARBALL_LOCAL_PATH} ]; then
+                if [ ${DOWNLOAD_FROM_INTERNET} = false ]; then
+                    error "Cannot get file ${FM_CURRENT_LIB_TARBALL_NAME} from the LAN cache."
+                fi
+            fi
+        fi
+
+        if [ ${DOWNLOAD_FROM_INTERNET} = true ]; then
+            if [ ! -f ${LIB_TARBALL_LOCAL_PATH} ]; then
+                downloadFile ${FM_CURRENT_LIB_TARBALL_DOWNLOAD_URL} ${LIB_TARBALL_LOCAL_PATH}
+            fi
+        fi
+
+        if [ ! -f ${LIB_TARBALL_LOCAL_PATH} ]; then
+            error "Cannot get file ${FM_CURRENT_LIB_TARBALL_NAME}."
+        fi
     else
         echo "File ${FM_CURRENT_LIB_TARBALL_NAME} already cached"
     fi
@@ -371,7 +426,9 @@ buildLibrary()
         echo "Library ${FM_CURRENT_LIB_FULL_NAME} (${FM_TARGET_TOOLCHAIN} ${FM_TARGET_TOOLCHAIN_VERSION}) skipped"
         return
     fi
+
     downloadCurrentLibTarballIfMissing
+    checkCurrentLibTarballChecksum
 
     local LIBRARY_BUILT="false"
     for FM_ARG_BUILD_VARIANT in ${FM_ARG_BUILD_VARIANTS}
@@ -383,7 +440,6 @@ buildLibrary()
         checkCurrentLibraryInstallStatus
 
         if [ ${FM_IS_LIBRARY_VARIANT_INSTALLED} = "false" ]; then
-            checkCurrentLibTarballChecksum
             decompressTarballForCurrentArchitecture
             buildCurrentArchitecture
             installLibraries
