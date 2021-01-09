@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FM_LIBS_TO_BUILD=(
+FM_LIBSET_LIBS=(
     zlib/1.2.11
     bzip2/1.0.6
     sqlite/3.26.0

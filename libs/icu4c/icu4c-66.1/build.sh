@@ -1,8 +1,8 @@
 #!/bin/bash
 # Build script for icu4c 66.1
 
-THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
+export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 
 beforeBuildCurrentArchitecture()
@@ -13,29 +13,19 @@ beforeBuildCurrentArchitecture()
 afterBuildCurrentArchitecture()
 {
     deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/icu"
-    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig"
-}
 
-decompressTarballForCurrentArchitecture()
-{
-    local LIB_TARBALL_LOCAL_PATH="${FM_GLOBAL_TARBALL_CACHE}/${FM_CURRENT_LIB_TARBALL_NAME}"
-
-    createDirectory "${FM_CURRENT_LIB_SOURCE_DIR}"
-
-    prepareBuildStep "Decompressing ${LIB_TARBALL_LOCAL_PATH} ... "
-    ${FM_CMD_TAR} -xz -f ${LIB_TARBALL_LOCAL_PATH} -C ${FM_CURRENT_LIB_SOURCE_DIR} || error "Cannot decompress file ${LIB_TARBALL_LOCAL_PATH} to ${FM_CURRENT_LIB_SOURCE_DIR}"
-    checkBuildStep
-
-    moveDirectory "${FM_CURRENT_LIB_SOURCE_DIR}/icu" "${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}"
+    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" ]; then
+        moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
+    fi
 }
 
 buildCurrentArchitecture__linux_gcc()
 {
-    export CFLAGS="-DU_CHARSET_IS_UTF8=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
+    export CFLAGS="-DU_CHARSET_IS_UTF8=1 ${CFLAGS}"
 
     local CROSS_COMPILER_HOST=""
     if [ -n "${FM_TARGET_CROSS_COMPILER_HOST-}" ]; then
-        CROSS_COMPILER_HOST="--host=${FM_TARGET_CROSS_COMPILER_HOST} --with-cross-build=${FM_GLOBAL_BUILD_ROOT}/linux_gcc_x64_release/source/${FM_ICU4C_FULL_NAME}/x64/source"
+        CROSS_COMPILER_HOST="--host=${FM_TARGET_CROSS_COMPILER_HOST} --with-cross-build=${FM_ARG_BUILD_ROOT}/linux_gcc_x86_64_release/source/${FM_ICU4C_FULL_NAME}/x86_64/source"
     fi
 
     local BUILD_CONFIGURATION=""
@@ -52,7 +42,7 @@ buildCurrentArchitecture__linux_gcc()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make -j${FM_ARG_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -62,7 +52,7 @@ buildCurrentArchitecture__linux_gcc()
 
 buildCurrentArchitecture__android_clang()
 {
-    export CFLAGS="-DU_CHARSET_IS_UTF8=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
+    export CFLAGS="-DU_CHARSET_IS_UTF8=1 ${CFLAGS}"
 
     local BUILD_CONFIGURATION=""
     if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
@@ -73,13 +63,13 @@ buildCurrentArchitecture__android_clang()
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
-        --with-cross-build=${FM_GLOBAL_BUILD_ROOT}/linux_gcc_x64_release/source/${FM_ICU4C_FULL_NAME}/x64/source\
+        --with-cross-build=${FM_ARG_BUILD_ROOT}/linux_gcc_x86_64_release/source/${FM_ICU4C_FULL_NAME}/x86_64/source\
         --enable-tools=no --enable-tests=no --enable-samples=no --with-data-packaging=static\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make -j${FM_ARG_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -89,7 +79,7 @@ buildCurrentArchitecture__android_clang()
 
 buildCurrentArchitecture__macos_clang()
 {
-    export CFLAGS="-DU_CHARSET_IS_UTF8=1 ${FM_TARGET_TOOLCHAIN_CFLAGS}"
+    export CFLAGS="-DU_CHARSET_IS_UTF8=1 ${CFLAGS}"
 
     local BUILD_CONFIGURATION=""
     if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
@@ -105,7 +95,7 @@ buildCurrentArchitecture__macos_clang()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make -j${FM_GLOBAL_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make -j${FM_ARG_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

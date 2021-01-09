@@ -1,8 +1,8 @@
 #!/bin/bash
 # Build script for boost 1.66.0
 
-THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
+export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 
 # Useful bjam flags
@@ -11,7 +11,7 @@ source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/common.sh"
 
 beforeBuildCurrentArchitecture()
 {
-    FM_BOOST_OPTIONAL_LIBS=""
+    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${FM_TARGET_BUILD_FLAGS_FOR_BOOST-}"
 
     if isLibraryInstalled "BZIP2"; then
         echo "Enabling support for library bzip2"
@@ -24,6 +24,20 @@ beforeBuildCurrentArchitecture()
         else
             export BZIP2_INCLUDE="${FM_LIBS_INSTALL_INCLUDES}"
             export BZIP2_LIBRARY_PATH="${FM_LIBS_INSTALL_LIBS}"
+        fi
+    fi
+
+    if isLibraryInstalled "XZ"; then
+        echo "Enabling support for library xz/lzma"
+        if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
+            export LZMA_INCLUDE="${FM_LIBS_INSTALL_INCLUDES_WINDOWS}"
+            export LZMA_LIBRARY_PATH="${FM_LIBS_INSTALL_LIBS_WINDOWS}"
+            export LZMA_NAME="libzlma"
+        elif [ ${FM_TARGET_TOOLCHAIN} = "ios_clang" ]; then
+            export LZMA_SOURCE="${FM_LIBS_BUILD_SOURCE}/${FM_XZ_FULL_NAME}/${FM_IOS_SDK_ARCHITECTURE}"
+        else
+            export LZMA_INCLUDE="${FM_LIBS_INSTALL_INCLUDES}"
+            export LZMA_LIBRARY_PATH="${FM_LIBS_INSTALL_LIBS}"
         fi
     fi
 
@@ -45,7 +59,7 @@ beforeBuildCurrentArchitecture()
         echo "Enabling support for library icu4c"
         export ICU_PATH="${FM_LIBS_INSTALL_PREFIX}"
     else
-        FM_BOOST_OPTIONAL_LIBS="${FM_BOOST_OPTIONAL_LIBS} --disable-icu"
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --disable-icu"
     fi
 }
 
@@ -58,6 +72,7 @@ buildCurrentArchitecture__linux_gcc()
         unset CXX
         unset NM
         unset RANLIB
+        unset CPPFLAGS
         unset CFLAGS
         unset CXXFLAGS
         unset LDFLAGS
@@ -67,7 +82,7 @@ buildCurrentArchitecture__linux_gcc()
     checkBuildStep
 
 cat > ./user-cross-config.jam <<EOF
-using gcc : ${FM_TARGET_ARCHITECTURE} : ${FM_TARGET_TOOLCHAIN_CXX} ;
+using gcc : ${FM_TARGET_ARCHITECTURE} : ${CXX} ;
 EOF
 
     local TOOLSET_NAME="gcc"
@@ -78,7 +93,7 @@ EOF
     fi
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./b2 -j${FM_GLOBAL_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${FM_BOOST_OPTIONAL_LIBS}\
+    ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
         --toolset=${TOOLSET_NAME} ${CROSS_COMPILE_OPTIONS} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
@@ -93,6 +108,7 @@ buildCurrentArchitecture__android_clang()
         unset CXX
         unset NM
         unset RANLIB
+        unset CPPFLAGS
         unset CFLAGS
         unset CXXFLAGS
         unset LDFLAGS
@@ -102,7 +118,7 @@ buildCurrentArchitecture__android_clang()
     checkBuildStep
 
 cat > ./user-cross-config.jam <<EOF
-using clang : ${FM_TARGET_ARCHITECTURE} : ${FM_TARGET_TOOLCHAIN_CXX} ;
+using clang : ${FM_TARGET_ARCHITECTURE} : ${CXX} ;
 EOF
 
     local TOOLSET_NAME="clang"
@@ -113,7 +129,7 @@ EOF
     fi
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./b2 -j${FM_GLOBAL_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${FM_BOOST_OPTIONAL_LIBS} --without-python\
+    ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
         --toolset=${TOOLSET_NAME} ${CROSS_COMPILE_OPTIONS} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} target-os=android cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
@@ -130,7 +146,7 @@ buildCurrentArchitecture__macos_clang()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./b2 -j${FM_GLOBAL_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${FM_BOOST_OPTIONAL_LIBS}\
+    ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
         --toolset=darwin variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
@@ -143,6 +159,7 @@ buildCurrentArchitecture__ios_clang()
     unset CXX
     unset NM
     unset RANLIB
+    unset CPPFLAGS
     unset CFLAGS
     unset CXXFLAGS
     unset LDFLAGS
@@ -174,7 +191,7 @@ EOF
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./b2 -sBOOST_BUILD_USER_CONFIG=./user-ios-config.jam\
-        -j${FM_GLOBAL_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${FM_BOOST_OPTIONAL_LIBS}\
+        -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
         --toolset=darwin-${FM_IOS_SDK_VERSION}~${BOOST_IOS_SDK} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL}\
         cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}" define=_LITTLE_ENDIAN\
         macosx-version=${BOOST_IOS_SDK}-${FM_IOS_SDK_VERSION} architecture=${BOOST_IOS_ARCH} target-os=iphone\
@@ -191,7 +208,7 @@ buildCurrentArchitecture__windows_mingw()
     local PYTON_HEADER_FIX="-D_hypot=hypot"
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./b2 -j${FM_GLOBAL_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths\
+    ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths\
         --toolset=gcc variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} ${PYTON_HEADER_FIX}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
@@ -204,8 +221,8 @@ buildCurrentArchitecture__windows_msvc()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./b2 -j${FM_GLOBAL_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths\
-        --toolset=msvc-${FM_TARGET_TOOLCHAIN_VERSION} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL}\
+    ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths\
+        --toolset=msvc-${FM_TARGET_COMPILER_VERSION} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL}\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }

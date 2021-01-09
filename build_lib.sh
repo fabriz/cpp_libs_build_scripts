@@ -1,52 +1,312 @@
 #!/bin/bash
 
-export FM_LIBS_BUILD_ROOT_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/utility.sh"
+# Treat undefined variables as an error
+set -o nounset
 
-BLOCK_SEPARATOR="------------------------------------------------------------"
+BUILD_LIB_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${BUILD_LIB_SCRIPT_DIRECTORY}/core/utility.sh"
+source "${BUILD_LIB_SCRIPT_DIRECTORY}/core/help.sh"
 
-# Check command line parameters
-if [ ! $# = 2 ]; then
-    echo "Usage: $0 LIBNAME/LIBVERSION <variant(s)>"
-    printLibsets
+
+printHelp()
+{
+cat <<EOF
+
+Usage: build.sh LIBNAME/LIBVERSION [OPTIONS]
+
+ Option     Long option
+ -h         --help                  Prints this help message and exits.
+            --list                  Lists available libraries and exits.
+ -l=value   --libset=value          Optional libset.
+ -j=value   --jobs=value            Number of concurrent build processes to use. Default: value of \$FM_CONFIG_NUM_PROCESSES or 4 (${FM_CONFIG_NUM_PROCESSES:-4}).
+ -t=value   --toolchain=value       Toolchain to use. Default: value of \$FM_TARGET_TOOLCHAIN (${FM_TARGET_TOOLCHAIN:-UNDEFINED}).
+ -x=value   --architectures=value   Architectures to build. Default: all (${FM_TARGET_ALL_ARCHITECTURES:-UNDEFINED}).
+ -v=value   --variants=value        Variants to build. Default: all (${FM_TARGET_ALL_BUILD_VARIANTS:-UNDEFINED}).
+ -c=value   --tarball-cache=value   Cache folder for downloaded library source tarballs. Default: value of \$FM_CONFIG_TARBALL_CACHE (${FM_CONFIG_TARBALL_CACHE:-UNDEFINED}).
+ -b=value   --build-root=value      Root folder for build files. Default: value of \$FM_CONFIG_BUILD_ROOT (${FM_CONFIG_BUILD_ROOT:-UNDEFINED}).
+ -d=value   --deploy-root=value     Root folder for libraries deployment. Default: value of \$FM_CONFIG_DEPLOY_ROOT (${FM_CONFIG_DEPLOY_ROOT:-UNDEFINED}).
+
+EOF
+}
+
+parseArguments()
+{
+    FM_ARG_LIB=""
+    FM_ARG_LIBSET=""
+    FM_ARG_NUM_PROCESSES="${FM_CONFIG_NUM_PROCESSES:-4}"
+    FM_ARG_TOOLCHAIN="${FM_TARGET_TOOLCHAIN-}"
+    FM_ARG_ARCHITECTURES="all"
+    FM_ARG_BUILD_VARIANTS="all"
+    FM_ARG_TARBALL_CACHE="${FM_CONFIG_TARBALL_CACHE-}"
+    FM_ARG_BUILD_ROOT="${FM_CONFIG_BUILD_ROOT-}"
+    FM_ARG_DEPLOY_ROOT="${FM_CONFIG_DEPLOY_ROOT-}"
+
+    local LOCAL_ARGUMENT=""
+    for LOCAL_ARGUMENT in "$@"
+    do
+        case ${LOCAL_ARGUMENT} in
+            -h|--help)
+                printHelp
+                exit 0
+            ;;
+            --list)
+                helpListLibs silent
+                exit 0
+            ;;
+            -l=*|--libset=*)
+                FM_ARG_LIBSET="$(echo ${LOCAL_ARGUMENT#*=} | tr '[:upper:]' '[:lower:]')"
+            ;;
+            -j=*|--jobs=*)
+                FM_ARG_NUM_PROCESSES="${LOCAL_ARGUMENT#*=}"
+            ;;
+            -t=*|--toolchain=*)
+                FM_ARG_TOOLCHAIN="$(echo ${LOCAL_ARGUMENT#*=} | tr '[:upper:]' '[:lower:]')"
+            ;;
+            -x=*|--architectures=*)
+                FM_ARG_ARCHITECTURES="$(echo ${LOCAL_ARGUMENT#*=} | tr '[:upper:]' '[:lower:]' | tr "," " ")"
+            ;;
+            -v=*|--variants=*)
+                FM_ARG_BUILD_VARIANTS="$(echo ${LOCAL_ARGUMENT#*=} | tr '[:upper:]' '[:lower:]' | tr "," " ")"
+            ;;
+            -c=*|--tarball-cache=*)
+                FM_ARG_TARBALL_CACHE="${LOCAL_ARGUMENT#*=}"
+            ;;
+            -b=*|--build-root=*)
+                FM_ARG_BUILD_ROOT="${LOCAL_ARGUMENT#*=}"
+            ;;
+            -d=*|--deploy-root=*)
+                FM_ARG_DEPLOY_ROOT="${LOCAL_ARGUMENT#*=}"
+            ;;
+            *\/*)
+                if [ -z "${FM_ARG_LIB-}" ]; then
+                    FM_ARG_LIB="$(echo ${LOCAL_ARGUMENT#*=} | tr '[:upper:]' '[:lower:]')"
+                else
+                    echo "Unknown argument: '${LOCAL_ARGUMENT}'"
+                fi
+            ;;
+            *)
+                echo "Unknown argument: '${LOCAL_ARGUMENT}'"
+            ;;
+        esac
+
+        shift
+    done
+
+
+    local LOCAL_RETURN_VALUE=0
+
+    # Libset
+    if [ -n "${FM_ARG_LIBSET-}" ]; then
+        # Get the list of libraries
+        FM_ARG_LIBSET_LIBS=""
+        case ${FM_ARG_LIBSET} in
+            *\/*)
+                # Assume that the string is a list of libraries
+                FM_ARG_LIBSET_LIBS="$(echo ${FM_ARG_LIBSET} | tr "," " ")"
+            ;;
+            *)
+                # Assume that the string is the name of a libset file
+                local LOCAL_LIBSET_FILE="${FM_PATH_SCRIPTS_ROOT_DIRECTORY}/libsets/${FM_ARG_LIBSET}.sh"
+                if [ ! -f "${LOCAL_LIBSET_FILE}" ]; then
+                    LOCAL_RETURN_VALUE=1
+                    echo "ERROR: Invalid libset file name: ${FM_ARG_LIBSET}"
+                else
+                    source "${LOCAL_LIBSET_FILE}"
+                    if [ $? -ne 0 ]; then
+                        LOCAL_RETURN_VALUE=1
+                        echo "ERROR: Error loading libset file: ${LOCAL_LIBSET_FILE}"
+                    else
+                        FM_ARG_LIBSET_LIBS="${FM_LIBSET_LIBS[@]}"
+                    fi
+                fi
+            ;;
+        esac
+
+        # Load and check the configuration file for each library in the libset
+        local LOCAL_LIBSET_LIB=""
+        local LOCAL_JOINED_LIBSET_LIBS=""
+        for LOCAL_LIBSET_LIB in ${FM_ARG_LIBSET_LIBS}
+        do
+            local LOCAL_LIBSET_LIB_NAME="${LOCAL_LIBSET_LIB%%/*}"
+            local LOCAL_LIBSET_LIB_VERSION="${LOCAL_LIBSET_LIB#*/}"
+            local LOCAL_LIBSET_LIB_CONFIG_FILE="${FM_PATH_SCRIPTS_ROOT_DIRECTORY}/libs/${LOCAL_LIBSET_LIB_NAME}/${LOCAL_LIBSET_LIB_NAME}-${LOCAL_LIBSET_LIB_VERSION}/config.sh"
+
+            if [ ! -f "${LOCAL_LIBSET_LIB_CONFIG_FILE}" ]; then
+                LOCAL_RETURN_VALUE=1
+                echo "ERROR: Invalid library in libset: ${LOCAL_LIBSET_LIB}"
+            else
+                source "${LOCAL_LIBSET_LIB_CONFIG_FILE}"
+                if [ $? -ne 0 ]; then
+                    LOCAL_RETURN_VALUE=1
+                    echo "ERROR: Error loading library configuration file: ${LOCAL_LIBSET_LIB_CONFIG_FILE}"
+                else
+                    if [ -z "${LOCAL_JOINED_LIBSET_LIBS-}" ]; then
+                        LOCAL_JOINED_LIBSET_LIBS="${LOCAL_LIBSET_LIB_NAME}-${LOCAL_LIBSET_LIB_VERSION}"
+                    else
+                        LOCAL_JOINED_LIBSET_LIBS="${LOCAL_JOINED_LIBSET_LIBS}, ${LOCAL_LIBSET_LIB_NAME}-${LOCAL_LIBSET_LIB_VERSION}"
+                    fi
+                fi
+            fi
+        done
+    fi
+
+    # Library to build
+    if [ -z "${FM_ARG_LIB-}" ]; then
+        LOCAL_RETURN_VALUE=1
+        echo "ERROR: A library must be specified as \"LIBNAME/LIBVERSION\"."
+    else
+        local LOCAL_LIB_NAME="${FM_ARG_LIB%%/*}"
+        local LOCAL_LIB_VERSION="${FM_ARG_LIB#*/}"
+        local LOCAL_LIB_CONFIG_FILE="${FM_PATH_SCRIPTS_ROOT_DIRECTORY}/libs/${LOCAL_LIB_NAME}/${LOCAL_LIB_NAME}-${LOCAL_LIB_VERSION}/config.sh"
+
+        if [ ! -f "${LOCAL_LIB_CONFIG_FILE}" ]; then
+            LOCAL_RETURN_VALUE=1
+            echo "ERROR: File '${LOCAL_LIB_CONFIG_FILE}' not found."
+        else
+            source "${LOCAL_LIB_CONFIG_FILE}"
+            if [ $? -ne 0 ]; then
+                LOCAL_RETURN_VALUE=1
+                echo "ERROR: Error loading library configuration file: ${LOCAL_LIB_CONFIG_FILE}"
+            fi
+        fi
+    fi
+
+    # Number of build processes
+    if [ -z "${FM_ARG_NUM_PROCESSES-}" ]; then
+        LOCAL_RETURN_VALUE=1
+        echo "ERROR: The number of build processes must be specified."
+    else
+        case ${FM_ARG_NUM_PROCESSES} in
+            0|*[!0-9]*)
+                LOCAL_RETURN_VALUE=1
+                echo "ERROR: Invalid number of build processes: ${FM_ARG_NUM_PROCESSES}"
+            ;;
+        esac
+    fi
+
+    # Toolchain
+    if [ -z "${FM_ARG_TOOLCHAIN-}" ]; then
+        LOCAL_RETURN_VALUE=1
+        echo "ERROR: A toolchain must be specified."
+    else
+        local LOCAL_TOOLCHAIN_INIT_SCRIPT="${FM_PATH_CORE_SCRIPTS_DIRECTORY}/toolchains/${FM_ARG_TOOLCHAIN}.sh"
+        if [ ! -f "${LOCAL_TOOLCHAIN_INIT_SCRIPT}" ]; then
+            LOCAL_RETURN_VALUE=1
+            echo "ERROR: Invalid toolchain: ${FM_ARG_TOOLCHAIN}"
+        else
+            source ${LOCAL_TOOLCHAIN_INIT_SCRIPT}
+        fi
+    fi
+
+    # Architectures
+    if [ -z "${FM_ARG_ARCHITECTURES-}" ]; then
+        LOCAL_RETURN_VALUE=1
+        echo "ERROR: At least one architecture must be specified."
+    else
+        if [ "${FM_ARG_ARCHITECTURES}" = "all" ]; then
+            FM_ARG_ARCHITECTURES="$(echo "${FM_TARGET_ALL_ARCHITECTURES}" | tr '[:upper:]' '[:lower:]' | tr "," " ")"
+        fi
+
+        local LOCAL_ARCHITECTURE=""
+        local LOCAL_JOINED_ARCHITECTURES=""
+        for LOCAL_ARCHITECTURE in ${FM_ARG_ARCHITECTURES}
+        do
+            if ! isItemInArray "${LOCAL_ARCHITECTURE}" "$(echo "${FM_TARGET_ALL_ARCHITECTURES}" | tr "," " ")" ; then
+                LOCAL_RETURN_VALUE=1
+                echo "ERROR: Invalid architecture: ${LOCAL_ARCHITECTURE}"
+            else
+                if [ -z "${LOCAL_JOINED_ARCHITECTURES-}" ]; then
+                    LOCAL_JOINED_ARCHITECTURES="${LOCAL_ARCHITECTURE}"
+                else
+                    LOCAL_JOINED_ARCHITECTURES="${LOCAL_JOINED_ARCHITECTURES}, ${LOCAL_ARCHITECTURE}"
+                fi
+            fi
+        done
+    fi
+
+    # Build variants
+    if [ -z "${FM_ARG_BUILD_VARIANTS-}" ]; then
+        LOCAL_RETURN_VALUE=1
+        echo "ERROR: At least one build variant must be specified."
+    else
+        if [ "${FM_ARG_BUILD_VARIANTS}" = "all" ]; then
+            FM_ARG_BUILD_VARIANTS="$(echo "${FM_TARGET_ALL_BUILD_VARIANTS}" | tr '[:upper:]' '[:lower:]' | tr "," " ")"
+        fi
+
+        local LOCAL_BUILD_VARIANT=""
+        local LOCAL_JOINED_BUILD_VARIANTS=""
+        for LOCAL_BUILD_VARIANT in ${FM_ARG_BUILD_VARIANTS}
+        do
+            if ! isItemInArray "${LOCAL_BUILD_VARIANT}" "$(echo "${FM_TARGET_ALL_BUILD_VARIANTS}" | tr "," " ")" ; then
+                LOCAL_RETURN_VALUE=1
+                echo "ERROR: Invalid build variant: ${LOCAL_BUILD_VARIANT}"
+            else
+                if [ -z "${LOCAL_JOINED_BUILD_VARIANTS-}" ]; then
+                    LOCAL_JOINED_BUILD_VARIANTS="${LOCAL_BUILD_VARIANT}"
+                else
+                    LOCAL_JOINED_BUILD_VARIANTS="${LOCAL_JOINED_BUILD_VARIANTS}, ${LOCAL_BUILD_VARIANT}"
+                fi
+            fi
+        done
+    fi
+
+    # Tarball cache
+    if [ -z "${FM_ARG_TARBALL_CACHE-}" ]; then
+        LOCAL_RETURN_VALUE=1
+        echo "ERROR: The cache folder for downloaded library source tarballs must be specified."
+    else
+        if ! mkdir -p "${FM_ARG_TARBALL_CACHE}"; then
+            LOCAL_RETURN_VALUE=1
+            echo "ERROR: Cannot create the cache folder for downloaded library source tarballs: ${FM_ARG_TARBALL_CACHE}"
+        fi
+    fi
+
+    # Build root
+    if [ -z "${FM_ARG_BUILD_ROOT-}" ]; then
+        LOCAL_RETURN_VALUE=1
+        echo "ERROR: The root folder for the builds must be specified."
+    else
+        if ! mkdir -p "${FM_ARG_BUILD_ROOT}"; then
+            LOCAL_RETURN_VALUE=1
+            echo "ERROR: Cannot create the root folder for the builds: ${FM_ARG_BUILD_ROOT}"
+        fi
+    fi
+
+    # Deploy root
+    if [ -z "${FM_ARG_DEPLOY_ROOT-}" ]; then
+        LOCAL_RETURN_VALUE=1
+        echo "ERROR: The root folder for libraries deployment must be specified."
+    else
+        if ! mkdir -p "${FM_ARG_DEPLOY_ROOT}"; then
+            LOCAL_RETURN_VALUE=1
+            echo "ERROR: Cannot create the root folder for libraries deployment: ${FM_ARG_DEPLOY_ROOT}"
+        fi
+    fi
+
+    return $LOCAL_RETURN_VALUE
+}
+
+buildLibrary()
+{
+    local LOCAL_LIB_NAME="${FM_ARG_LIB%%/*}"
+    local LOCAL_LIB_VERSION="${FM_ARG_LIB#*/}"
+    local LOCAL_LIB_BUILD_SCRIPT="${FM_PATH_SCRIPTS_ROOT_DIRECTORY}/libs/${LOCAL_LIB_NAME}/${LOCAL_LIB_NAME}-${LOCAL_LIB_VERSION}/build.sh"
+
+    ${LOCAL_LIB_BUILD_SCRIPT} --action=buildInstall --jobs=${FM_ARG_NUM_PROCESSES} --toolchain=${FM_ARG_TOOLCHAIN} \
+        --architectures="${FM_ARG_ARCHITECTURES}" --variants="${FM_ARG_BUILD_VARIANTS}" --tarball-cache="${FM_ARG_TARBALL_CACHE}" \
+        --build-root="${FM_ARG_BUILD_ROOT}" --deploy-root="${FM_ARG_DEPLOY_ROOT}"
+
+    if [ $? -ne 0 ]; then
+        error "Build failed"
+    fi
+}
+
+
+if ! parseArguments "$@"; then
+    printHelp
     exit 1
 fi
 
-LIB_TO_BUILD="$(echo $1 | tr '[:upper:]' '[:lower:]')"
-LIB_TO_BUILD_NAME="${LIB_TO_BUILD%%/*}"
-LIB_TO_BUILD_VERSION="${LIB_TO_BUILD#*/}"
-LIB_INFO_FILE="${FM_LIBS_BUILD_ROOT_SCRIPT_DIR}/libs/${LIB_TO_BUILD_NAME}/${LIB_TO_BUILD_NAME}-${LIB_TO_BUILD_VERSION}/config.sh"
-
-# Check library
-LIBS_CHECK_OK="true"
-printf "Checking ${LIB_TO_BUILD} ... "
-if [ ! -f ${LIB_INFO_FILE} ]; then
-    LIBS_CHECK_OK="false"
-    echo "NOT FOUND"
-else
-    source "${LIB_INFO_FILE}"
-    if [ $? -ne 0 ]; then
-        LIBS_CHECK_OK="false"
-        echo "ERROR"
-    else
-        echo "OK"
-    fi
-fi
-
-if [ ${LIBS_CHECK_OK} = "false" ]; then
-    error "Library check failed."
-fi
-
-echo ${BLOCK_SEPARATOR}
-
-# Build library
-./libs/${LIB_TO_BUILD_NAME}/${LIB_TO_BUILD_NAME}-${LIB_TO_BUILD_VERSION}/build.sh "${FM_GLOBAL_TOOLCHAIN}" "${FM_GLOBAL_ARCHITECTURE}" "$2"
-if [ $? -ne 0 ]; then
-    error "Build failed"
-fi
-
-echo ${BLOCK_SEPARATOR}
-echo "OK: All libraries built successfully"
-echo
+buildLibrary
 
 success

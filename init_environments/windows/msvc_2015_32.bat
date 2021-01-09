@@ -1,31 +1,24 @@
 @echo off
 
-set FM_SCRIPT_PATH=%~dp0
+set FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY=%~dp0
 
-call "vars.bat"
+call "%FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY%\vars.bat"
 
-set FM_GLOBAL_HOST=windows
-set FM_GLOBAL_COMPILER=msvc2015
-set FM_GLOBAL_TOOLCHAIN=%FM_GLOBAL_HOST%_%FM_GLOBAL_COMPILER%
-set FM_GLOBAL_ARCHITECTURE=i386
-
-set PATH=%FM_GLOBAL_CMAKE_INSTALL_PATH%\bin;^
-%FM_GLOBAL_MSYS64_INSTALL_PATH%\usr\local\bin;^
-%FM_GLOBAL_MSYS64_INSTALL_PATH%\usr\bin;^
-%FM_GLOBAL_MSYS64_INSTALL_PATH%\bin;^
-%FM_GLOBAL_MSYS64_INSTALL_PATH%\opt\bin;^
+set PATH=%FM_CONFIG_MSYS64_INSTALL_PATH%\usr\local\bin;^
+%FM_CONFIG_MSYS64_INSTALL_PATH%\usr\bin;^
+%FM_CONFIG_MSYS64_INSTALL_PATH%\bin;^
+%FM_CONFIG_MSYS64_INSTALL_PATH%\opt\bin;^
 %PATH%
 
-call "%FM_GLOBAL_MSVC2015_INSTALL_PATH%\VC\vcvarsall.bat" x86
+set FM_TARGET_OS_TYPE=windows
+set FM_TARGET_COMPILER=msvc
+set FM_TARGET_COMPILER_VERSION=14.0
+set FM_TARGET_TOOLCHAIN=windows_msvc
+set FM_TARGET_PLATFORM=windows_msvc2015
+set FM_TARGET_HAS_PKGCONFIG=false
+set FM_TARGET_ALL_ARCHITECTURES=x86
+set FM_TARGET_ALL_BUILD_VARIANTS=debug,release
 
-cd /D %FM_SCRIPT_PATH%\..\..
+call "%FM_CONFIG_MSVC2015_INSTALL_PATH%\VC\vcvarsall.bat" x86
 
-echo.
-echo To build all libraries:
-echo ./build_libset.sh latest debug,release
-echo.
-echo To build a single library:
-echo ./build_lib.sh "LIBNAME/LIBVERSION" debug,release
-echo.
-
-%FM_GLOBAL_MSYS64_INSTALL_PATH%\usr\bin\bash.exe
+call "%FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY%\start_bash.bat"
