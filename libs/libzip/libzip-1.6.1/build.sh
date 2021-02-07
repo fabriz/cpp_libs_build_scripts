@@ -5,13 +5,6 @@ export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 
-afterBuildCurrentArchitecture()
-{
-    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" ]; then
-        moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
-    fi
-}
-
 beforeBuildCurrentArchitecture()
 {
     # Build just the library
@@ -19,6 +12,13 @@ beforeBuildCurrentArchitecture()
     sed -i.orig 's/ADD_SUBDIRECTORY(src)/#ADD_SUBDIRECTORY(src)/' ./CMakeLists.txt
     sed -i.orig 's/ADD_SUBDIRECTORY(regress)/#ADD_SUBDIRECTORY(regress)/' ./CMakeLists.txt
     sed -i.orig 's/ADD_SUBDIRECTORY(examples)/#ADD_SUBDIRECTORYexamples/' ./CMakeLists.txt
+}
+
+afterBuildCurrentArchitecture()
+{
+    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" ]; then
+        moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
+    fi
 }
 
 buildCurrentArchitecture__linux_gcc()

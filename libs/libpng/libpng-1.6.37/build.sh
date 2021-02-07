@@ -5,14 +5,6 @@ export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 
-#beforeBuildCurrentArchitecture()
-#{
-#    # Avoid the "d" suffix for debug libraries and errors finding m library
-#    sed -i.orig -e 's/CMAKE_DEBUG_POSTFIX "d"/CMAKE_DEBUG_POSTFIX ""/'\
-#        -e 's/find_library(M_LIBRARY m)/set(M_LIBRARY "")/'\
-#        ./CMakeLists.txt
-#}
-
 afterBuildCurrentArchitecture()
 {
     deleteFile "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/png.h"

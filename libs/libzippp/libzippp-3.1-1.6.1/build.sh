@@ -29,21 +29,21 @@ afterBuildCurrentArchitecture()
 buildCurrentArchitecture__linux_gcc()
 {
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make libzippp-static -j${FM_ARG_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CPPFLAGS} ${CFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make libzippp-static -j${FM_ARG_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CPPFLAGS} ${CFLAGS} ${CXXFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }
 
 buildCurrentArchitecture__android_clang()
 {
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make libzippp-static -j${FM_ARG_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CPPFLAGS} ${CFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make libzippp-static -j${FM_ARG_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CPPFLAGS} ${CFLAGS} ${CXXFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }
 
 buildCurrentArchitecture__macos_clang()
 {
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make libzippp-static -j${FM_ARG_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CPPFLAGS} ${CFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make libzippp-static -j${FM_ARG_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CPPFLAGS} ${CFLAGS} ${CXXFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }
 
@@ -55,7 +55,7 @@ buildCurrentArchitecture__macos_clang()
 buildCurrentArchitecture__windows_mingw()
 {
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make libzippp-static -j${FM_ARG_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CPPFLAGS} ${CFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    make libzippp-static -j${FM_ARG_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CPPFLAGS} ${CFLAGS} ${CXXFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }
 

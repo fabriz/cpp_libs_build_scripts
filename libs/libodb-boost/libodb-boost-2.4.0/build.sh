@@ -130,7 +130,7 @@ buildCurrentArchitecture__windows_msvc()
     devenv ./libodb-boost-vc12.sln -upgrade
     
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    devenv ./libodb-boost-vc12.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    devenv ./libodb-boost-vc12.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" -out "${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE}"
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

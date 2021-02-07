@@ -162,7 +162,7 @@ buildCurrentArchitecture__windows_mingw()
 #    devenv ./allinone/allinone.sln -upgrade
 
 #    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-#    devenv ./allinone/allinone.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+#    devenv ./allinone/allinone.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" -out "${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE}"
 #    checkBuildStep
 
 #    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

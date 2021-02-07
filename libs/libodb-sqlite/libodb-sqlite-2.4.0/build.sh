@@ -20,7 +20,7 @@ buildCurrentArchitecture__linux_gcc()
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure ${CROSS_COMPILER_HOST} --disable-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure ${CROSS_COMPILER_HOST} --disable-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} -out "${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE}"
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -130,7 +130,7 @@ buildCurrentArchitecture__windows_msvc()
     devenv ./libodb-sqlite-vc12.sln -upgrade
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    devenv ./libodb-sqlite-vc12.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    devenv ./libodb-sqlite-vc12.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" -out "${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE}"
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

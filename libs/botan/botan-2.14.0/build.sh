@@ -50,8 +50,6 @@ beforeBuildCurrentArchitecture()
 
 afterBuildCurrentArchitecture()
 {
-    local BASE_INCLUDE_DIR=""
-    
     moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/botan-2/botan" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include"
     deleteDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/botan-2"
 

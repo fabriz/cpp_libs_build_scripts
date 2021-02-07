@@ -19,7 +19,7 @@ Usage: build_libset.sh [OPTIONS]
 
  Option     Long option
  -h         --help                  Prints this help message and exits.
-            --list                  Lists available libraries and exits.
+            --list                  Lists available libsets and exits.
  -l=value   --libset=value          Libset. Default: latest
  -x=value   --architectures=value   Architectures to build. Default: all (${FM_TARGET_ALL_ARCHITECTURES:-UNDEFINED}).
  -v=value   --variants=value        Variants to build. Default: all (${FM_TARGET_ALL_BUILD_VARIANTS:-UNDEFINED}).

@@ -139,6 +139,18 @@ moveDirectory()
     done
 }
 
+moveDirectoryIfPresent()
+{
+    [ $# = 2 ] || error "moveDirectoryIfPresent(): invalid number of arguments"
+
+    local LOCAL_MOVE_SOURCE=$1
+    local LOCAL_MOVE_DESTINATION=$2
+
+    if [ -d "${LOCAL_MOVE_SOURCE}" ]; then
+        moveDirectory "${LOCAL_MOVE_SOURCE}" "${LOCAL_MOVE_DESTINATION}"
+    fi
+}
+
 moveFile()
 {
     [ $# = 2 ] || error "moveFile(): invalid number of arguments"
@@ -164,6 +176,18 @@ moveFile()
     done
 }
 
+moveFileIfPresent()
+{
+    [ $# = 2 ] || error "moveFileIfPresent(): invalid number of arguments"
+
+    local LOCAL_MOVE_SOURCE=$1
+    local LOCAL_MOVE_DESTINATION=$2
+
+    if [ -f "${LOCAL_MOVE_SOURCE}" ]; then
+        moveFile "${LOCAL_MOVE_SOURCE}" "${LOCAL_MOVE_DESTINATION}"
+    fi
+}
+
 copyFile()
 {
     [ $# = 2 ] || error "copyFile(): invalid number of arguments"
@@ -181,4 +205,36 @@ deleteFile()
     local LOCAL_DELETE_TARGET=$1
 
     rm "${LOCAL_DELETE_TARGET}" || error "Cannot delete file ${LOCAL_DELETE_TARGET}"
+}
+
+acquireLock()
+{
+    [ $# = 1 ] || error "acquireLock(): invalid number of arguments"
+
+    local LOCAL_LOCK_DIRECTORY_PATH=$1
+    local LOCAL_LOCK_INITIALLY_BUSY=false
+
+    while true; do
+        if mkdir "${LOCAL_LOCK_DIRECTORY_PATH}" > /dev/null 2>&1; then
+            if [ ${LOCAL_LOCK_INITIALLY_BUSY} = true ]; then
+                echo "ACQUIRED"
+            fi
+            break;
+        else
+            if [ ${LOCAL_LOCK_INITIALLY_BUSY} = false ]; then
+                LOCAL_LOCK_INITIALLY_BUSY=true
+                printf "Waiting to acquire lock: ${LOCAL_LOCK_DIRECTORY_PATH} ... "
+            fi
+            sleep 1
+        fi
+    done
+}
+
+releaseLock()
+{
+    [ $# = 1 ] || error "releaseLock(): invalid number of arguments"
+
+    local LOCAL_LOCK_DIRECTORY_PATH=$1
+
+    deleteDirectory "${LOCAL_LOCK_DIRECTORY_PATH}"
 }

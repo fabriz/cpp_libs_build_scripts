@@ -5,6 +5,15 @@ export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 
+beforeBuildCurrentArchitecture()
+{
+    if [ ${FM_TARGET_TOOLCHAIN} = "macos_clang" ]; then
+        prepareBuildStep "Patching ${FM_CURRENT_ARCHITECTURE_LIB_TAG} source ... "
+        sed -i.orig 's|<sys/types.h>|<stdint.h>|' ./include/ogg/os_types.h
+        checkBuildStep
+    fi
+}
+
 afterBuildCurrentArchitecture()
 {
     deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake"

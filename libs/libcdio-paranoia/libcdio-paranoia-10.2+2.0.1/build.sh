@@ -36,9 +36,23 @@ buildCurrentArchitecture__linux_gcc()
 #{
 #}
 
-#buildCurrentArchitecture__macos_clang()
-#{
-#}
+buildCurrentArchitecture__macos_clang()
+{
+    export LIBCDIO_CFLAGS="${CPPFLAGS} ${CFLAGS}"
+    export LIBCDIO_LIBS="-lcdio -framework IOKit -framework CoreFoundation -framework DiskArbitration"
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    ./configure --disable-shared --disable-example-progs --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make -j${FM_ARG_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+}
 
 #buildCurrentArchitecture__ios_clang()
 #{
@@ -46,6 +60,9 @@ buildCurrentArchitecture__linux_gcc()
 
 buildCurrentArchitecture__windows_mingw()
 {
+    export LIBCDIO_CFLAGS="${CPPFLAGS} ${CFLAGS}"
+    export LIBCDIO_LIBS="-lcdio"
+
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --build="${FM_TARGET_MINGW_PLATFORM}" --disable-shared --disable-example-progs --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep

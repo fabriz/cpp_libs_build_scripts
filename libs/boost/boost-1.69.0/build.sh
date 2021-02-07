@@ -218,7 +218,7 @@ buildCurrentArchitecture__windows_mingw()
     local PYTON_HEADER_FIX="-D_hypot=hypot"
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths\
+    ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
         --toolset=gcc variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} ${PYTON_HEADER_FIX}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
@@ -231,7 +231,7 @@ buildCurrentArchitecture__windows_msvc()
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths\
+    ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
         --toolset=msvc-${FM_TARGET_COMPILER_VERSION} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL}\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep

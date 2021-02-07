@@ -117,9 +117,20 @@ downloadFileFromLanCache()
     if [ $? -ne 0 ]; then
         rm -f "${DESTINATION_PATH}"
         echo "LAN cache: Cannot download ${TARBALL_NAME} to ${DESTINATION_PATH}"
-    else
-        mv "${DESTINATION_PATH}" "${DESTINATION_PATH_FINAL}" || error "Cannot rename file ${DESTINATION_PATH} to ${DESTINATION_PATH_FINAL}"
+        return 1
     fi
+
+    if ! mv "${DESTINATION_PATH}" "${DESTINATION_PATH_FINAL}"; then
+        echo "LAN cache: Cannot rename file ${DESTINATION_PATH} to ${DESTINATION_PATH_FINAL}"
+        return 1
+    fi
+
+    if [ ! -f "${DESTINATION_PATH_FINAL}" ]; then
+        echo "LAN cache: Failed to download ${TARBALL_NAME} to ${DESTINATION_PATH_FINAL}"
+        return 1
+    fi
+
+    return 0
 }
 
 downloadFile()
@@ -146,41 +157,56 @@ downloadFile()
     "${LOCAL_CURL_CMD}" ${LOCAL_CURL_CMD_OPTIONS} -L -o "${LOCAL_DOWNLOAD_DESTINATION_TEMP}" "${LOCAL_DOWNLOAD_SOURCE}"
     if [ $? -ne 0 ]; then
         rm -f "${LOCAL_DOWNLOAD_DESTINATION_TEMP}"
-        echo "Cannot download ${LOCAL_DOWNLOAD_SOURCE} to ${LOCAL_DOWNLOAD_DESTINATION_TEMP}"
+        echo "ERROR: Cannot download ${LOCAL_DOWNLOAD_SOURCE} to ${LOCAL_DOWNLOAD_DESTINATION_TEMP}"
+        return 1
     fi
 
-    mv "${LOCAL_DOWNLOAD_DESTINATION_TEMP}" "${LOCAL_DOWNLOAD_DESTINATION}" || error "Cannot rename file ${LOCAL_DOWNLOAD_DESTINATION_TEMP} to ${LOCAL_DOWNLOAD_DESTINATION}"
+    if ! mv "${LOCAL_DOWNLOAD_DESTINATION_TEMP}" "${LOCAL_DOWNLOAD_DESTINATION}"; then
+        echo "ERROR: Cannot rename file ${LOCAL_DOWNLOAD_DESTINATION_TEMP} to ${LOCAL_DOWNLOAD_DESTINATION}"
+        return 1
+    fi
+
+    if [ ! -f "${LOCAL_DOWNLOAD_DESTINATION}" ]; then
+        echo "ERROR: Failed to download ${LOCAL_DOWNLOAD_SOURCE} to ${LOCAL_DOWNLOAD_DESTINATION}"
+        return 1
+    fi
+
+    return 0
 }
 
 downloadCurrentLibTarballIfMissing()
 {
     local LOCAL_LIB_TARBALL_LOCAL_PATH="${FM_ARG_TARBALL_CACHE}/${FM_CURRENT_LIB_TARBALL_NAME}"
+    local LOCAL_LIB_TARBALL_LOCK_PATH="${FM_ARG_TARBALL_CACHE}/${FM_CURRENT_LIB_TARBALL_NAME}.lock"
+
+    acquireLock "${LOCAL_LIB_TARBALL_LOCK_PATH}"
 
     if [ ! -f ${LOCAL_LIB_TARBALL_LOCAL_PATH} ]; then
         echo "File ${FM_CURRENT_LIB_TARBALL_NAME} is missing"
 
+        local LOCAL_USE_LAN_TARBALL_CACHE="$(echo ${FM_CONFIG_LAN_TARBALL_CACHE_USE} | tr '[:upper:]' '[:lower:]')"
         local LOCAL_DOWNLOAD_FROM_LAN_CACHE=false
         local LOCAL_DOWNLOAD_FROM_INTERNET=true
 
-        case ${FM_CONFIG_LAN_TARBALL_CACHE_USE} in
-            "NO")
+        case ${LOCAL_USE_LAN_TARBALL_CACHE:-no} in
+            "no")
                 LOCAL_DOWNLOAD_FROM_LAN_CACHE=false
                 LOCAL_DOWNLOAD_FROM_INTERNET=true
             ;;
-            "YES")
+            "yes")
                 LOCAL_DOWNLOAD_FROM_LAN_CACHE=true
                 LOCAL_DOWNLOAD_FROM_INTERNET=true
             ;;
-            "ONLY")
+            "only")
                 LOCAL_DOWNLOAD_FROM_LAN_CACHE=true
                 LOCAL_DOWNLOAD_FROM_INTERNET=false
             ;;
         esac
 
         if [ ${LOCAL_DOWNLOAD_FROM_LAN_CACHE} = true ]; then
-            downloadFileFromLanCache ${FM_CURRENT_LIB_TARBALL_NAME} ${LOCAL_LIB_TARBALL_LOCAL_PATH}
-            if [ ! -f ${LOCAL_LIB_TARBALL_LOCAL_PATH} ]; then
+            if ! downloadFileFromLanCache ${FM_CURRENT_LIB_TARBALL_NAME} ${LOCAL_LIB_TARBALL_LOCAL_PATH}; then
                 if [ ${LOCAL_DOWNLOAD_FROM_INTERNET} = false ]; then
+                    releaseLock "${LOCAL_LIB_TARBALL_LOCK_PATH}"
                     error "Cannot get file ${FM_CURRENT_LIB_TARBALL_NAME} from the LAN cache."
                 fi
             fi
@@ -193,11 +219,14 @@ downloadCurrentLibTarballIfMissing()
         fi
 
         if [ ! -f ${LOCAL_LIB_TARBALL_LOCAL_PATH} ]; then
+            releaseLock "${LOCAL_LIB_TARBALL_LOCK_PATH}"
             error "Cannot get file ${FM_CURRENT_LIB_TARBALL_NAME}."
         fi
     else
         echo "File ${FM_CURRENT_LIB_TARBALL_NAME} already cached"
     fi
+
+    releaseLock "${LOCAL_LIB_TARBALL_LOCK_PATH}"
 }
 
 initCurrentLibraryVariables()
@@ -388,15 +417,15 @@ installLibraries()
         fi
     fi
 
-    # check that at least one found
-
-    printf "Installing library files ... "
-    cp -R "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/." "${FM_LIBS_INSTALL_LIBS}/"
-    echo "OK"
-
     printf "Installing include files ... "
     cp -R "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/." "${FM_LIBS_INSTALL_INCLUDES}/"
     echo "OK"
+
+    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib" ]; then
+        printf "Installing library files ... "
+        cp -R "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/." "${FM_LIBS_INSTALL_LIBS}/"
+        echo "OK"
+    fi
 
     if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/dll" ]; then
         printf "Installing dll files ... "
@@ -472,7 +501,7 @@ actionBuildInstall()
     downloadCurrentLibTarballIfMissing
     checkCurrentLibTarballChecksum
 
-    local LOCAL_LIBRARY_BUILT="false"
+    local LOCAL_LIBRARY_BUILT=false
     for FM_ARG_ARCHITECTURE in ${FM_ARG_ARCHITECTURES}
     do
         for FM_ARG_BUILD_VARIANT in ${FM_ARG_BUILD_VARIANTS}

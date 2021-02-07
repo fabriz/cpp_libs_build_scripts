@@ -20,4 +20,6 @@ set FM_TARGET_ALL_BUILD_VARIANTS=debug,release,profile
 
 for /F "delims=" %%i in ('gcc -dumpversion') do set FM_TARGET_COMPILER_VERSION=%%i
 
+set FM_TARGET_BUILD_FLAGS_FOR_BOOST=--without-python
+
 call "%FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY%\start_bash.bat"

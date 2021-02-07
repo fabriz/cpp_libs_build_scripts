@@ -14,6 +14,8 @@ REM MSYS environment installation path
 set FM_CONFIG_MSYS64_INSTALL_PATH=C:\msys64
 
 REM MinGW toolchains installation paths
+REM set FM_CONFIG_MINGW_32_INSTALL_PATH=C:\msys64\mingw32
+REM set FM_CONFIG_MINGW_64_INSTALL_PATH=C:\msys64\mingw64
 REM set FM_CONFIG_MINGW_32_INSTALL_PATH=C:\Qt\Tools\mingw810_32
 REM set FM_CONFIG_MINGW_64_INSTALL_PATH=C:\Qt\Tools\mingw810_64
 

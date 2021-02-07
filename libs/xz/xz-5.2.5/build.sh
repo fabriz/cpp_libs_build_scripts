@@ -103,7 +103,7 @@ buildCurrentArchitecture__windows_msvc()
     devenv ./windows/vs2013/xz_win.sln -upgrade
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    devenv ./windows/vs2013/xz_win.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" -project "liblzma" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    devenv ./windows/vs2013/xz_win.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" -project "liblzma" -out "${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE}"
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
