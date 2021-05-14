@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build script for neon 0.31.2
+# Build script for curl 7.75.0
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
@@ -9,10 +9,11 @@ beforeBuildCurrentArchitecture()
 {
     THIS_SCRIPT_OPTIONAL_BUILD_FLAGS=""
 
-#    if isLibraryInstalled "OPENSSL"; then
-#        echo "Enabling support for library openssl"
-#        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --with-ssl=openssl --enable-threadsafe-ssl"
-#    fi
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="--enable-debug"
+    else
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="--disable-debug"
+    fi
 }
 
 afterBuildCurrentArchitecture()
@@ -28,7 +29,8 @@ buildCurrentArchitecture__linux_gcc()
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure ${CROSS_COMPILER_HOST} --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure ${CROSS_COMPILER_HOST} --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -43,7 +45,8 @@ buildCurrentArchitecture__linux_gcc()
 buildCurrentArchitecture__android_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -57,10 +60,9 @@ buildCurrentArchitecture__android_clang()
 
 buildCurrentArchitecture__macos_clang()
 {
-    export CFLAGS="${CFLAGS} -Wno-error=all"
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -78,11 +80,9 @@ buildCurrentArchitecture__macos_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
-    export CFLAGS="${CFLAGS} -D__USE_MINGW_ANSI_STDIO=1"
-    export ne_cv_os_uname="MINGW32"
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure --build="${FM_TARGET_MINGW_PLATFORM}" --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure --build="${FM_TARGET_MINGW_PLATFORM}" --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -99,4 +99,4 @@ buildCurrentArchitecture__windows_mingw()
 #}
 
 
-buildLibrary "NEON"
+buildLibrary "CURL"

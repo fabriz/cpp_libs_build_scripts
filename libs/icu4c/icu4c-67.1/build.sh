@@ -37,7 +37,7 @@ buildCurrentArchitecture__linux_gcc()
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure ${CROSS_COMPILER_HOST} ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
-        --with-data-packaging=static\
+        --enable-dyload=no --with-data-packaging=static\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -64,7 +64,7 @@ buildCurrentArchitecture__android_clang()
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
         --with-cross-build=${FM_ARG_BUILD_ROOT}/linux_gcc_x86_64_release/source/${FM_ICU4C_FULL_NAME}/x86_64/source\
-        --enable-tools=no --enable-tests=no --enable-samples=no --with-data-packaging=static\
+        --enable-dyload=no --enable-tools=no --enable-tests=no --enable-samples=no --with-data-packaging=static\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -90,7 +90,7 @@ buildCurrentArchitecture__macos_clang()
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
-        --with-data-packaging=static\
+        --enable-dyload=no --with-data-packaging=static\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -127,7 +127,7 @@ buildCurrentArchitecture__windows_mingw()
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --build="${FM_TARGET_MINGW_PLATFORM}" ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
-        --enable-tests=no --enable-samples=no --with-data-packaging=static\
+        --enable-dyload=no --enable-tests=no --enable-samples=no --with-data-packaging=static\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 

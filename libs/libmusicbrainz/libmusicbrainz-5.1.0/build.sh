@@ -15,6 +15,13 @@ beforeBuildCurrentArchitecture()
     if [ ${FM_TARGET_TOOLCHAIN} = "macos_clang" ]; then
         sed -i.orig -e 's/SHARED/STATIC/' \
                     -e 's/${LIBXML2_LIBRARIES}/${LIBXML2_LIBRARIES} lzma z iconv/' ./src/CMakeLists.txt
+    elif [ ${FM_TARGET_TOOLCHAIN} = "windows_mingw" ]; then
+        sed -i.orig -e 's/SHARED/STATIC/' \
+                    -e 's/${LIBXML2_LIBRARIES}/${LIBXML2_LIBRARIES} lzma z iconv wsock32 winmm ws2_32/' ./src/CMakeLists.txt
+
+        # Implementation of timersub taken from https://github.com/msysgit/msys/blob/master/newlib/libc/include/sys/time.h
+        sed -i.orig -e '1s/^/#define timersub(a, b, result) do {(result)->tv_sec = (a)->tv_sec - (b)->tv_sec;(result)->tv_usec = (a)->tv_usec - (b)->tv_usec;if ((result)->tv_usec < 0) {--(result)->tv_sec;(result)->tv_usec += 1000000;}} while (0) /' ./src/Query.cc
+
     else
         sed -i.orig -e 's/SHARED/STATIC/' \
                     -e 's/${LIBXML2_LIBRARIES}/${LIBXML2_LIBRARIES} lzma z/' ./src/CMakeLists.txt

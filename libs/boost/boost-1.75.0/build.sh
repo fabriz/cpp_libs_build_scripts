@@ -9,6 +9,14 @@ beforeBuildCurrentArchitecture()
 {
     THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${FM_TARGET_BUILD_FLAGS_FOR_BOOST-}"
 
+    if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} include=${FM_LIBS_INSTALL_INCLUDES_WINDOWS} library-path=${FM_LIBS_INSTALL_LIBS_WINDOWS}"
+    else
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} include=${FM_LIBS_INSTALL_INCLUDES} library-path=${FM_LIBS_INSTALL_LIBS}"
+    fi
+
+#    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --debug-configuration --debug-building --debug-generators -d2"
+
     if isLibraryInstalled "BZIP2"; then
         echo "Enabling support for library bzip2"
         if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
