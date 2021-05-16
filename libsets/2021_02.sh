@@ -38,11 +38,6 @@ FM_LIBSET_LIBS=(
     libical/3.0.9
 )
 
-# graphicsmagick/1.3.36 fails to build with windows_mingw
-if [ ${FM_TARGET_TOOLCHAIN} = "windows_mingw" ]; then
-    FM_LIBSET_LIBS=("${FM_LIBSET_LIBS[@]/graphicsmagick\/1.3.36/graphicsmagick\/1.3.35}")
-fi
-
 # wt/4.5.0 fails to build with windows_mingw
 if [ ${FM_TARGET_TOOLCHAIN} = "windows_mingw" ]; then
     FM_LIBSET_LIBS=("${FM_LIBSET_LIBS[@]/wt\/4.5.0/wt\/4.2.0}")

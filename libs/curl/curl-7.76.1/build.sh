@@ -1,17 +1,24 @@
 #!/bin/bash
-# Build script for graphicsmagick 1.3.36
+# Build script for curl 7.76.1
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 
+beforeBuildCurrentArchitecture()
+{
+    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS=""
+
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="--enable-debug"
+    else
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="--disable-debug"
+    fi
+}
+
 afterBuildCurrentArchitecture()
 {
-    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/GraphicsMagick-"*
-
-    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" ]; then
-        moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
-    fi
+    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
 }
 
 buildCurrentArchitecture__linux_gcc()
@@ -22,7 +29,8 @@ buildCurrentArchitecture__linux_gcc()
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure ${CROSS_COMPILER_HOST} --disable-shared --without-gs --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure ${CROSS_COMPILER_HOST} --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -37,7 +45,8 @@ buildCurrentArchitecture__linux_gcc()
 buildCurrentArchitecture__android_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared --without-gs --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -52,7 +61,8 @@ buildCurrentArchitecture__android_clang()
 buildCurrentArchitecture__macos_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure --disable-shared --without-gs --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -70,11 +80,9 @@ buildCurrentArchitecture__macos_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
-    export CPPFLAGS="-DLIBXML_STATIC=1 ${CPPFLAGS}"
-    export LIBS="-lgdi32"
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure --build="${FM_TARGET_MINGW_PLATFORM}" --disable-shared --without-gs --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure --build="${FM_TARGET_MINGW_PLATFORM}" --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -91,4 +99,4 @@ buildCurrentArchitecture__windows_mingw()
 #}
 
 
-buildLibrary "GRAPHICSMAGICK"
+buildLibrary "CURL"
