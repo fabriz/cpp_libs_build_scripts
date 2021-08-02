@@ -5,6 +5,15 @@ export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 
+beforeBuildCurrentArchitecture()
+{
+    # File "version" clashes with a new header of the Standard Library introduced in C++20
+    prepareBuildStep "Patching ${FM_CURRENT_ARCHITECTURE_LIB_TAG} configuration ... "
+    moveFile "./version" "./version_odb"
+    sed -i.orig 's/dist_doc_DATA = GPLv2 LICENSE README NEWS version/dist_doc_DATA = GPLv2 LICENSE README NEWS version_odb/' ./Makefile.in
+    checkBuildStep
+}
+
 afterBuildCurrentArchitecture()
 {
     if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" ]; then
@@ -36,12 +45,6 @@ buildCurrentArchitecture__android_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
-    checkBuildStep
-
-    # File "version" clashes with an header of the Standard Library of the NDK
-    prepareBuildStep "Patching ${FM_CURRENT_ARCHITECTURE_LIB_TAG} makefile ... "
-    moveFile "./version" "./version_odb"
-    sed -i.orig 's/dist_doc_DATA = GPLv2 LICENSE README NEWS version/dist_doc_DATA = GPLv2 LICENSE README NEWS version_odb/' ./Makefile
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build script for odb_sqlite 2.4.0
+# Build script for sqlite 3.36.0
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
@@ -7,11 +7,9 @@ source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 beforeBuildCurrentArchitecture()
 {
-    # File "version" clashes with a new header of the Standard Library introduced in C++20
-    prepareBuildStep "Patching ${FM_CURRENT_ARCHITECTURE_LIB_TAG} configuration ... "
-    moveFile "./version" "./version_odb"
-    sed -i.orig 's/dist_doc_DATA = GPLv2 LICENSE README NEWS version/dist_doc_DATA = GPLv2 LICENSE README NEWS version_odb/' ./Makefile.in
-    checkBuildStep
+    if [ -n "${CFLAGS-}" ]; then
+        export CFLAGS="${CFLAGS} -DSQLITE_ENABLE_UNLOCK_NOTIFY=1"
+    fi
 }
 
 afterBuildCurrentArchitecture()
@@ -88,8 +86,6 @@ buildCurrentArchitecture__ios_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
-    export CXXFLAGS="-DLIBODB_STATIC_LIB ${FM_TARGET_TOOLCHAIN_CXXFLAGS}"
-
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --disable-shared --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -105,46 +101,37 @@ buildCurrentArchitecture__windows_mingw()
 
 buildCurrentArchitecture__windows_msvc()
 {
-    local BUILD_PLATFORM=""
-    if [ ${FM_TARGET_ARCHITECTURE} = "x86" ]; then
-        BUILD_PLATFORM="Win32"
-    else
-        BUILD_PLATFORM="x64"
-    fi
-    
-    local BUILD_CONFIGURATION=""
+    ADDITIONAL_FLAG=""
     if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-        BUILD_CONFIGURATION="Debug"
+        ADDITIONAL_FLAG="-MDd -DSQLITE_ENABLE_API_ARMOR=1"
     else
-        BUILD_CONFIGURATION="Release"
+        ADDITIONAL_FLAG="-MD -O2 -DNDEBUG"
     fi
-    
-    # Patch files
-    sed -i.orig -e '/<ImportLibrary>/d' -e '/<WholeProgramOptimization>/d' -e 's/DynamicLibrary/StaticLibrary/'\
-        -e '/<OutDir>/c\<OutDir>..\\..\\tmp_build\\</OutDir>'\
-        -e '/<TargetName>/c\<TargetName>odb-sqlite</TargetName>'\
-        -e 's/_USRDLL;LIBODB_SQLITE_DYNAMIC_LIB/LIBODB_STATIC_LIB;LIBODB_SQLITE_STATIC_LIB/'\
-        -e '/<SDLCheck>/a <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n<ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>'\
-        ./odb/sqlite/libodb-sqlite-vc12.vcxproj
-
-    export _CL_="${FM_TARGET_TOOLCHAIN_CFLAGS}"
-    export _LINK_="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
-
-    devenv ./libodb-sqlite-vc12.sln -upgrade
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    devenv ./libodb-sqlite-vc12.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" -out "${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE}"
+
+    cl -W4 -Zi -Fosqlite3.obj -Fdsqlite3.pdb -c -fp:precise -I. ${ADDITIONAL_FLAG}\
+        -DINCLUDE_MSVC_H=1 -DSQLITE_OS_WIN=1 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
+        -D_CRT_NONSTDC_NO_WARNINGS -DSQLITE_THREADSAFE=1 -DSQLITE_THREAD_OVERRIDE_LOCK=-1 -DSQLITE_TEMP_STORE=1\
+        -DSQLITE_MAX_TRIGGER_DEPTH=100  -DSQLITE_ENABLE_FTS3=1 -DSQLITE_ENABLE_RTREE=1 -DSQLITE_ENABLE_GEOPOLY=1 -DSQLITE_ENABLE_JSON1=1\
+        -DSQLITE_ENABLE_STMTVTAB=1 -DSQLITE_ENABLE_DBPAGE_VTAB=1 -DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_DESERIALIZE=1\
+        -DSQLITE_ENABLE_COLUMN_METADATA=1 -DSQLITE_ENABLE_UNLOCK_NOTIFY=1\
+         sqlite3.c > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+
+    lib /OUT:sqlite3.lib sqlite3.obj >> ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}
-    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/odb
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
     createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-    /usr/bin/find ./odb \( -name "*.h" -o -name "*.hxx" -o -name "*.ixx" -o -name "*.txx" \) -exec cp --parents "{}" ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/ ';'
-    copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/odb-sqlite.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-    copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/odb-sqlite.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    copyFile sqlite3.h ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
+    copyFile sqlite3ext.h ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
+    copyFile sqlite3.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    copyFile sqlite3.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     checkBuildStep
 }
 
 
-buildLibrary "ODBSQLITE"
+buildLibrary "SQLITE"

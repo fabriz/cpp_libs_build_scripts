@@ -7,8 +7,14 @@ source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 beforeBuildCurrentArchitecture()
 {
-    # Avoid the "d" suffix for debug libraries
-    sed -i.orig 's/DEBUG_LIB_POSTFIX "d"/DEBUG_LIB_POSTFIX ""/' ./CMakeLists.txt
+    if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
+        # Avoid the "d" suffix for debug libraries and set flags for boost linking
+        sed -i.orig -e 's/DEBUG_LIB_POSTFIX "d"/DEBUG_LIB_POSTFIX ""/' \
+                    -e 's/-D_WIN32_WINNT=0x0600/-D_WIN32_WINNT=0x0600 -DBOOST_AUTO_LINK_SYSTEM/' ./CMakeLists.txt
+    else
+        # Avoid the "d" suffix for debug libraries
+        sed -i.orig 's/DEBUG_LIB_POSTFIX "d"/DEBUG_LIB_POSTFIX ""/' ./CMakeLists.txt
+    fi
 
     sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/CMakeLists.txt
     sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/Wt/Dbo/CMakeLists.txt
