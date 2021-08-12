@@ -8,10 +8,6 @@ source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 afterBuildCurrentArchitecture()
 {
     deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/GraphicsMagick-"*
-
-    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" ]; then
-        moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
-    fi
 }
 
 buildCurrentArchitecture__linux_gcc()

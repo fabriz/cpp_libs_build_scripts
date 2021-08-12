@@ -15,11 +15,6 @@ beforeBuildCurrentArchitecture()
 #    fi
 }
 
-afterBuildCurrentArchitecture()
-{
-    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
-}
-
 buildCurrentArchitecture__linux_gcc()
 {
     local CROSS_COMPILER_HOST=""

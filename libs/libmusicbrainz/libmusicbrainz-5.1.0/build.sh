@@ -30,11 +30,6 @@ beforeBuildCurrentArchitecture()
     checkBuildStep
 }
 
-afterBuildCurrentArchitecture()
-{
-    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
-}
-
 buildCurrentArchitecture__linux_gcc()
 {
     local CROSS_COMPILATION_FLAGS=""
@@ -99,6 +94,8 @@ buildCurrentArchitecture__macos_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
+    export CXXFLAGS="${CXXFLAGS} -DLIBXML_STATIC"
+
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     "${FM_CONFIG_CMAKE_COMMAND}" -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} \
         -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} \

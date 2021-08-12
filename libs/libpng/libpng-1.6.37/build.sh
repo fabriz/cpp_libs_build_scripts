@@ -24,10 +24,6 @@ afterBuildCurrentArchitecture()
     sed -i.to_patch -e 's/png16/png/' -e 's+/include/libpng+/include+' "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig/libpng.pc"
 
     deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/libpng"
-
-    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" ]; then
-        moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
-    fi
 }
 
 buildCurrentArchitecture__linux_gcc()

@@ -312,6 +312,7 @@ initCurrentArchitecture()
     FM_LIBS_INSTALL_PREFIX="${FM_ARG_DEPLOY_ROOT}/${FM_TARGET_BUILD_TAG}"
     FM_LIBS_INSTALL_INCLUDES="${FM_LIBS_INSTALL_PREFIX}/include"
     FM_LIBS_INSTALL_LIBS="${FM_LIBS_INSTALL_PREFIX}/lib"
+    FM_LIBS_INSTALL_CMAKE="${FM_LIBS_INSTALL_PREFIX}/cmake"
     FM_LIBS_INSTALL_PKGCONFIG="${FM_LIBS_INSTALL_PREFIX}/pkgconfig"
     FM_LIBS_INSTALL_DLLS="${FM_LIBS_INSTALL_PREFIX}/dll"
 
@@ -380,6 +381,13 @@ installLibraries()
 {
     if ! currentLibraryVariantIsAlreadyStaged; then
         error "Library not staged"
+    fi
+    
+    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake" ]; then
+        printf "Installing cmake files ... "
+        createDirectory ${FM_LIBS_INSTALL_CMAKE}
+        cp -R "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake/." "${FM_LIBS_INSTALL_CMAKE}/"
+        echo "OK"
     fi
 
     if [ ${FM_TARGET_HAS_PKGCONFIG:-false} = true ]; then
@@ -455,6 +463,10 @@ buildCurrentArchitecture()
     buildCurrentArchitecture__${FM_TARGET_TOOLCHAIN}
     afterBuildCurrentArchitecture
     
+    #deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake"
+    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake"
+    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
+
     popd
 }
 

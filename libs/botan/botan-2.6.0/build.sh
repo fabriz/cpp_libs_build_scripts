@@ -52,10 +52,6 @@ afterBuildCurrentArchitecture()
     moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/botan-2/botan" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include"
     deleteDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/botan-2"
 
-    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" ]; then
-        moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
-    fi
-
     if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"/lib/python* ]; then
         moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"/lib/python* "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}"
     fi

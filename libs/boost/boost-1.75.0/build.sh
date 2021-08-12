@@ -81,11 +81,6 @@ beforeBuildCurrentArchitecture()
     fi
 }
 
-afterBuildCurrentArchitecture()
-{
-    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake"
-}
-
 buildCurrentArchitecture__linux_gcc()
 {
     prepareBuildStep "Bootstrapping ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

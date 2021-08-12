@@ -14,13 +14,6 @@ beforeBuildCurrentArchitecture()
     sed -i.orig 's/ADD_SUBDIRECTORY(examples)/#ADD_SUBDIRECTORYexamples/' ./CMakeLists.txt
 }
 
-afterBuildCurrentArchitecture()
-{
-    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" ]; then
-        moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
-    fi
-}
-
 buildCurrentArchitecture__linux_gcc()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

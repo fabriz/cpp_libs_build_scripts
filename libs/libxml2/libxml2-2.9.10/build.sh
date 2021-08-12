@@ -11,10 +11,6 @@ afterBuildCurrentArchitecture()
 
     moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/libxml2/libxml" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include"
     deleteDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/libxml2"
-
-    deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake"
-
-    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
 }
 
 buildCurrentArchitecture__linux_gcc()

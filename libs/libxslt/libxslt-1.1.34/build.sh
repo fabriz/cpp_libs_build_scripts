@@ -9,7 +9,6 @@ afterBuildCurrentArchitecture()
 {
     moveFileIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/xsltConf.sh" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/xsltConf.sh"
 
-    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
     moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/libxslt-plugins" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/libxslt-plugins"
     moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/python2.7" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/python2.7"
 }
