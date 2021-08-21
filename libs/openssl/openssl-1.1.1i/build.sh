@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build script for zlib openssl 1.1.1i
+# Build script for openssl 1.1.1i
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
@@ -19,6 +19,8 @@ buildCurrentArchitecture__linux_gcc()
         BUILD_PLATFORM="linux-x86_64"
     elif [ ${FM_TARGET_ARCHITECTURE} = "armv7" ]; then
         BUILD_PLATFORM="linux-generic32"
+    elif [ ${FM_TARGET_ARCHITECTURE} = "armv8" ]; then
+        BUILD_PLATFORM="linux-generic64"
     else
         error "Unsupported architecture: ${FM_TARGET_ARCHITECTURE}"
     fi

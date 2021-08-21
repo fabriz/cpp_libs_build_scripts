@@ -15,7 +15,8 @@ export FM_CONFIG_TAR_COMMAND="$(which tar)"
 #export FM_CONFIG_ANDROID_NDK_INSTALL_PATH=/home/fabrizio/Android/ndk/android-ndk-r21d
 
 # Yocto environment initialization script
-#export FM_CONFIG_YOCTO_ENVIRONMENT_INIT_SCRIPT=/path/to/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+#export FM_CONFIG_YOCTO_ARMV7_ENVIRONMENT_INIT_SCRIPT=/path/to/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+#export FM_CONFIG_YOCTO_ARMV8_ENVIRONMENT_INIT_SCRIPT=/path/to/environment-setup-aarch64-poky-linux
 
 # LAN cache configuration
 #export FM_CONFIG_LAN_TARBALL_CACHE_USE=(NO|YES|ONLY)

@@ -19,6 +19,8 @@ buildCurrentArchitecture__linux_gcc()
         BUILD_PLATFORM="linux-x86_64"
     elif [ ${FM_TARGET_ARCHITECTURE} = "armv7" ]; then
         BUILD_PLATFORM="linux-generic32"
+    elif [ ${FM_TARGET_ARCHITECTURE} = "armv8" ]; then
+        BUILD_PLATFORM="linux-generic64"
     else
         error "Unsupported architecture: ${FM_TARGET_ARCHITECTURE}"
     fi
