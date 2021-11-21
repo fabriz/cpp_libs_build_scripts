@@ -1,0 +1,12 @@
+diff --git a/src/Wt/Render/CssParser.C b/src/Wt/Render/CssParser.C
+index 17d7c54..ca0ac7b 100644
+--- a/src/Wt/Render/CssParser.C
++++ b/src/Wt/Render/CssParser.C
+@@ -20,6 +20,7 @@ using namespace Wt::Render;
+ #define NOMINMAX
+ #define WIN32_LEAN_AND_MEAN
+ 
++#include <boost/foreach.hpp>
+ #include <boost/algorithm/string.hpp>
+ #include <boost/bind.hpp>
+ #include <boost/config/warning_disable.hpp>

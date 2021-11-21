@@ -1,4 +1,12 @@
 #!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
+
 # Configuration script for libmusicbrainz 5.1.0
 # Library release date: 2014/11/13
 

@@ -1,4 +1,12 @@
 #!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
+
 # Build script for odb 2.4.0
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -127,9 +135,6 @@ buildCurrentArchitecture__windows_msvc()
 
     echo "" >> ./odb/compilers/vc/pre.hxx
     echo "#pragma warning (disable:4275)" >> ./odb/compilers/vc/pre.hxx
-    
-    export _CL_="${FM_TARGET_TOOLCHAIN_CFLAGS}"
-    export _LINK_="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
 
     devenv ./libodb-vc12.sln -upgrade
     
@@ -143,7 +148,7 @@ buildCurrentArchitecture__windows_msvc()
     createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     /usr/bin/find ./odb \( -name "*.h" -o -name "*.hxx" -o -name "*.ixx" -o -name "*.txx" \) -exec cp --parents "{}" ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/ ';'
     copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/odb.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-    copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/odb.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    copyFileIfPresent ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/tmp_build/odb.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     checkBuildStep
 }
 

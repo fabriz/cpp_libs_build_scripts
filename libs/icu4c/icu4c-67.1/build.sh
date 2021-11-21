@@ -1,4 +1,12 @@
 #!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
+
 # Build script for icu4c 67.1
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -152,9 +160,6 @@ buildCurrentArchitecture__windows_mingw()
 #        BUILD_CONFIGURATION="Release"
 #    fi
 
-#    export _CL_="${FM_TARGET_TOOLCHAIN_CFLAGS}"
-#    export _LINK_="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
-
 #    devenv ./allinone/allinone.sln -upgrade
 
 #    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -171,7 +176,7 @@ buildCurrentArchitecture__windows_mingw()
 #    popd
 
 #    copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/windows/vs2013/${BUILD_CONFIGURATION}/${BUILD_PLATFORM}/liblzma/liblzma.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-#    copyFile ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/windows/vs2013/${BUILD_CONFIGURATION}/${BUILD_PLATFORM}/liblzma/liblzma.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+#    copyFileIfPresent ${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}/windows/vs2013/${BUILD_CONFIGURATION}/${BUILD_PLATFORM}/liblzma/liblzma.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
 #    checkBuildStep
 #}
 

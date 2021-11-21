@@ -1,4 +1,12 @@
 #!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
+
 # Build script for zlib 1.2.11
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -93,7 +101,7 @@ buildCurrentArchitecture__windows_msvc()
     copyFile zconf.h ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
     copyFile zlib.h ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
     copyFile zlib.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-    copyFile zlib.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    copyFileIfPresent zlib.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     checkBuildStep
 }
 

@@ -1,4 +1,11 @@
 #!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
 
 # Number of parallel jobs for make
 export FM_CONFIG_NUM_PROCESSES=$(nproc)
@@ -9,6 +16,7 @@ export FM_CONFIG_CURL_COMMAND="$(which curl)"
 export FM_CONFIG_PERL_COMMAND="$(which perl)"
 export FM_CONFIG_PYTHON_COMMAND="$(which python)"
 export FM_CONFIG_TAR_COMMAND="$(which tar)"
+export FM_CONFIG_PATCH_COMMAND="$(which patch)"
 
 # Android NDK path and API level
 #export FM_CONFIG_ANDROID_API_LEVEL=21
@@ -32,5 +40,8 @@ export FM_CONFIG_DEPLOY_ROOT=/home/fabrizio/libs/libs
 #export FM_CONFIG_ON_BUILD_SUCCESS=
 #export FM_CONFIG_ON_BUILD_ERROR=
 
-# To disable certificate validation:
+# Uncomment to deploy the provided cmake find modules
+#export FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true
+
+# Uncomment to disable certificate validation
 #export FM_CONFIG_DISABLE_SSL_CERTIFICATE_VALIDATION=true

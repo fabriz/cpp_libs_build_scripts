@@ -1,4 +1,12 @@
 #!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
+
 # Build script for flac 1.3.3
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -91,9 +99,6 @@ buildCurrentArchitecture__windows_msvc()
     else
         BUILD_CONFIGURATION="Release"
     fi
-
-    export _CL_="${FM_TARGET_TOOLCHAIN_CFLAGS}"
-    export _LINK_="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
 
     # Patch files
     cp ./src/libFLAC/libFLAC_static.vcxproj ./src/libFLAC/libFLAC.vcxproj

@@ -1,5 +1,11 @@
 #!/bin/bash
-
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
 
 initToolchain()
 {
@@ -35,11 +41,15 @@ initToolchain()
     case ${FM_ARG_BUILD_VARIANT} in
         debug)
             LOCAL_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
-            LOCAL_BUILD_VARIANT_CFLAGS="-MDd"
+            LOCAL_BUILD_VARIANT_CFLAGS="-MDd -Zi"
         ;;
         release)
             LOCAL_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
             LOCAL_BUILD_VARIANT_CFLAGS="-MD -O2 -DNDEBUG"
+        ;;
+        profile)
+            LOCAL_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
+            LOCAL_BUILD_VARIANT_CFLAGS="-MD -Zi -O2 -DNDEBUG"
         ;;
         *)
             error "Invalid build variant '${FM_ARG_BUILD_VARIANT}'."
@@ -53,16 +63,17 @@ initToolchain()
     FM_LIBS_INSTALL_INCLUDES_WINDOWS="$(cygpath -w "${FM_LIBS_INSTALL_INCLUDES}")"
     FM_LIBS_INSTALL_LIBS_WINDOWS="$(cygpath -w "${FM_LIBS_INSTALL_LIBS}")"
 
+    LOCAL_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES_WINDOWS} -nologo -Zc:wchar_t -Zc:strictStrings -bigobj -FS -DUNICODE -D_UNICODE -DWIN32 -D_WIN32_WINNT=0x0601"
+    LOCAL_COMMON_CXXFLAGS="-Zc:throwingNew -GR -EHsc"
+    LOCAL_COMMON_LDFLAGS="/LIBPATH:${FM_LIBS_INSTALL_LIBS_WINDOWS}"
+
     case ${FM_TARGET_COMPILER_VERSION} in
         14.0)
-            LOCAL_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES_WINDOWS} -nologo -Zi -Zc:wchar_t -Zc:strictStrings -bigobj -FS -DUNICODE -DWIN32 -D_WIN32_WINNT=0x0601"
-            LOCAL_COMMON_CXXFLAGS="-Zc:throwingNew -GR -EHsc"
-            LOCAL_COMMON_LDFLAGS="/LIBPATH:${FM_LIBS_INSTALL_LIBS_WINDOWS}"
+            # Nothing to do
         ;;
         14.1|14.2)
-            LOCAL_COMMON_CFLAGS="-I${FM_LIBS_INSTALL_INCLUDES_WINDOWS} -nologo -Zi -Zc:inline -Zc:wchar_t -Zc:strictStrings -bigobj -FS -DUNICODE -DWIN32 -D_WIN32_WINNT=0x0601"
-            LOCAL_COMMON_CXXFLAGS="-Zc:throwingNew -Zc:rvalueCast -Zc:referenceBinding -GR -EHsc"
-            LOCAL_COMMON_LDFLAGS="/LIBPATH:${FM_LIBS_INSTALL_LIBS_WINDOWS}"
+            LOCAL_COMMON_CFLAGS="${LOCAL_COMMON_CFLAGS} -Zc:inline -D_ENABLE_EXTENDED_ALIGNED_STORAGE"
+            LOCAL_COMMON_CXXFLAGS="${LOCAL_COMMON_CXXFLAGS} -Zc:rvalueCast -Zc:referenceBinding -Zc:__cplusplus"
         ;;
         *)
         error "Invalid compiler version '${FM_TARGET_COMPILER_VERSION}'."
@@ -72,4 +83,9 @@ initToolchain()
     FM_TARGET_TOOLCHAIN_CFLAGS="${LOCAL_COMMON_CFLAGS} ${LOCAL_ARCHITECTURE_CFLAGS} ${LOCAL_BUILD_VARIANT_CFLAGS}"
     FM_TARGET_TOOLCHAIN_CXXFLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS} ${LOCAL_COMMON_CXXFLAGS} ${LOCAL_ARCHITECTURE_CXXFLAGS} ${LOCAL_BUILD_VARIANT_CXXFLAGS}"
     FM_TARGET_TOOLCHAIN_LDFLAGS="${LOCAL_COMMON_LDFLAGS} ${LOCAL_ARCHITECTURE_LDFLAGS} ${LOCAL_BUILD_VARIANT_LDFLAGS}"
+
+    FM_TARGET_TOOLCHAIN_CXXFLAGS_CMAKE="${LOCAL_COMMON_CFLAGS} ${LOCAL_ARCHITECTURE_CFLAGS} ${LOCAL_COMMON_CXXFLAGS} ${LOCAL_ARCHITECTURE_CXXFLAGS} ${LOCAL_BUILD_VARIANT_CXXFLAGS}"
+
+    export _CL_="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"
+    export _LINK_="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
 }

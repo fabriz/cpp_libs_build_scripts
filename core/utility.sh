@@ -1,5 +1,11 @@
 #!/bin/bash
-
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
 
 playBeep()
 {
@@ -196,6 +202,18 @@ copyFile()
     local LOCAL_COPY_DESTINATION=$2
 
     cp "${LOCAL_COPY_SOURCE}" "${LOCAL_COPY_DESTINATION}" || error "Cannot copy file ${LOCAL_COPY_SOURCE} to ${LOCAL_COPY_DESTINATION}"
+}
+
+copyFileIfPresent()
+{
+    [ $# = 2 ] || error "copyFileIfPresent(): invalid number of arguments"
+
+    local LOCAL_COPY_SOURCE=$1
+    local LOCAL_COPY_DESTINATION=$2
+
+    if [ -f "${LOCAL_COPY_SOURCE}" ]; then
+        moveFile "${LOCAL_COPY_SOURCE}" "${LOCAL_COPY_DESTINATION}"
+    fi
 }
 
 deleteFile()

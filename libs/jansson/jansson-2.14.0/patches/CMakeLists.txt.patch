@@ -1,0 +1,17 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 39b9ad3..3e97ce9 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -27,9 +27,9 @@ set(JANSSON_TEMP_DIR ${CMAKE_CURRENT_BINARY_DIR}/tmp)
+ # Give the debug version a different postfix for windows,
+ # so both the debug and release version can be built in the
+ # same build-tree on Windows (MSVC).
+-if (WIN32 AND NOT CMAKE_DEBUG_POSTFIX)
+-   set(CMAKE_DEBUG_POSTFIX "_d")
+-endif()
++#if (WIN32 AND NOT CMAKE_DEBUG_POSTFIX)
++#   set(CMAKE_DEBUG_POSTFIX "_d")
++#endif()
+ 
+ # This is how I thought it should go
+ # set (JANSSON_VERSION "2.3.1")

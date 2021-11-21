@@ -1,4 +1,12 @@
 #!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
+
 # Build script for openssl 1.1.1g
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -158,9 +166,6 @@ buildCurrentArchitecture__windows_mingw()
 
 buildCurrentArchitecture__windows_msvc()
 {
-    export _CL_="${FM_TARGET_TOOLCHAIN_CFLAGS}"
-    export _LINK_="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
-    
     local BUILD_PLATFORM=""
     if [ ${FM_TARGET_ARCHITECTURE} = "x86" ]; then
         BUILD_PLATFORM="VC-WIN32"

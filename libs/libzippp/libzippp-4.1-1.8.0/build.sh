@@ -1,4 +1,12 @@
 #!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
+
 # Build script for libzippp 4.1-1.8.0
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -15,10 +23,7 @@ afterBuildCurrentArchitecture()
 
     if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
         copyFile libzippp.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-
-        if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
-            copyFile ./CMakeFiles/libzippp.dir/libzippp.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-        fi
+        copyFileIfPresent ./CMakeFiles/libzippp.dir/libzippp.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     else
         copyFile libzippp.a ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     fi
@@ -61,6 +66,8 @@ buildCurrentArchitecture__windows_mingw()
 
 buildCurrentArchitecture__windows_msvc()
 {
+    export _CL_="${FM_TARGET_TOOLCHAIN_CXXFLAGS_CMAKE}"
+
     sed -i.orig -e 's/find_package(LIBZIP MODULE REQUIRED)/#find_package(LIBZIP MODULE REQUIRED)/' \
         -e 's/target_link_libraries/#target_link_libraries/' \
         -e 's/"libzippp_static"/"libzippp"/' ./CMakeLists.txt

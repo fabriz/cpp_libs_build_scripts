@@ -1,5 +1,11 @@
 #!/bin/bash
-
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
 
 prepareBuildStep()
 {
@@ -265,6 +271,9 @@ initCurrentLibraryVariables()
     FM_CURRENT_LIB_INSTALL_CHECK="${!LOCAL_VAR_LIB_INSTALL_CHECK}"
     FM_CURRENT_LIB_TARBALL_HASH="${!LOCAL_VAR_LIB_HASH}"
     FM_CURRENT_LIB_TARBALL_HASH_TYPE="${!LOCAL_VAR_LIB_HASH_TYPE}"
+    
+    FM_CURRENT_LIB_PATCHES_DIR="${FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY}/patches"
+    FM_CURRENT_LIB_CMAKE_DIR="${FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY}/cmake"
 }
 
 deletePreviousBuildDirectory()
@@ -383,44 +392,38 @@ installLibraries()
         error "Library not staged"
     fi
     
-    if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake" ]; then
+    if [ ${FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES:-false} = true ] && [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake" ]; then
         printf "Installing cmake files ... "
-        createDirectory ${FM_LIBS_INSTALL_CMAKE}
-        cp -R "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake/." "${FM_LIBS_INSTALL_CMAKE}/"
+        
+        if [ ! -f "${FM_LIBS_INSTALL_CMAKE}" ]; then
+            createDirectory "${FM_LIBS_INSTALL_CMAKE}"
+            cp -R "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/cmake/." "${FM_LIBS_INSTALL_CMAKE}/"
+        fi
+        
+        pushd "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake"
+        local LOCAL_CMAKE_FILES=(*.cmake)
+        for LOCAL_CMAKE_FILE in "${LOCAL_CMAKE_FILES[@]}"
+        do
+            copyFile "./${LOCAL_CMAKE_FILE}" "${FM_LIBS_INSTALL_CMAKE}"
+        done
+        popd
+        
         echo "OK"
     fi
 
     if [ ${FM_TARGET_HAS_PKGCONFIG:-false} = true ]; then
         if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig" ]; then
             printf "Installing pkgconfig files ... "
-            createDirectory ${FM_LIBS_INSTALL_PKGCONFIG}
+            createDirectory "${FM_LIBS_INSTALL_PKGCONFIG}"
+            
             pushd "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
-
             local LOCAL_PKGCONFIG_FILES=(*.pc)
             for LOCAL_PKGCONFIG_FILE in "${LOCAL_PKGCONFIG_FILES[@]}"
             do
-                if [ ${FM_HOST_OS_TYPE} = "windows" ]; then
-                    FM_CURRENT_ARCHITECTURE_STAGE_DIR_WINDOWS=$(cygpath -w ${FM_CURRENT_ARCHITECTURE_STAGE_DIR})
-                    sed -i.orig -e "s|${FM_CURRENT_ARCHITECTURE_STAGE_DIR}|${FM_LIBS_INSTALL_PREFIX}|" \
-                        -e "s|${FM_CURRENT_ARCHITECTURE_STAGE_DIR_WINDOWS//\\/\\\\}|${FM_LIBS_INSTALL_PREFIX}|" \
-                        -e "s|${FM_CURRENT_ARCHITECTURE_STAGE_DIR_WINDOWS//\\/\/}|${FM_LIBS_INSTALL_PREFIX}|" ./${LOCAL_PKGCONFIG_FILE}
-                else
-                    sed -i.orig "s|${FM_CURRENT_ARCHITECTURE_STAGE_DIR}|${FM_LIBS_INSTALL_PREFIX}|" ./${LOCAL_PKGCONFIG_FILE}
-                fi
-
-                if [ $? -ne 0 ]; then
-                    error "FAILED"
-                fi
-
-                if cmp -s "./${LOCAL_PKGCONFIG_FILE}" "./${LOCAL_PKGCONFIG_FILE}.orig"; then
-                    echo "ERROR"
-                    error "Error patching pkg-config file: ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig/${LOCAL_PKGCONFIG_FILE}."
-                fi
-
-                copyFile ./${LOCAL_PKGCONFIG_FILE} ${FM_LIBS_INSTALL_PKGCONFIG}
+                copyFile "./${LOCAL_PKGCONFIG_FILE}" "${FM_LIBS_INSTALL_PKGCONFIG}"
             done
-
             popd
+            
             echo "OK"
         fi
     fi
@@ -443,6 +446,23 @@ installLibraries()
     fi
 }
 
+applyCurrentArchitecturePatches()
+{
+    if [ -d "${FM_CURRENT_LIB_PATCHES_DIR}" ]; then
+        pushd "${FM_CURRENT_LIB_PATCHES_DIR}"
+        local LOCAL_AVAILABLE_PATCHES=(*.patch)
+        popd
+        for LOCAL_AVAILABLE_PATCH in "${LOCAL_AVAILABLE_PATCHES[@]}"
+        do
+            echo "Applying patch: ${LOCAL_AVAILABLE_PATCH} ..."
+            "${FM_CONFIG_PATCH_COMMAND}" -p1 -f -b -i "${FM_CURRENT_LIB_PATCHES_DIR}/${LOCAL_AVAILABLE_PATCH}"
+            if [ $? -ne 0 ]; then
+                error "Patch failed"
+            fi
+        done
+    fi
+}
+
 beforeBuildCurrentArchitecture()
 {
     # Empty default implementation
@@ -455,17 +475,74 @@ afterBuildCurrentArchitecture()
     :
 }
 
+manageCurrentArchitectureCMakeFiles()
+{
+    # Keep any cmake file provided by the package for reference
+    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake_from_package"
+    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake_from_package_1"
+    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/CMake" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake_from_package_2"
+
+    if [ ${FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES:-false} = true ] && [ -d "${FM_CURRENT_LIB_CMAKE_DIR}" ]; then
+        createDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake"
+        cp -R "${FM_CURRENT_LIB_CMAKE_DIR}/." "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake/"
+        
+        pushd "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake"
+        local LOCAL_CMAKE_FILES=(*.cmake)
+        for LOCAL_CMAKE_FILE in "${LOCAL_CMAKE_FILES[@]}"
+        do
+            sed -i.orig "s/\${CPPLIBS_LIBRARY_KNOWN_VERSION}/\"${FM_CURRENT_LIB_VERSION}\"/g" ./${LOCAL_CMAKE_FILE}
+        done
+        popd
+    fi
+}
+
+manageCurrentArchitecturePkgconfigFiles()
+{
+    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
+    
+    if [ ${FM_TARGET_HAS_PKGCONFIG:-false} = true ]; then
+        if [ -d "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig" ]; then
+            pushd "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
+    
+            local LOCAL_PKGCONFIG_FILES=(*.pc)
+            for LOCAL_PKGCONFIG_FILE in "${LOCAL_PKGCONFIG_FILES[@]}"
+            do
+                if [ ${FM_HOST_OS_TYPE} = "windows" ]; then
+                    FM_CURRENT_ARCHITECTURE_STAGE_DIR_WINDOWS=$(cygpath -w ${FM_CURRENT_ARCHITECTURE_STAGE_DIR})
+                    sed -i.orig -e "s|${FM_CURRENT_ARCHITECTURE_STAGE_DIR}|${FM_LIBS_INSTALL_PREFIX}|" \
+                        -e "s|${FM_CURRENT_ARCHITECTURE_STAGE_DIR_WINDOWS//\\/\\\\}|${FM_LIBS_INSTALL_PREFIX}|" \
+                        -e "s|${FM_CURRENT_ARCHITECTURE_STAGE_DIR_WINDOWS//\\/\/}|${FM_LIBS_INSTALL_PREFIX}|" ./${LOCAL_PKGCONFIG_FILE}
+                else
+                    sed -i.orig "s|${FM_CURRENT_ARCHITECTURE_STAGE_DIR}|${FM_LIBS_INSTALL_PREFIX}|" ./${LOCAL_PKGCONFIG_FILE}
+                fi
+    
+                if [ $? -ne 0 ]; then
+                    error "FAILED"
+                fi
+    
+                if cmp -s "./${LOCAL_PKGCONFIG_FILE}" "./${LOCAL_PKGCONFIG_FILE}.orig"; then
+                    echo "ERROR"
+                    error "Error patching pkg-config file: ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig/${LOCAL_PKGCONFIG_FILE}."
+                fi
+            done
+    
+            popd
+        fi
+    fi
+}
+
 buildCurrentArchitecture()
 {
     pushd "${FM_CURRENT_ARCHITECTURE_SOURCE_DIR}"
 
+    applyCurrentArchitecturePatches
+    
     beforeBuildCurrentArchitecture
     buildCurrentArchitecture__${FM_TARGET_TOOLCHAIN}
     afterBuildCurrentArchitecture
     
-    #deleteDirectoryRecursive "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake"
-    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/cmake" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/cmake"
-    moveDirectoryIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/pkgconfig" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/pkgconfig"
+    manageCurrentArchitectureCMakeFiles
+    manageCurrentArchitecturePkgconfigFiles
 
     popd
 }

@@ -1,0 +1,13 @@
+diff --git a/boost/asio/detail/pop_options.hpp b/boost/asio/detail/pop_options.hpp
+index c34eb98..89008cc 100644
+--- a/boost/asio/detail/pop_options.hpp
++++ b/boost/asio/detail/pop_options.hpp
+@@ -146,4 +146,8 @@
+ #  endif
+ # endif
+ 
++# pragma pop_macro ("emit")
++# pragma pop_macro ("signal")
++# pragma pop_macro ("slot")
++
+ #endif

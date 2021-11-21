@@ -1,4 +1,12 @@
 #!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (C) 2021 Fabrizio Maj
+#
+# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
+# Refer to the licenses of the managed libraries for conditions on their use and distribution.
+# For details, see https://github.com/fabriz/cpp_libs_build_scripts
+#-----------------------------------------------------------------------------------------------------------------------
+
 # Build script for bzip2 1.0.6
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -79,7 +87,7 @@ buildCurrentArchitecture__windows_msvc()
     createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     copyFile bzlib.h ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
     copyFile libbz2.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
-    copyFile libbz2.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    copyFileIfPresent libbz2.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
     checkBuildStep
 }
 

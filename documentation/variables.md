@@ -60,6 +60,8 @@ FM_CURRENT_LIB_INSTALL_CHECK | Name of a representative header file of the libra
 FM_CURRENT_LIB_TARBALL_HASH | Hash of the library tarball.
 FM_CURRENT_LIB_TARBALL_HASH_TYPE | Type of hash function used. Supported hash functions are: MD5, SHA-1, SHA-256.
 
+FM_CURRENT_LIB_PATCHES_DIR | Directory for optional patches for the library
+
 FM_CURRENT_LIB_SOURCE_DIR | Directory in which the tarball of the library is decompressed during the build.
 
 
@@ -89,8 +91,8 @@ FM_CONFIG_LAN_TARBALL_CACHE_USE | LAN cache configuration mode. Possible values 
 FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD | Command to use to download a tarball from the LAN cache. Example: 'curl -u : -o "${DESTINATION_PATH}" "smb://server/libs_cache/${TARBALL_NAME}"'.
 FM_CONFIG_ON_BUILD_ERROR | Optional command to execute when the build completes with an error.
 FM_CONFIG_ON_BUILD_SUCCESS | Optional command to execute when the build completes successfully.
+FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES | Set to true to deploy the provided cmake find modules. Default: false
 FM_CONFIG_DISABLE_SSL_CERTIFICATE_VALIDATION | Set to true to disable certificate validation during downloads. Obviously, better to avoid if possible. Default: false
-
 
 Executables
 
@@ -103,6 +105,7 @@ FM_CONFIG_PERL_WINDOWS_COMMAND | Path of the Windows perl executable
 FM_CONFIG_PYTHON_COMMAND | Path of the python executable
 FM_CONFIG_PYTHON_WINDOWS_COMMAND | Path of the Windows python executable
 FM_CONFIG_TAR_COMMAND | Path of the tar executable
+FM_CONFIG_PATCH_COMMAND | Path of the patch executable
 
 Add also CMP (diffutils)
 

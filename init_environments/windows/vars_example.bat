@@ -9,6 +9,7 @@ set FM_CONFIG_PERL_WINDOWS_COMMAND=C:\Strawberry\perl\bin\perl.exe
 set FM_CONFIG_PYTHON_COMMAND=/usr/bin/python
 set FM_CONFIG_PYTHON_WINDOWS_COMMAND=C:\Program Files\Python39\python.exe
 set FM_CONFIG_TAR_COMMAND=/usr/bin/tar
+set FM_CONFIG_PATCH_COMMAND=/usr/bin/patch
 
 REM MSYS environment installation path
 set FM_CONFIG_MSYS64_INSTALL_PATH=C:\msys64
@@ -40,5 +41,8 @@ REM Optional commands to execute when the build completes
 REM set FM_CONFIG_ON_BUILD_SUCCESS=
 REM set FM_CONFIG_ON_BUILD_ERROR=
 
-REM To disable certificate validation:
+REM Uncomment to deploy the provided cmake find modules
+REM set FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true
+
+REM Uncomment to disable certificate validation
 REM set FM_CONFIG_DISABLE_SSL_CERTIFICATE_VALIDATION=true

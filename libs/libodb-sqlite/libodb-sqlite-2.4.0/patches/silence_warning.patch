@@ -1,0 +1,12 @@
+diff --git a/odb/sqlite/statement.hxx b/odb/sqlite/statement.hxx
+index 1be0cab..38d1bea 100644
+--- a/odb/sqlite/statement.hxx
++++ b/odb/sqlite/statement.hxx
+@@ -122,6 +122,7 @@ namespace odb
+       void
+       active (bool active)
+       {
++        (void)active;
+         assert (active);
+ 
+         if (!active_)
