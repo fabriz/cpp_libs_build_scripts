@@ -13,8 +13,8 @@ find_library(BZIP2_LIBRARY NAMES bz2 libbz2 PATHS "${CPPLIBS_VARIANT_ROOT}/lib" 
 mark_as_advanced(BZIP2_INCLUDE_DIR BZIP2_LIBRARY)
 
 if(BZIP2_INCLUDE_DIR AND EXISTS "${BZIP2_INCLUDE_DIR}/bzlib.h")
-    file(STRINGS "${BZIP2_INCLUDE_DIR}/bzlib.h" VERSION_LINE REGEX "bzip2/libbzip2 version [0-9\\.]+ of")
-    string(REGEX REPLACE "^.*bzip2/libbzip2 version ([0-9\\.]+) of.*$" "\\1" BZIP2_VERSION_STRING "${VERSION_LINE}")
+    file(STRINGS "${BZIP2_INCLUDE_DIR}/bzlib.h" VERSION_LINE REGEX "bzip2/libbzip2 version [0-9.]+ of")
+    string(REGEX REPLACE "^.*bzip2/libbzip2 version ([0-9.]+) of.*$" "\\1" BZIP2_VERSION_STRING "${VERSION_LINE}")
 endif()
 
 debugMessage("BZIP2_INCLUDE_DIR: ${BZIP2_INCLUDE_DIR}")

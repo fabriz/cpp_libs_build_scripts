@@ -1,0 +1,13 @@
+diff --git a/config.hw b/config.hw
+index b2b9d57..244904c 100644
+--- a/config.hw
++++ b/config.hw
+@@ -59,7 +59,7 @@
+ #define SIZEOF_LONG 4
+ 
+ /* Win32 uses a underscore, so we use a macro to eliminate that. */
+-#define snprintf			_snprintf
++//#define snprintf			_snprintf
+ /* VS2008 has this already defined */
+ #if (_MSC_VER < 1500)
+ #define vsnprintf			_vsnprintf

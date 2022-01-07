@@ -16,6 +16,7 @@ export FM_TARGET_OS_TYPE=android
 export FM_TARGET_COMPILER=clang
 export FM_TARGET_TOOLCHAIN=android_clang
 export FM_TARGET_PLATFORM="android_clang_api${FM_CONFIG_ANDROID_API_LEVEL}"
+export FM_TARGET_CMAKE_TOOLCHAIN_FILE="${FM_CONFIG_ANDROID_NDK_INSTALL_PATH}/build/cmake/android.toolchain.cmake"
 export FM_TARGET_HAS_PKGCONFIG=false
 export FM_TARGET_ALL_ARCHITECTURES=armv7,armv8,x86,x86_64
 export FM_TARGET_ALL_BUILD_VARIANTS=debug,release,profile

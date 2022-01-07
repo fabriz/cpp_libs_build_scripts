@@ -30,6 +30,7 @@ buildCurrentArchitecture__linux_gcc()
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure ${CROSS_COMPILER_HOST} --disable-shared --without-python \
+        --with-libxml-include-prefix="${FM_LIBS_INSTALL_INCLUDES}/libxml2" \
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -46,7 +47,7 @@ buildCurrentArchitecture__android_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared --without-python \
-        --with-libxml-include-prefix="${FM_LIBS_INSTALL_INCLUDES}" --with-libxml-libs-prefix="${FM_LIBS_INSTALL_LIBS}" \
+        --with-libxml-include-prefix="${FM_LIBS_INSTALL_INCLUDES}/libxml2" --with-libxml-libs-prefix="${FM_LIBS_INSTALL_LIBS}" \
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -82,6 +83,7 @@ buildCurrentArchitecture__macos_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --disable-shared --without-python \
+        --with-libxml-include-prefix="${FM_LIBS_INSTALL_INCLUDES}/libxml2" \
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -104,6 +106,7 @@ buildCurrentArchitecture__windows_mingw()
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --build="${FM_TARGET_MINGW_PLATFORM}" --disable-shared --without-python \
+        --with-libxml-include-prefix="${FM_LIBS_INSTALL_INCLUDES}/libxml2" \
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
@@ -116,9 +119,37 @@ buildCurrentArchitecture__windows_mingw()
     checkBuildStep
 }
 
-#buildCurrentArchitecture__windows_msvc()
-#{
-#}
+buildCurrentArchitecture__windows_msvc()
+{
+    export _CL_="${_CL_} -DLIBXML_STATIC -I${FM_LIBS_INSTALL_INCLUDES_WINDOWS}\\libxml2"
+
+    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS=""
+
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} debug=yes"
+    else
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} debug=no"
+    fi
+
+    cd ./win32
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    cscript configure.js compiler=msvc static=yes iconv=no crypto=no ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        include="${FM_LIBS_INSTALL_INCLUDES_WINDOWS}" lib="${FM_LIBS_INSTALL_LIBS_WINDOWS}" \
+        prefix="${FM_CURRENT_ARCHITECTURE_STAGE_DIR_WINDOWS}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    nmake -f Makefile.msvc > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    nmake -f Makefile.msvc install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+
+    deleteFileIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/libexslt.lib"
+    deleteFileIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/libxslt.lib"
+}
 
 
 buildLibrary "LIBXSLT"

@@ -212,7 +212,7 @@ copyFileIfPresent()
     local LOCAL_COPY_DESTINATION=$2
 
     if [ -f "${LOCAL_COPY_SOURCE}" ]; then
-        moveFile "${LOCAL_COPY_SOURCE}" "${LOCAL_COPY_DESTINATION}"
+        copyFile "${LOCAL_COPY_SOURCE}" "${LOCAL_COPY_DESTINATION}"
     fi
 }
 
@@ -223,6 +223,17 @@ deleteFile()
     local LOCAL_DELETE_TARGET=$1
 
     rm "${LOCAL_DELETE_TARGET}" || error "Cannot delete file ${LOCAL_DELETE_TARGET}"
+}
+
+deleteFileIfPresent()
+{
+    [ $# = 1 ] || error "deleteFile(): invalid number of arguments"
+
+    local LOCAL_DELETE_TARGET=$1
+
+    if [ -f "${LOCAL_DELETE_TARGET}" ]; then
+        deleteFile "${LOCAL_DELETE_TARGET}"
+    fi
 }
 
 acquireLock()

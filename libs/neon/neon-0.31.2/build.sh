@@ -97,9 +97,28 @@ buildCurrentArchitecture__windows_mingw()
     checkBuildStep
 }
 
-#buildCurrentArchitecture__windows_msvc()
-#{
-#}
+buildCurrentArchitecture__windows_msvc()
+{
+    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS=""
+
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} DEBUG_BUILD=yes"
+    fi
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    nmake -f neon.mak ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/neon
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    /usr/bin/find ./src \( -name "*.h" \) -exec cp "{}" ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/neon ';'
+    copyFile libneon.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    copyFileIfPresent libneon.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    checkBuildStep
+}
 
 
 buildLibrary "NEON"

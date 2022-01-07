@@ -85,9 +85,27 @@ buildCurrentArchitecture__windows_mingw()
     checkBuildStep
 }
 
-#buildCurrentArchitecture__windows_msvc()
-#{
-#}
+buildCurrentArchitecture__windows_msvc()
+{
+    export _CL_="${FM_TARGET_TOOLCHAIN_CXXFLAGS_CMAKE}"
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    "${FM_CONFIG_CMAKE_COMMAND}" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} \
+        -DJANSSON_BUILD_DOCS=OFF \
+        -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} \
+        -S . -B . > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    nmake > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    nmake install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+
+    copyFileIfPresent ./CMakeFiles/jansson.dir/jansson.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+}
 
 
 buildLibrary "JANSSON"

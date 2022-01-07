@@ -45,11 +45,6 @@ FM_LIBSET_LIBS=(
     libical/3.0.10
 )
 
-# libtiff/4.3.0 fails to build with android_clang and yocto_gcc
-if [ ${FM_TARGET_TOOLCHAIN} = "android_clang" ] || [ ${FM_TARGET_PLATFORM} = "yocto_gcc" ]; then
-    FM_LIBSET_LIBS=("${FM_LIBSET_LIBS[@]/libtiff\/4.3.0/libtiff\/4.2.0}")
-fi
-
 # wt/4.5.0 fails to build with windows_mingw
 if [ ${FM_TARGET_TOOLCHAIN} = "windows_mingw" ]; then
     FM_LIBSET_LIBS=("${FM_LIBSET_LIBS[@]/wt\/4.5.0/wt\/4.2.0}")

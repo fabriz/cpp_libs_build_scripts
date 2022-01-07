@@ -56,12 +56,6 @@ beforeBuildCurrentArchitecture()
     fi
 }
 
-afterBuildCurrentArchitecture()
-{
-    moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/botan-2/botan" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include"
-    deleteDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/botan-2"
-}
-
 buildCurrentArchitecture__linux_gcc()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

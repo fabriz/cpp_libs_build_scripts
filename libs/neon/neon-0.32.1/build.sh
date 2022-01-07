@@ -25,6 +25,8 @@ beforeBuildCurrentArchitecture()
 
 buildCurrentArchitecture__linux_gcc()
 {
+    export CPPFLAGS="${CPPFLAGS} -I${FM_LIBS_INSTALL_INCLUDES}/libxml2"
+
     local CROSS_COMPILER_HOST=""
     if [ -n "${FM_TARGET_CROSS_COMPILER_HOST-}" ]; then
         CROSS_COMPILER_HOST="--host=${FM_TARGET_CROSS_COMPILER_HOST}"
@@ -45,6 +47,8 @@ buildCurrentArchitecture__linux_gcc()
 
 buildCurrentArchitecture__android_clang()
 {
+    export CPPFLAGS="${CPPFLAGS} -I${FM_LIBS_INSTALL_INCLUDES}/libxml2"
+    
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
@@ -60,6 +64,7 @@ buildCurrentArchitecture__android_clang()
 
 buildCurrentArchitecture__macos_clang()
 {
+    export CPPFLAGS="${CPPFLAGS} -I${FM_LIBS_INSTALL_INCLUDES}/libxml2"
     export CFLAGS="${CFLAGS} -Wno-error=all"
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -81,6 +86,7 @@ buildCurrentArchitecture__macos_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
+    export CPPFLAGS="${CPPFLAGS} -I${FM_LIBS_INSTALL_INCLUDES}/libxml2"
     export CFLAGS="${CFLAGS} -D__USE_MINGW_ANSI_STDIO=1"
     export ne_cv_os_uname="MINGW32"
 
@@ -97,9 +103,28 @@ buildCurrentArchitecture__windows_mingw()
     checkBuildStep
 }
 
-#buildCurrentArchitecture__windows_msvc()
-#{
-#}
+buildCurrentArchitecture__windows_msvc()
+{
+    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS=""
+
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} DEBUG_BUILD=yes"
+    fi
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    nmake -f neon.mak ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/neon
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    /usr/bin/find ./src \( -name "*.h" \) -exec cp "{}" ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/neon ';'
+    copyFile libneon.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    copyFileIfPresent libneon.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    checkBuildStep
+}
 
 
 buildLibrary "NEON"

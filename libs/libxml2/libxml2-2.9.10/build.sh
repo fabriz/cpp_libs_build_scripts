@@ -16,9 +16,6 @@ source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 afterBuildCurrentArchitecture()
 {
     moveFileIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/xml2Conf.sh" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/xml2Conf.sh"
-
-    moveDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/libxml2/libxml" "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include"
-    deleteDirectory "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include/libxml2"
 }
 
 buildCurrentArchitecture__linux_gcc()
@@ -94,9 +91,35 @@ buildCurrentArchitecture__windows_mingw()
     checkBuildStep
 }
 
-#buildCurrentArchitecture__windows_msvc()
-#{
-#}
+buildCurrentArchitecture__windows_msvc()
+{
+    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS=""
+
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} debug=yes"
+    else
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} debug=no"
+    fi
+
+    cd ./win32
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    cscript configure.js compiler=msvc static=yes iconv=no icu=no ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+        include="${FM_LIBS_INSTALL_INCLUDES_WINDOWS}" lib="${FM_LIBS_INSTALL_LIBS_WINDOWS}" \
+        prefix="${FM_CURRENT_ARCHITECTURE_STAGE_DIR_WINDOWS}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    nmake -f Makefile.msvc > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    nmake -f Makefile.msvc install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+
+    deleteFileIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/libxml2.lib"
+    deleteFileIfPresent "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/libxml2_a_dll.lib"
+}
 
 
 buildLibrary "LIBXML2"

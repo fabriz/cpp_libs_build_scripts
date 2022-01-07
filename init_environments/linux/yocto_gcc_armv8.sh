@@ -16,6 +16,7 @@ export FM_TARGET_OS_TYPE=linux
 export FM_TARGET_COMPILER=gcc
 export FM_TARGET_TOOLCHAIN=linux_gcc
 export FM_TARGET_PLATFORM=yocto_gcc
+export FM_TARGET_CMAKE_TOOLCHAIN_FILE="${OECORE_NATIVE_SYSROOT}/usr/share/cmake/OEToolchainConfig.cmake"
 export FM_TARGET_HAS_PKGCONFIG=true
 export FM_TARGET_CROSS_COMPILER_HOST=aarch64-poky-linux
 export FM_TARGET_ALL_ARCHITECTURES=armv8

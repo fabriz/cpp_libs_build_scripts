@@ -170,6 +170,7 @@ FM_TARGET_COMPILER | Compiler for the build target.
 FM_TARGET_COMPILER_VERSION | Version of the compiler for the build target.
 FM_TARGET_TOOLCHAIN | Toolchain for the build target.
 FM_TARGET_PLATFORM | Platform for the build target.
+FM_TARGET_CMAKE_TOOLCHAIN_FILE | CMake cross compile toolchain definition file.
 FM_TARGET_HAS_PKGCONFIG | Is support for pkgconfig available to the toolchain for the build target? Possible values are true, false. Default: false
 FM_TARGET_CROSS_COMPILER_HOST | To enable cross compilation.
 FM_TARGET_ALL_ARCHITECTURES | All supported architectures.

@@ -1,0 +1,23 @@
+diff --git a/src/Wt/WIOService.h b/src/Wt/WIOService.h
+index 7157a6c..4008c76 100644
+--- a/src/Wt/WIOService.h
++++ b/src/Wt/WIOService.h
+@@ -94,14 +94,16 @@ public:
+ 
+   // decrement the blocked thread counter
+   void releaseBlockedThread();
+-
++  
++protected:
++  virtual void run();
++    
+ private:
+   WIOServiceImpl *impl_;
+   strand strand_;
+   void handleTimeout(const std::shared_ptr<AsioWrapper::asio::steady_timer>& timer,
+ 		     const std::function<void ()>& function,
+ 		     const AsioWrapper::error_code& e);
+-  void run();
+ };
+ 
+ }

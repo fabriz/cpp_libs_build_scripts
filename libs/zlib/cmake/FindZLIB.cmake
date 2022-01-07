@@ -14,7 +14,7 @@ mark_as_advanced(ZLIB_INCLUDE_DIR ZLIB_LIBRARY)
 
 if(ZLIB_INCLUDE_DIR AND EXISTS "${ZLIB_INCLUDE_DIR}/zlib.h")
     file(STRINGS "${ZLIB_INCLUDE_DIR}/zlib.h" VERSION_LINE REGEX "^#define ZLIB_VERSION \"[^\"]*\"$")
-    string(REGEX REPLACE "^.*ZLIB_VERSION \"([0-9\\.]+).*$" "\\1" ZLIB_VERSION_STRING "${VERSION_LINE}")
+    string(REGEX REPLACE "^.*ZLIB_VERSION \"([0-9.]+).*$" "\\1" ZLIB_VERSION_STRING "${VERSION_LINE}")
 endif()
 
 debugMessage("ZLIB_INCLUDE_DIR: ${ZLIB_INCLUDE_DIR}")
