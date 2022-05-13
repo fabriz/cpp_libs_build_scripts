@@ -10,6 +10,9 @@
 # Number of parallel jobs for make
 export FM_CONFIG_NUM_PROCESSES=$(sysctl -n hw.logicalcpu)
 
+# C++ standard version (14|17)
+export FM_CONFIG_CXX_STANDARD=17
+
 # Paths of local tools
 export FM_CONFIG_CMAKE_COMMAND="$(which cmake)"
 export FM_CONFIG_CURL_COMMAND="$(which curl)"
@@ -17,6 +20,7 @@ export FM_CONFIG_PERL_COMMAND="$(which perl)"
 export FM_CONFIG_PYTHON_COMMAND="$(which python)"
 export FM_CONFIG_TAR_COMMAND="$(which tar)"
 export FM_CONFIG_PATCH_COMMAND="$(which patch)"
+export FM_CONFIG_LIPO_COMMAND="$(which lipo)"
 
 # LAN cache configuration
 #export FM_CONFIG_LAN_TARBALL_CACHE_USE=(NO|YES|ONLY)

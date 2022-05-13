@@ -52,10 +52,12 @@ buildCurrentArchitecture__macos_clang()
     checkBuildStep
 }
 
-#buildCurrentArchitecture__ios_clang()
-#{
-#    :
-#}
+buildCurrentArchitecture__ios_clang()
+{
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    make libzippp-static -j${FM_ARG_NUM_PROCESSES} AR="${AR}" CC="${CC}" CFLAGS="${CPPFLAGS} ${CFLAGS} ${CXXFLAGS}" RANLIB="${RANLIB}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+}
 
 buildCurrentArchitecture__windows_mingw()
 {
@@ -73,10 +75,9 @@ buildCurrentArchitecture__windows_msvc()
         -e 's/"libzippp_static"/"libzippp"/' ./CMakeLists.txt
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${FM_CMAKE_TARGET_VARIANT_BUILD_TYPE} -DBUILD_SHARED_LIBS=False -DLIBZIPPP_BUILD_TESTS=False \
-        -DCMAKE_C_FLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS}" -DCMAKE_CXX_FLAGS="${FM_TARGET_TOOLCHAIN_CXXFLAGS}" \
-        -DCMAKE_PREFIX_PATH=${FM_LIBS_INSTALL_PREFIX} -DCMAKE_INSTALL_PREFIX=${FM_CURRENT_ARCHITECTURE_STAGE_DIR}\
-        -S . -B . > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS} \
+        -DBUILD_SHARED_LIBS=False -DLIBZIPPP_BUILD_TESTS=False \
+        -DCMAKE_C_FLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS}" -DCMAKE_CXX_FLAGS="${FM_TARGET_TOOLCHAIN_CXXFLAGS}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

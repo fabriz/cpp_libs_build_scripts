@@ -54,7 +54,7 @@ if(CURL_FOUND)
         endif()
 
         if(MACOS)
-            target_link_libraries(CURL::LibCurl INTERFACE iconv "-framework LDAP" "-framework SystemConfiguration")
+            target_link_libraries(CURL::LibCurl INTERFACE "-framework LDAP" "-framework SystemConfiguration")
         elseif(MINGW)
             target_link_libraries(CURL::LibCurl INTERFACE crypt32 ws2_32 wldap32)
         elseif(MSVC)

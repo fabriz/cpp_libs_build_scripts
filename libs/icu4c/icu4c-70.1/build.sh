@@ -85,6 +85,11 @@ buildCurrentArchitecture__macos_clang()
 {
     export CFLAGS="-DU_CHARSET_IS_UTF8=1 ${CFLAGS}"
 
+    local CROSS_COMPILER_HOST=""
+    if [ -n "${FM_TARGET_CROSS_COMPILER_HOST-}" ]; then
+        CROSS_COMPILER_HOST="--host=${FM_TARGET_CROSS_COMPILER_HOST} --with-cross-build=${FM_ARG_BUILD_ROOT}/macos_clang_x86_64_release/source/${FM_ICU4C_FULL_NAME}/x86_64/source"
+    fi
+
     local BUILD_CONFIGURATION=""
     if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
         BUILD_CONFIGURATION="--enable-debug=yes --enable-release=no"
@@ -93,7 +98,7 @@ buildCurrentArchitecture__macos_clang()
     fi
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
+    ./configure ${CROSS_COMPILER_HOST} ${BUILD_CONFIGURATION} --enable-shared=no --enable-static=yes\
         --enable-dyload=no --with-data-packaging=static\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep

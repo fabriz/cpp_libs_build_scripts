@@ -42,8 +42,13 @@ buildCurrentArchitecture__macos_clang()
     export LIBCDIO_CFLAGS="${CPPFLAGS} ${CFLAGS}"
     export LIBCDIO_LIBS="-lcdio -framework IOKit -framework CoreFoundation -framework DiskArbitration"
 
+    local CROSS_COMPILER_HOST=""
+    if [ -n "${FM_TARGET_CROSS_COMPILER_HOST-}" ]; then
+        CROSS_COMPILER_HOST="--host=${FM_TARGET_CROSS_COMPILER_HOST}"
+    fi
+
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure --disable-shared --disable-example-progs --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    ./configure ${CROSS_COMPILER_HOST} --disable-shared --disable-example-progs --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

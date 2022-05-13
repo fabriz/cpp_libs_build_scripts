@@ -35,7 +35,7 @@ decompressArchive()
     fi
 
     printf "Decompressing ${LOCAL_ARCHIVE_SOURCE} ... "
-    "${LOCAL_TAR_COMMAND}" ${LOCAL_CUSTOM_FLAGS} -x -f ${LOCAL_ARCHIVE_SOURCE} -C ${LOCAL_ARCHIVE_DESTINATION}
+    "${LOCAL_TAR_COMMAND}" "${LOCAL_CUSTOM_FLAGS}" -x -f ${LOCAL_ARCHIVE_SOURCE} -C ${LOCAL_ARCHIVE_DESTINATION}
     if [ $? -ne 0 ]; then
         echo "FAILED"
         error "Cannot decompress file ${LOCAL_ARCHIVE_SOURCE} to ${LOCAL_ARCHIVE_DESTINATION}"
@@ -313,9 +313,11 @@ initCurrentArchitecture()
     FM_LIBS_BUILD_SOURCE="${FM_LIBS_BUILD_FOLDER}/source"
     FM_LIBS_BUILD_LOGS="${FM_LIBS_BUILD_FOLDER}/logs"
 
-    createDirectory ${FM_LIBS_BUILD_FOLDER}
-    createDirectory ${FM_LIBS_BUILD_SOURCE}
-    createDirectory ${FM_LIBS_BUILD_LOGS}
+    if [ "${FM_ARG_ARCHITECTURE}" != "fat" ]; then
+        createDirectory ${FM_LIBS_BUILD_FOLDER}
+        createDirectory ${FM_LIBS_BUILD_SOURCE}
+        createDirectory ${FM_LIBS_BUILD_LOGS}
+    fi
 
     # Install folders
     FM_LIBS_INSTALL_PREFIX="${FM_ARG_DEPLOY_ROOT}/${FM_TARGET_BUILD_TAG}"
@@ -349,17 +351,26 @@ initCurrentArchitecture()
     FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE=${LOCAL_LOG_FILE_PREFIX}_make.log
     FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE=${LOCAL_LOG_FILE_PREFIX}_stage.log
 
+    # CMake arguments configuration
+    FM_TARGET_CMAKE_ARGUMENTS="-S . -B . -DCMAKE_PREFIX_PATH:PATH='${FM_LIBS_INSTALL_PREFIX}' -DCMAKE_INSTALL_PREFIX:PATH='${FM_CURRENT_ARCHITECTURE_STAGE_DIR}'"
+
     # Corresponding build type for CMake
-    FM_CMAKE_TARGET_VARIANT_BUILD_TYPE=""
     if [ ${FM_ARG_BUILD_VARIANT} = "debug" ]; then
-        FM_CMAKE_TARGET_VARIANT_BUILD_TYPE="Debug"
+        FM_TARGET_CMAKE_ARGUMENTS="${FM_TARGET_CMAKE_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug"
     elif [ ${FM_ARG_BUILD_VARIANT} = "release" ]; then
-        FM_CMAKE_TARGET_VARIANT_BUILD_TYPE="Release"
+        FM_TARGET_CMAKE_ARGUMENTS="${FM_TARGET_CMAKE_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release"
     elif [ ${FM_ARG_BUILD_VARIANT} = "profile" ]; then
-        FM_CMAKE_TARGET_VARIANT_BUILD_TYPE="RelWithDebInfo"
+        FM_TARGET_CMAKE_ARGUMENTS="${FM_TARGET_CMAKE_ARGUMENTS} -DCMAKE_BUILD_TYPE=RelWithDebInfo"
     else
         error "Unsupported build variant: ${FM_ARG_BUILD_VARIANT}."
     fi
+
+    # CMake toolchain file
+    if [ -n "${FM_TARGET_CMAKE_TOOLCHAIN_FILE-}" ]; then
+        FM_TARGET_CMAKE_ARGUMENTS="${FM_TARGET_CMAKE_ARGUMENTS} -DCMAKE_TOOLCHAIN_FILE:PATH='${FM_TARGET_CMAKE_TOOLCHAIN_FILE}'"
+    fi
+
+#    FM_TARGET_CMAKE_ARGUMENTS="${FM_TARGET_CMAKE_ARGUMENTS} -DCMAKE_VERBOSE_MAKEFILE=True -DCMAKE_FIND_DEBUG_MODE=True --log-level=TRACE"
 }
 
 isLibraryInstalled()
@@ -448,6 +459,81 @@ installLibraries()
         cp -R "${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/dll/." "${FM_LIBS_INSTALL_DLLS}/"
         echo "OK"
     fi
+}
+
+installFatLibraries()
+{
+    local LOCAL_REFERENCE_ARCHITECTURE_STAGE_FOLDER=${FM_FAT_SOURCE_LIBRARIES_STAGE_FOLDERS[0]}
+
+    printf "Creating libraries for ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    pushd "${LOCAL_REFERENCE_ARCHITECTURE_STAGE_FOLDER}/lib"
+    local LOCAL_LIB_NAMES=(*.a)
+    if [ -n "${LOCAL_LIB_NAMES-}" ]; then
+        for LOCAL_LIB_NAME in "${LOCAL_LIB_NAMES[@]}"
+        do
+            local ALL_LIBS_FOUND=true
+            local LOCAL_LIB_PATHS=()
+            for LOCAL_ARCH_STAGE_FOLDER in "${FM_FAT_SOURCE_LIBRARIES_STAGE_FOLDERS[@]}"
+            do
+                local LOCAL_LIB_PATH="${LOCAL_ARCH_STAGE_FOLDER}/lib/${LOCAL_LIB_NAME}"
+                if [ -f "${LOCAL_LIB_PATH}" ]; then
+                    LOCAL_LIB_PATHS+=("${LOCAL_LIB_PATH}")
+                else
+                    ALL_LIBS_FOUND=false
+                   echo "${LOCAL_LIB_PATH}" >> "${FM_LIBS_INSTALL_PREFIX}/missing_libraries.txt"
+                fi
+            done
+
+            if [ ${ALL_LIBS_FOUND} = true ]; then
+                ${FM_CONFIG_LIPO_COMMAND} -create ${LOCAL_LIB_PATHS[@]} -output "${FM_LIBS_INSTALL_LIBS}/${LOCAL_LIB_NAME}"
+                if [ $? -ne 0 ]; then
+                    error "Lipo failed"
+                fi
+            fi
+        done
+    fi
+    popd
+    echo "OK"
+
+    if [ ${FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES:-false} = true ] && [ -d "${LOCAL_REFERENCE_ARCHITECTURE_STAGE_FOLDER}/cmake" ]; then
+        printf "Installing cmake files ... "
+
+        if [ ! -f "${FM_LIBS_INSTALL_CMAKE}" ]; then
+            createDirectory "${FM_LIBS_INSTALL_CMAKE}"
+            cp -R "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/cmake/." "${FM_LIBS_INSTALL_CMAKE}/"
+        fi
+
+        pushd "${LOCAL_REFERENCE_ARCHITECTURE_STAGE_FOLDER}/cmake"
+        local LOCAL_CMAKE_FILES=(*.cmake)
+        for LOCAL_CMAKE_FILE in "${LOCAL_CMAKE_FILES[@]}"
+        do
+            copyFile "./${LOCAL_CMAKE_FILE}" "${FM_LIBS_INSTALL_CMAKE}"
+        done
+        popd
+
+        echo "OK"
+    fi
+
+    if [ ${FM_TARGET_HAS_PKGCONFIG:-false} = true ]; then
+        if [ -d "${LOCAL_REFERENCE_ARCHITECTURE_STAGE_FOLDER}/pkgconfig" ]; then
+            printf "Installing pkgconfig files ... "
+            createDirectory "${FM_LIBS_INSTALL_PKGCONFIG}"
+
+            pushd "${LOCAL_REFERENCE_ARCHITECTURE_STAGE_FOLDER}/pkgconfig"
+            local LOCAL_PKGCONFIG_FILES=(*.pc)
+            for LOCAL_PKGCONFIG_FILE in "${LOCAL_PKGCONFIG_FILES[@]}"
+            do
+                copyFile "./${LOCAL_PKGCONFIG_FILE}" "${FM_LIBS_INSTALL_PKGCONFIG}"
+            done
+            popd
+
+            echo "OK"
+        fi
+    fi
+
+    printf "Installing include files ... "
+    cp -R "${LOCAL_REFERENCE_ARCHITECTURE_STAGE_FOLDER}/include/." "${FM_LIBS_INSTALL_INCLUDES}/"
+    echo "OK"
 }
 
 applyCurrentArchitecturePatches()
@@ -594,12 +680,15 @@ actionBuildInstall()
     checkCurrentLibTarballChecksum
 
     local LOCAL_LIBRARY_BUILT=false
-    for FM_ARG_ARCHITECTURE in ${FM_ARG_ARCHITECTURES}
+    for FM_ARG_BUILD_VARIANT in ${FM_ARG_BUILD_VARIANTS}
     do
-        for FM_ARG_BUILD_VARIANT in ${FM_ARG_BUILD_VARIANTS}
+        FM_FAT_SOURCE_LIBRARIES_STAGE_FOLDERS=()
+        for FM_ARG_ARCHITECTURE in ${FM_ARG_ARCHITECTURES}
         do
             initCurrentArchitecture
             initToolchain
+
+            FM_FAT_SOURCE_LIBRARIES_STAGE_FOLDERS+=($FM_CURRENT_ARCHITECTURE_STAGE_DIR)
 
             if ! currentLibraryVariantIsAlreadyInstalled; then
                 deletePreviousBuildDirectory
@@ -610,6 +699,16 @@ actionBuildInstall()
                 echo "Library variant ${FM_CURRENT_LIB_FULL_NAME} ${FM_TARGET_BUILD_TAG} successfully installed"
             fi
         done
+
+        if [ ${FM_CREATE_FAT_LIBRARIES} = true ]; then
+            FM_ARG_ARCHITECTURE=fat
+            initCurrentArchitecture
+            if ! currentLibraryVariantIsAlreadyInstalled; then
+                installFatLibraries
+                LOCAL_LIBRARY_BUILT=true
+                echo "Library variant ${FM_CURRENT_LIB_FULL_NAME} ${FM_TARGET_BUILD_TAG} successfully installed"
+            fi
+        fi
     done
 
     if [ ${LOCAL_LIBRARY_BUILT} = true ]; then
@@ -628,6 +727,21 @@ buildLibrary()
     if ! isFunctionDefined "buildCurrentArchitecture__${FM_TARGET_TOOLCHAIN}"; then
         echo "Library ${FM_CURRENT_LIB_FULL_NAME} (${FM_TARGET_TOOLCHAIN} ${FM_TARGET_COMPILER_VERSION}) skipped"
         return
+    fi
+
+    local LOCAL_ARCHITECTURES=()
+    FM_CREATE_FAT_LIBRARIES=false
+    for FM_ARG_ARCHITECTURE in ${FM_ARG_ARCHITECTURES}
+    do
+        if [ ${FM_ARG_ARCHITECTURE} = "fat" ]; then
+            FM_CREATE_FAT_LIBRARIES=true
+        else
+            LOCAL_ARCHITECTURES+=($FM_ARG_ARCHITECTURE)
+        fi
+    done
+
+    if [ ${FM_CREATE_FAT_LIBRARIES} = true ]; then
+        FM_ARG_ARCHITECTURES="${LOCAL_ARCHITECTURES[@]}"
     fi
 
     if [ ${FM_ARG_ACTION} = "build" ]; then

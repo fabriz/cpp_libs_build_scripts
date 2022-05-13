@@ -42,8 +42,3 @@ FM_LIBSET_LIBS=(
     wt/4.5.0
     libical/3.0.8
 )
-
-# wt/4.5.0 fails to build with windows_mingw
-if [ ${FM_TARGET_TOOLCHAIN} = "windows_mingw" ]; then
-    FM_LIBSET_LIBS=("${FM_LIBSET_LIBS[@]/wt\/4.5.0/wt\/4.2.0}")
-fi

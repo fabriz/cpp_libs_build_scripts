@@ -73,7 +73,9 @@ if(CDIO_FOUND)
             IMPORTED_LOCATION             "${CDIO_CDIO_LIBRARY}"
             INTERFACE_INCLUDE_DIRECTORIES "${CDIO_INCLUDE_DIR}")
 
-        if(MINGW)
+        if(MACOS)
+            target_link_libraries(CDIO::CDIO INTERFACE "-framework DiskArbitration" "-framework IOKit")
+        elseif(MINGW)
             target_link_libraries(CDIO::CDIO INTERFACE winmm)
         endif()
     endif()

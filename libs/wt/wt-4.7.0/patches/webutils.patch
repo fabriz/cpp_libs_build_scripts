@@ -1,0 +1,17 @@
+diff --git a/src/web/WebUtils.h b/src/web/WebUtils.h
+index 657749ae6..7d9995da7 100644
+--- a/src/web/WebUtils.h
++++ b/src/web/WebUtils.h
+@@ -24,9 +24,10 @@
+ #include <float.h>
+ #endif
+ 
+-#include "3rdparty/rapidxml/rapidxml.hpp"
+-
+ namespace Wt {
++  namespace rapidxml {
++    template<class Ch> class xml_node;
++  }
+ 
+   class WString;
+   class EscapeOStream;

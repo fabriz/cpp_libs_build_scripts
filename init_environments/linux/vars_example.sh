@@ -10,6 +10,9 @@
 # Number of parallel jobs for make
 export FM_CONFIG_NUM_PROCESSES=$(nproc)
 
+# C++ standard version (14|17)
+export FM_CONFIG_CXX_STANDARD=17
+
 # Paths of local tools
 export FM_CONFIG_CMAKE_COMMAND="$(which cmake)"
 export FM_CONFIG_CURL_COMMAND="$(which curl)"

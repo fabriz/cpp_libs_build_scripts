@@ -87,6 +87,7 @@ Options
 Name | Description
 ---- | -----------
 FM_CONFIG_NUM_PROCESSES | Number of parallel jobs to use during the build.
+FM_CONFIG_CXX_STANDARD | C++ standard version. Possible values are 14, 17 ...
 FM_CONFIG_LAN_TARBALL_CACHE_USE | LAN cache configuration mode. Possible values are NO, YES, ONLY. Default: NO
 FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD | Command to use to download a tarball from the LAN cache. Example: 'curl -u : -o "${DESTINATION_PATH}" "smb://server/libs_cache/${TARBALL_NAME}"'.
 FM_CONFIG_ON_BUILD_ERROR | Optional command to execute when the build completes with an error.
@@ -106,6 +107,7 @@ FM_CONFIG_PYTHON_COMMAND | Path of the python executable
 FM_CONFIG_PYTHON_WINDOWS_COMMAND | Path of the Windows python executable
 FM_CONFIG_TAR_COMMAND | Path of the tar executable
 FM_CONFIG_PATCH_COMMAND | Path of the patch executable
+FM_CONFIG_LIPO_COMMAND | Path of the lipo executable (for macOS)
 
 Add also CMP (diffutils)
 
@@ -170,11 +172,22 @@ FM_TARGET_COMPILER | Compiler for the build target.
 FM_TARGET_COMPILER_VERSION | Version of the compiler for the build target.
 FM_TARGET_TOOLCHAIN | Toolchain for the build target.
 FM_TARGET_PLATFORM | Platform for the build target.
+FM_TARGET_CMAKE_GENERATOR | CMake generator for the build target.
 FM_TARGET_CMAKE_TOOLCHAIN_FILE | CMake cross compile toolchain definition file.
+FM_TARGET_CMAKE_ARGUMENTS | Default arguments for CMake invocation for the build target.
 FM_TARGET_HAS_PKGCONFIG | Is support for pkgconfig available to the toolchain for the build target? Possible values are true, false. Default: false
 FM_TARGET_CROSS_COMPILER_HOST | To enable cross compilation.
+FM_TARGET_IS_CROSS_COMPILING | Is cross compilation active for the build target?
 FM_TARGET_ALL_ARCHITECTURES | All supported architectures.
 FM_TARGET_ALL_BUILD_VARIANTS | All supported build variants.
+FM_TARGET_ANDROID_ABI | Android ABI (armeabi-v7a, arm64-v8a, x86, x86_64)
+FM_TARGET_IOS_PLATFORM | iOS platform in use (iPhoneOS, iPhoneSimulator ...)
+FM_TARGET_IOS_SDK | iOS SDK in use (iphoneos, iphonesimulator ...)
+FM_TARGET_IOS_SDK_VERSION | Version of the iOS SDK.
+FM_TARGET_IOS_SYS_ROOT | Sys root of the iOS SDK.
+FM_TARGET_IOS_VERSION | iOS version in use (10.0, 13.0 ...)
+FM_TARGET_IOS_PROCESSOR | iOS processor target
+
 
 Name | Description
 ---- | -----------
@@ -216,7 +229,7 @@ FM_TARGET_TOOLCHAIN_CPPFLAGS | Toolchain executable flags.
 FM_TARGET_TOOLCHAIN_CFLAGS | Toolchain executable flags.
 FM_TARGET_TOOLCHAIN_CXXFLAGS | Toolchain executable flags.
 FM_TARGET_TOOLCHAIN_LDFLAGS | Toolchain executable flags.
-
+FM_TARGET_TOOLCHAIN_ASMFLAGS | Toolchain executable flags.
 
 
 
@@ -294,7 +307,6 @@ FM_LIBSET_LIBS | Libraries included in a libset.
 
 
 
-FM_CMAKE_TARGET_VARIANT_BUILD_TYPE
 
 
 FM_CURRENT_ARCHITECTURE_LIB_TAG

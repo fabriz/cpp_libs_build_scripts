@@ -10,6 +10,9 @@
 # Treat undefined variables as an error
 set -o nounset
 
+# Expand a pattern with no match to a null string instead of the pattern itself
+shopt -s nullglob
+
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/utility.sh"
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/functions.sh"
 

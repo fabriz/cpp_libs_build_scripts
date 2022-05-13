@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9bcb107..b91c94a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -86,8 +86,6 @@ if(HAVE_WERROR_FLAG)
+ endif()
+ 
+ add_compile_options(
+-    $<$<BOOL:${MSVC}>:/wd4267>
+-    $<$<BOOL:${MSVC}>:/wd4996>
+     $<$<BOOL:${ENABLE_WERROR}>:-Werror>
+     $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<BOOL:${HAVE_WEFFCXX_FLAG}>>:-Weffc++>
+     $<$<AND:$<COMPILE_LANGUAGE:C>,$<BOOL:${HAVE_DECL_AFTER_STMT_FLAG}>>:-Wdeclaration-after-statement>)

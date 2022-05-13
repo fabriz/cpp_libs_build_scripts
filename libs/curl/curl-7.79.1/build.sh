@@ -71,7 +71,7 @@ buildCurrentArchitecture__android_clang()
 buildCurrentArchitecture__macos_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} \
+    ./configure --disable-shared ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --without-libidn2 --without-nghttp2 --without-libpsl \
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 

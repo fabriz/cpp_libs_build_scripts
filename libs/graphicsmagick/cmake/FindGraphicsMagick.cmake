@@ -8,6 +8,7 @@
 
 include(${CMAKE_CURRENT_LIST_DIR}/CppLibsCommon.cmake)
 
+find_package(Freetype QUIET)
 find_package(X11 QUIET)
 find_package(ZLIB QUIET)
 find_package(BZip2 QUIET)
@@ -62,6 +63,10 @@ if(GRAPHICSMAGICK_FOUND)
             IMPORTED_LOCATION             "${GRAPHICSMAGICK_MAGICK_LIBRARY}"
             INTERFACE_INCLUDE_DIRECTORIES "${GRAPHICSMAGICK_INCLUDE_DIR}"
             INTERFACE_COMPILE_DEFINITIONS "_LIB")
+
+        if(FREETYPE_FOUND)
+            target_link_libraries(GraphicsMagick::Magick INTERFACE Freetype::Freetype)
+        endif()
 
         if(X11_FOUND)
             target_link_libraries(GraphicsMagick::Magick INTERFACE X11::X11 X11::Xext)

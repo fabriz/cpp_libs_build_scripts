@@ -1,174 +1,130 @@
 #!/bin/bash
 #-----------------------------------------------------------------------------------------------------------------------
-# Copyright (C) 2021 Fabrizio Maj
+# Copyright (C) 2022 Fabrizio Maj
 #
 # This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
 # Refer to the licenses of the managed libraries for conditions on their use and distribution.
 # For details, see https://github.com/fabriz/cpp_libs_build_scripts
 #-----------------------------------------------------------------------------------------------------------------------
 
-LOCAL_ARCHITECTURE=""
-LOCAL_ADDRESS_MODEL=""
-LOCAL_BUILD_VARIANT=""
-
-LOCAL_COMMON_CFLAGS=""
-LOCAL_COMMON_CXXFLAGS=""
-LOCAL_COMMON_LDFLAGS=""
-LOCAL_ARCHITECTURE_CFLAGS=""
-LOCAL_ARCHITECTURE_CXXFLAGS=""
-LOCAL_ARCHITECTURE_LDFLAGS=""
-LOCAL_BUILD_VARIANT_CFLAGS=""
-LOCAL_BUILD_VARIANT_CXXFLAGS=""
-LOCAL_BUILD_VARIANT_LDFLAGS=""
-
-
-case ${FM_ARG_ARCHITECTURE} in
-    fat)
-        LOCAL_ARCHITECTURE="fat"
-        LOCAL_ARCHITECTURE_CFLAGS=""
-        LOCAL_ADDRESS_MODEL="32"
-    ;;
-    *)
-        error "Invalid architecture ${FM_ARG_ARCHITECTURE}. Valid values are (fat)"
-    ;;
-esac
-
-case ${FM_ARG_BUILD_VARIANT} in
-    debug)
-        LOCAL_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
-        LOCAL_BUILD_VARIANT_CFLAGS="-g"
-    ;;
-    release)
-        LOCAL_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
-        LOCAL_BUILD_VARIANT_CFLAGS="-O2"
-    ;;
-    *)
-        error "Invalid variant ${FM_ARG_BUILD_VARIANT}. Valid values are (debug, release)"
-    ;;
-esac
-
-
-initToolchainConfigurationForSdk()
+initToolchain()
 {
-    [ $# = 1 ] || error "initToolchainConfigurationForSdk(): invalid number of arguments"
+    local LOCAL_ARCHITECTURE_SUFFIX="$(echo ${FM_ARG_ARCHITECTURE} | tr '[:lower:]' '[:upper:]')"
+    local LOCAL_BUILD_VARIANT_SUFFIX="$(echo ${FM_ARG_BUILD_VARIANT} | tr '[:lower:]' '[:upper:]')"
 
-    FM_IOS_CURRENT_SDK_NAME=$1
+    local LOCAL_VAR_NAME_ARCHITECTURE_CFLAGS="FM_TARGET_TOOLCHAIN_ARCHITECTURE_CFLAGS_${LOCAL_ARCHITECTURE_SUFFIX}"
+    local LOCAL_VAR_NAME_ARCHITECTURE_CXXFLAGS="FM_TARGET_TOOLCHAIN_ARCHITECTURE_CXXFLAGS_${LOCAL_ARCHITECTURE_SUFFIX}"
+    local LOCAL_VAR_NAME_ARCHITECTURE_LDFLAGS="FM_TARGET_TOOLCHAIN_ARCHITECTURE_LDFLAGS_${LOCAL_ARCHITECTURE_SUFFIX}"
 
-    FM_IOS_SDK_MIN_VERSION=6.0
-    FM_IOS_SDK_VERSION=$(xcrun -sdk ${FM_IOS_CURRENT_SDK_NAME} --show-sdk-version)
-    FM_IOS_XCODE_ROOT=$(xcode-select -print-path)
+    local LOCAL_VAR_NAME_BUILD_VARIANT_CFLAGS="FM_TARGET_TOOLCHAIN_BUILD_VARIANT_CFLAGS_${LOCAL_BUILD_VARIANT_SUFFIX}"
+    local LOCAL_VAR_NAME_BUILD_VARIANT_CXXFLAGS="FM_TARGET_TOOLCHAIN_BUILD_VARIANT_CXXFLAGS_${LOCAL_BUILD_VARIANT_SUFFIX}"
+    local LOCAL_VAR_NAME_BUILD_VARIANT_LDFLAGS="FM_TARGET_TOOLCHAIN_BUILD_VARIANT_LDFLAGS_${LOCAL_BUILD_VARIANT_SUFFIX}"
 
-    case ${FM_IOS_CURRENT_SDK_NAME} in
-        iphoneos)
-            FM_IOS_SDK_PLATFORM="iPhoneOS"
+    local LOCAL_ARCHITECTURE_CPPFLAGS=""
+    local LOCAL_ARCHITECTURE_CFLAGS=""
+    local LOCAL_ARCHITECTURE_ASMFLAGS=""
+    local LOCAL_COMPILER_TARGET_PREFIX=""
+    local LOCAL_TARGET_IOS_VERSION=""
+
+    FM_TARGET_ARCHITECTURE="${FM_ARG_ARCHITECTURE}"
+    FM_TARGET_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
+    FM_TARGET_IS_CROSS_COMPILING=true
+
+    export FM_TARGET_IOS_SDK_VERSION="$(xcrun -sdk ${FM_TARGET_IOS_SDK} --show-sdk-version)"
+    export FM_TARGET_IOS_SYS_ROOT="$(xcrun -sdk ${FM_TARGET_IOS_SDK} --show-sdk-path)"
+
+    case ${FM_ARG_ARCHITECTURE} in
+        x86)
+            FM_TARGET_ADDRESS_MODEL="32"
+            FM_TARGET_IOS_PROCESSOR="x86"
+            FM_TARGET_CROSS_COMPILER_HOST="arm-apple-darwin${FM_TARGET_IOS_SDK_VERSION}"
+            LOCAL_COMPILER_TARGET_PREFIX="x86"
+            LOCAL_ARCHITECTURE_ASMFLAGS="-arch i386"
         ;;
-        iphonesimulator)
-            FM_IOS_SDK_PLATFORM="iPhoneSimulator"
+        x86_64)
+            FM_TARGET_ADDRESS_MODEL="64"
+            FM_TARGET_IOS_PROCESSOR="x86_64"
+            FM_TARGET_CROSS_COMPILER_HOST="arm-apple-darwin${FM_TARGET_IOS_SDK_VERSION}"
+            LOCAL_COMPILER_TARGET_PREFIX="x86_64"
+            LOCAL_ARCHITECTURE_ASMFLAGS="-arch x86_64"
+        ;;
+        armv7)
+            FM_TARGET_ADDRESS_MODEL="32"
+            FM_TARGET_IOS_PROCESSOR="arm"
+            FM_TARGET_CROSS_COMPILER_HOST="arm-apple-darwin"
+            LOCAL_COMPILER_TARGET_PREFIX="armv7"
+            LOCAL_ARCHITECTURE_ASMFLAGS="-arch armv7"
+        ;;
+        armv7s)
+            FM_TARGET_ADDRESS_MODEL="32"
+            FM_TARGET_IOS_PROCESSOR="arm"
+            FM_TARGET_CROSS_COMPILER_HOST="arm-apple-darwin${FM_TARGET_IOS_SDK_VERSION}"
+            LOCAL_COMPILER_TARGET_PREFIX="armv7s"
+            LOCAL_ARCHITECTURE_ASMFLAGS="-arch armv7s"
+        ;;
+        arm64)
+            FM_TARGET_ADDRESS_MODEL="64"
+            FM_TARGET_IOS_PROCESSOR="aarch64"
+            FM_TARGET_CROSS_COMPILER_HOST="arm-apple-darwin${FM_TARGET_IOS_SDK_VERSION}"
+            LOCAL_COMPILER_TARGET_PREFIX="arm64"
+            LOCAL_ARCHITECTURE_ASMFLAGS="-arch arm64"
         ;;
         *)
-            error "Invalid SDK ${FM_IOS_CURRENT_SDK_NAME}. Valid values are (iphoneos, iphonesimulator)"
+            error "Invalid architecture '${FM_ARG_ARCHITECTURE}'."
         ;;
     esac
 
-    FM_IOS_CROSS_SYS_ROOT="${FM_IOS_XCODE_ROOT}/Platforms/${FM_IOS_SDK_PLATFORM}.platform/Developer/SDKs/${FM_IOS_SDK_PLATFORM}${FM_IOS_SDK_VERSION}.sdk"
+    case ${FM_TARGET_IOS_SDK} in
+        iphoneos)
+            case ${FM_ARG_ARCHITECTURE} in
+                armv7|armv7s)
+                    LOCAL_TARGET_IOS_VERSION="10.3"
+                ;;
+                arm64)
+                    LOCAL_TARGET_IOS_VERSION="13.0"
+                ;;
+                *)
+                    error "Invalid architecture for '${FM_TARGET_IOS_SDK}': '${FM_ARG_ARCHITECTURE}'."
+                ;;
+            esac
 
-    LOCAL_COMMON_CFLAGS="-isysroot ${FM_IOS_CROSS_SYS_ROOT} -I${FM_LIBS_INSTALL_INCLUDES} -I${FM_IOS_CROSS_SYS_ROOT}/usr/include\
-        -mios-version-min=${FM_IOS_SDK_MIN_VERSION} -miphoneos-version-min=${FM_IOS_SDK_MIN_VERSION}\
-        -fPIC -Wextra -Wall -W -fvisibility=hidden -fvisibility-inlines-hidden"
-    LOCAL_COMMON_CXXFLAGS="-stdlib=libc++ -std=c++14"
-    LOCAL_COMMON_LDFLAGS="-L${FM_LIBS_INSTALL_LIBS} -L${FM_IOS_CROSS_SYS_ROOT}/usr/lib"
+            LOCAL_ARCHITECTURE_CPPFLAGS="${LOCAL_ARCHITECTURE_CPPFLAGS} -target ${LOCAL_COMPILER_TARGET_PREFIX}-apple-ios${LOCAL_TARGET_IOS_VERSION} -mios-version-min=${LOCAL_TARGET_IOS_VERSION}"
+        ;;
+        iphonesimulator)
+            LOCAL_TARGET_IOS_VERSION="13.0"
+            LOCAL_ARCHITECTURE_CPPFLAGS="${LOCAL_ARCHITECTURE_CPPFLAGS} -target ${LOCAL_COMPILER_TARGET_PREFIX}-apple-ios${LOCAL_TARGET_IOS_VERSION}-simulator -mios-simulator-version-min=${LOCAL_TARGET_IOS_VERSION}"
+        ;;
+        *)
+            error "Invalid SDK '${FM_TARGET_IOS_SDK}'."
+        ;;
+    esac
 
-    FM_TARGET_TOOLCHAIN_CFLAGS="${LOCAL_COMMON_CFLAGS} ${LOCAL_ARCHITECTURE_CFLAGS} ${LOCAL_BUILD_VARIANT_CFLAGS}"
-    FM_TARGET_TOOLCHAIN_CXXFLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS} ${LOCAL_COMMON_CXXFLAGS} ${LOCAL_ARCHITECTURE_CXXFLAGS} ${LOCAL_BUILD_VARIANT_CXXFLAGS}"
-    FM_TARGET_TOOLCHAIN_LDFLAGS="${LOCAL_COMMON_LDFLAGS} ${LOCAL_ARCHITECTURE_LDFLAGS} ${LOCAL_BUILD_VARIANT_LDFLAGS}"
+    FM_TARGET_TOOLCHAIN_CPPFLAGS="${LOCAL_ARCHITECTURE_CPPFLAGS} -isysroot ${FM_TARGET_IOS_SYS_ROOT} -I${FM_LIBS_INSTALL_INCLUDES} ${FM_TARGET_TOOLCHAIN_COMMON_CPPFLAGS-}"
+    FM_TARGET_TOOLCHAIN_CFLAGS="${FM_TARGET_TOOLCHAIN_CPPFLAGS} ${FM_TARGET_TOOLCHAIN_COMMON_CFLAGS-} ${!LOCAL_VAR_NAME_ARCHITECTURE_CFLAGS-} ${!LOCAL_VAR_NAME_BUILD_VARIANT_CFLAGS-}"
+    FM_TARGET_TOOLCHAIN_CXXFLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS} ${FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS-} ${!LOCAL_VAR_NAME_ARCHITECTURE_CXXFLAGS-} ${!LOCAL_VAR_NAME_BUILD_VARIANT_CXXFLAGS-}"
+    FM_TARGET_TOOLCHAIN_LDFLAGS="-L${FM_LIBS_INSTALL_LIBS} ${FM_TARGET_TOOLCHAIN_COMMON_LDFLAGS-} ${!LOCAL_VAR_NAME_ARCHITECTURE_LDFLAGS-} ${!LOCAL_VAR_NAME_BUILD_VARIANT_LDFLAGS-}"
+    FM_TARGET_TOOLCHAIN_ASMFLAGS="${LOCAL_ARCHITECTURE_ASMFLAGS}"
 
-    FM_TARGET_TOOLCHAIN_AR="xcrun -sdk ${FM_IOS_CURRENT_SDK_NAME} ar"
-    FM_TARGET_TOOLCHAIN_CC="xcrun -sdk ${FM_IOS_CURRENT_SDK_NAME} clang"
-    FM_TARGET_TOOLCHAIN_CXX="xcrun -sdk ${FM_IOS_CURRENT_SDK_NAME} clang++"
-    FM_TARGET_TOOLCHAIN_NM="xcrun -sdk ${FM_IOS_CURRENT_SDK_NAME} nm"
-    FM_TARGET_TOOLCHAIN_RANLIB="xcrun -sdk ${FM_IOS_CURRENT_SDK_NAME} ranlib"
-}
-
-initToolchainConfigurationForArchitecture()
-{
-    [ $# = 1 ] || error "initToolchainConfigurationForArchitecture(): invalid number of arguments"
-
-    FM_IOS_CURRENT_ARCHITECTURE_NAME=$1
+    FM_TARGET_TOOLCHAIN_AR="$(xcrun -sdk ${FM_TARGET_IOS_SDK} -find ar)"
+    FM_TARGET_TOOLCHAIN_CC="$(xcrun -sdk ${FM_TARGET_IOS_SDK} -find clang)"
+    FM_TARGET_TOOLCHAIN_CXX="$(xcrun -sdk ${FM_TARGET_IOS_SDK} -find clang++)"
+    FM_TARGET_TOOLCHAIN_NM="$(xcrun -sdk ${FM_TARGET_IOS_SDK} -find nm)"
+    FM_TARGET_TOOLCHAIN_RANLIB="$(xcrun -sdk ${FM_TARGET_IOS_SDK} -find ranlib)"
 
     export AR="${FM_TARGET_TOOLCHAIN_AR}"
-    export CC="${FM_TARGET_TOOLCHAIN_CC} -arch ${FM_IOS_CURRENT_ARCHITECTURE_NAME}"
-    export CXX="${FM_TARGET_TOOLCHAIN_CXX} -arch ${FM_IOS_CURRENT_ARCHITECTURE_NAME}"
+    export CC="${FM_TARGET_TOOLCHAIN_CC}"
+    export CXX="${FM_TARGET_TOOLCHAIN_CXX}"
     export NM="${FM_TARGET_TOOLCHAIN_NM}"
     export RANLIB="${FM_TARGET_TOOLCHAIN_RANLIB}"
 
-    export CFLAGS="-arch ${FM_IOS_CURRENT_ARCHITECTURE_NAME} ${FM_TARGET_TOOLCHAIN_CFLAGS}"
-    export CXXFLAGS="-arch ${FM_IOS_CURRENT_ARCHITECTURE_NAME} ${FM_TARGET_TOOLCHAIN_CXXFLAGS}"
+    export CPPFLAGS="${FM_TARGET_TOOLCHAIN_CPPFLAGS}"
+    export CFLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS}"
+    export CXXFLAGS="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"
     export LDFLAGS="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
+    export ASMFLAGS="${FM_TARGET_TOOLCHAIN_ASMFLAGS}"
+
+    export FM_TARGET_IOS_VERSION="${LOCAL_TARGET_IOS_VERSION}"
+    export FM_TARGET_IOS_PROCESSOR
+    export FM_LIBS_INSTALL_PREFIX
+    export CMAKE_GENERATOR="${FM_TARGET_CMAKE_GENERATOR}"
 }
-
-buildLibrary()
-{
-    [ $# = 1 ] || error "buildLibrary(): invalid number of arguments"
-
-    local CURRENT_LIBRARY_NAME=$1
-
-    local FM_IOS_IPHONEOS_SDK_ARCHITECTURES=("armv7" "armv7s" "arm64")
-    local FM_IOS_IPHONESIMULATOR_SDK_ARCHITECTURES=("i386" "x86_64")
-    local FM_IOS_ALL_SDK_ARCHITECTURES=("${FM_IOS_IPHONEOS_SDK_ARCHITECTURES[@]} ${FM_IOS_IPHONESIMULATOR_SDK_ARCHITECTURES[@]}")
-    local FM_IOS_BUILT_ARCHITECTURES=()
-
-    initCurrentLibraryVariables "${CURRENT_LIBRARY_NAME}"
-    checkCurrentLibraryInstallStatus
-    downloadCurrentLibTarballIfMissing
-
-    initToolchainConfigurationForSdk "iphoneos"
-    for FM_IOS_SDK_ARCHITECTURE in "${FM_IOS_IPHONEOS_SDK_ARCHITECTURES[@]}"
-    do
-        FM_TARGET_ADDRESS_MODEL=""
-        if [ ${FM_IOS_SDK_ARCHITECTURE} = "arm64" ]; then
-            FM_TARGET_ADDRESS_MODEL="64"
-        else
-            FM_TARGET_ADDRESS_MODEL="32"
-        fi
-
-        initToolchainConfigurationForArchitecture "${FM_IOS_SDK_ARCHITECTURE}"
-        initCurrentArchitectureVariables "${FM_IOS_SDK_ARCHITECTURE}"
-        decompressTarballForCurrentArchitecture
-        buildCurrentArchitecture
-
-        FM_IOS_BUILT_ARCHITECTURES+=(${FM_IOS_SDK_ARCHITECTURE})
-    done
-
-    initToolchainConfigurationForSdk "iphonesimulator"
-    for FM_IOS_SDK_ARCHITECTURE in "${FM_IOS_IPHONESIMULATOR_SDK_ARCHITECTURES[@]}"
-    do
-        FM_TARGET_ADDRESS_MODEL=""
-        if [ ${FM_IOS_SDK_ARCHITECTURE} = "x86_64" ]; then
-            FM_TARGET_ADDRESS_MODEL="64"
-        else
-            FM_TARGET_ADDRESS_MODEL="32"
-        fi
-
-        initToolchainConfigurationForArchitecture "${FM_IOS_SDK_ARCHITECTURE}"
-        initCurrentArchitectureVariables "${FM_IOS_SDK_ARCHITECTURE}"
-        decompressTarballForCurrentArchitecture
-        buildCurrentArchitecture
-
-        FM_IOS_BUILT_ARCHITECTURES+=(${FM_IOS_SDK_ARCHITECTURE})
-    done
-
-    installFatLibraries "${FM_CURRENT_LIB_FULL_NAME}" "${FM_IOS_BUILT_ARCHITECTURES}"
-
-    echo "Library ${FM_CURRENT_LIB_FULL_NAME} successfully installed"
-}
-
-# To list architectures in a fat library:
-# lipo -info libz.a
-
-
-FM_TARGET_PLATFORM="ios_clang"
-FM_TARGET_TOOLCHAIN_VERSION="$(clang -dumpversion)"
-FM_TARGET_ARCHITECTURE="${LOCAL_ARCHITECTURE}"
-#FM_TARGET_ADDRESS_MODEL="${LOCAL_ADDRESS_MODEL}"
-FM_TARGET_BUILD_VARIANT="${LOCAL_BUILD_VARIANT}"
-

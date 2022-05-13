@@ -48,7 +48,11 @@ if(LIBXML2_FOUND)
             target_link_libraries(LibXml2::LibXml2 INTERFACE LibLZMA::LibLZMA)
         endif()
 
-        if(MINGW)
+        if(MACOS)
+            target_link_libraries(LibXml2::LibXml2 INTERFACE iconv)
+        elseif(IOS)
+            target_link_libraries(LibXml2::LibXml2 INTERFACE iconv)
+        elseif(MINGW)
             target_link_libraries(LibXml2::LibXml2 INTERFACE iconv wsock32 ws2_32)
         endif()
 

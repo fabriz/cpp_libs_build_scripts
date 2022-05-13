@@ -49,8 +49,3 @@ FM_LIBSET_LIBS=(
 if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
     FM_LIBSET_LIBS=("${FM_LIBSET_LIBS[@]/zstd\/1.5.1/zstd\/1.5.0}")
 fi
-
-# wt/4.6.1 fails to build with windows_mingw
-if [ ${FM_TARGET_TOOLCHAIN} = "windows_mingw" ]; then
-    FM_LIBSET_LIBS=("${FM_LIBSET_LIBS[@]/wt\/4.6.1/wt\/4.2.0}")
-fi

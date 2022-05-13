@@ -17,6 +17,16 @@ beforeBuildCurrentArchitecture()
 {
     THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${FM_TARGET_BUILD_FLAGS_FOR_BOOST-}"
 
+    if [ ${FM_TARGET_BUILD_VARIANT} = "debug" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} variant=debug"
+    elif [ ${FM_TARGET_BUILD_VARIANT} = "release" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} variant=release"
+    elif [ ${FM_TARGET_BUILD_VARIANT} = "profile" ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} variant=release debug-symbols=on"
+    else
+        error "Unsupported build variant: ${FM_TARGET_BUILD_VARIANT}."
+    fi
+
     if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
         THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} include=${FM_LIBS_INSTALL_INCLUDES_WINDOWS} library-path=${FM_LIBS_INSTALL_LIBS_WINDOWS}"
     else
@@ -120,7 +130,7 @@ EOF
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
-        --toolset=${TOOLSET_NAME} ${CROSS_COMPILE_OPTIONS} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
+        --toolset=${TOOLSET_NAME} ${CROSS_COMPILE_OPTIONS} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }
@@ -156,7 +166,7 @@ EOF
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
-        --toolset=${TOOLSET_NAME} ${CROSS_COMPILE_OPTIONS} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} target-os=android cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
+        --toolset=${TOOLSET_NAME} ${CROSS_COMPILE_OPTIONS} address-model=${FM_TARGET_ADDRESS_MODEL} target-os=android cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }
@@ -173,7 +183,7 @@ buildCurrentArchitecture__macos_clang()
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
-        --toolset=darwin variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
+        --toolset=darwin address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }
@@ -218,7 +228,7 @@ EOF
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./b2 -sBOOST_BUILD_USER_CONFIG=./user-ios-config.jam\
         -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
-        --toolset=darwin-${FM_IOS_SDK_VERSION}~${BOOST_IOS_SDK} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL}\
+        --toolset=darwin-${FM_IOS_SDK_VERSION}~${BOOST_IOS_SDK} address-model=${FM_TARGET_ADDRESS_MODEL}\
         cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS}" define=_LITTLE_ENDIAN\
         macosx-version=${BOOST_IOS_SDK}-${FM_IOS_SDK_VERSION} architecture=${BOOST_IOS_ARCH} target-os=iphone\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
@@ -235,7 +245,7 @@ buildCurrentArchitecture__windows_mingw()
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
-        --toolset=gcc variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} ${PYTON_HEADER_FIX}"\
+        --toolset=gcc address-model=${FM_TARGET_ADDRESS_MODEL} cxxflags="${FM_TARGET_TOOLCHAIN_CXXFLAGS} ${PYTON_HEADER_FIX}"\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }
@@ -248,7 +258,7 @@ buildCurrentArchitecture__windows_msvc()
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     ./b2 -j${FM_ARG_NUM_PROCESSES} threading=multi link=static runtime-link=shared --layout=system --abbreviate-paths ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS}\
-        --toolset=msvc-${FM_TARGET_COMPILER_VERSION} variant=${FM_TARGET_BUILD_VARIANT} address-model=${FM_TARGET_ADDRESS_MODEL}\
+        --toolset=msvc-${FM_TARGET_COMPILER_VERSION} address-model=${FM_TARGET_ADDRESS_MODEL}\
         --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} --build-dir=./tmp_build install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 }

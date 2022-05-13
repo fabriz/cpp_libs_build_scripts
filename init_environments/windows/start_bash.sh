@@ -21,6 +21,7 @@ export FM_CONFIG_PERL_WINDOWS_COMMAND="$(cygpath -u "${FM_CONFIG_PERL_WINDOWS_CO
 export FM_CONFIG_PYTHON_COMMAND="$(cygpath -u "${FM_CONFIG_PYTHON_COMMAND}")"
 export FM_CONFIG_PYTHON_WINDOWS_COMMAND="$(cygpath -u "${FM_CONFIG_PYTHON_WINDOWS_COMMAND}")"
 export FM_CONFIG_TAR_COMMAND="$(cygpath -u "${FM_CONFIG_TAR_COMMAND}")"
+export FM_CONFIG_PATCH_COMMAND="$(cygpath -u "${FM_CONFIG_PATCH_COMMAND}")"
 
 initHostVariables()
 {
@@ -30,16 +31,17 @@ initHostVariables()
     # Identify the architecture and the address model of the build host
     local LOCAL_SYSTEM_ARCHITECTURE="$(uname -m | tr '[:upper:]' '[:lower:]')"
     case ${LOCAL_SYSTEM_ARCHITECTURE} in
-        "x86"|"i386"|"i686")
+        x86|i386|i686)
             export FM_HOST_ARCHITECTURE="x86"
             export FM_HOST_ADDRESS_MODEL="32"
         ;;
-        "x86_64"|"amd64")
+        x86_64|amd64)
             export FM_HOST_ARCHITECTURE="x86_64"
             export FM_HOST_ADDRESS_MODEL="64"
         ;;
         *)
-            error "Unsupported architecture type reported by 'uname -m': '${LOCAL_SYSTEM_ARCHITECTURE}'"
+            echo "ERROR: Unsupported architecture type reported by 'uname -m': '${LOCAL_SYSTEM_ARCHITECTURE}'"
+            exit 1
         ;;
     esac
 }
