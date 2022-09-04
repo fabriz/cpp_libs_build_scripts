@@ -12,7 +12,7 @@ FM_<LIBRARY>_TARBALL_NAME | Name of the tarball file.
 FM_<LIBRARY>_TARBALL_DOWNLOAD_URL | Url from which the tarball file can be downloaded.
 FM_<LIBRARY>_INSTALL_CHECK | Name of a representative header file of the library to check if the library is already built.
 FM_<LIBRARY>_HASH | Hash of the library tarball.
-FM_<LIBRARY>_HASH_TYPE | Type of hash function used. Supported hash functions are: MD5, SHA-1, SHA-256.
+FM_<LIBRARY>_HASH_TYPE | Type of hash function used. Supported hash functions are: MD5, SHA-1, SHA-256, SHA-512.
 
 As a simplified example consider the following:
 

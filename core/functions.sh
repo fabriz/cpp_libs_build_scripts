@@ -52,11 +52,13 @@ checkCurrentLibTarballChecksum()
     local LOCAL_MD5_CMD=""
     local LOCAL_SHA1_CMD=""
     local LOCAL_SHA256_CMD=""
+    local LOCAL_SHA512_CMD=""
     local LOCAL_OPENSSL_CMD=$(which openssl)
     if [ -n "${LOCAL_OPENSSL_CMD}" ]; then
         LOCAL_MD5_CMD="${LOCAL_OPENSSL_CMD} dgst -md5 -r"
         LOCAL_SHA1_CMD="${LOCAL_OPENSSL_CMD} dgst -sha1 -r"
         LOCAL_SHA256_CMD="${LOCAL_OPENSSL_CMD} dgst -sha256 -r"
+        LOCAL_SHA512_CMD="${LOCAL_OPENSSL_CMD} dgst -sha512 -r"
     else
         LOCAL_MD5_CMD=$(which md5sum)
         if [ -z "${LOCAL_MD5_CMD}" ]; then
@@ -69,6 +71,10 @@ checkCurrentLibTarballChecksum()
         LOCAL_SHA256_CMD=$(which sha256sum)
         if [ -z "${LOCAL_SHA256_CMD}" ]; then
             LOCAL_SHA256_CMD=$(which gsha256sum)
+        fi
+        LOCAL_SHA512_CMD=$(which sha512sum)
+        if [ -z "${LOCAL_SHA512_CMD}" ]; then
+            LOCAL_SHA512_CMD=$(which gsha512sum)
         fi
     fi
 
@@ -89,6 +95,12 @@ checkCurrentLibTarballChecksum()
             if [ -n "${LOCAL_SHA256_CMD}" ]; then
                 LOCAL_LIB_TARBALL_CHECKSUM=$(${LOCAL_SHA256_CMD} ${LOCAL_LIB_TARBALL_LOCAL_PATH})
                 LOCAL_LIB_TARBALL_CHECKSUM=${LOCAL_LIB_TARBALL_CHECKSUM:0:64}
+            fi
+        ;;
+        "SHA-512")
+            if [ -n "${LOCAL_SHA512_CMD}" ]; then
+                LOCAL_LIB_TARBALL_CHECKSUM=$(${LOCAL_SHA512_CMD} ${LOCAL_LIB_TARBALL_LOCAL_PATH})
+                LOCAL_LIB_TARBALL_CHECKSUM=${LOCAL_LIB_TARBALL_CHECKSUM:0:128}
             fi
         ;;
     esac
