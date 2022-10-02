@@ -366,6 +366,15 @@ initCurrentArchitecture()
     # CMake arguments configuration
     FM_TARGET_CMAKE_ARGUMENTS="-S . -B . -DCMAKE_PREFIX_PATH:PATH='${FM_LIBS_INSTALL_PREFIX}' -DCMAKE_INSTALL_PREFIX:PATH='${FM_CURRENT_ARCHITECTURE_STAGE_DIR}'"
 
+    # Corresponding C++ standard for CMake
+    if [ ${FM_CONFIG_CXX_STANDARD} = "14" ]; then
+        FM_TARGET_CMAKE_ARGUMENTS="${FM_TARGET_CMAKE_ARGUMENTS} -DCMAKE_CXX_STANDARD=14"
+    elif [ ${FM_CONFIG_CXX_STANDARD} = "17" ]; then
+        FM_TARGET_CMAKE_ARGUMENTS="${FM_TARGET_CMAKE_ARGUMENTS} -DCMAKE_CXX_STANDARD=17"
+    else
+        error "Unsupported C++ standard: ${FM_CONFIG_CXX_STANDARD}."
+    fi
+    
     # Corresponding build type for CMake
     if [ ${FM_ARG_BUILD_VARIANT} = "debug" ]; then
         FM_TARGET_CMAKE_ARGUMENTS="${FM_TARGET_CMAKE_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug"
