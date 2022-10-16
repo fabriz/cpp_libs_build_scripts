@@ -43,6 +43,9 @@ export FM_CONFIG_DEPLOY_ROOT=/home/fabrizio/libs/libs
 #export FM_CONFIG_ON_BUILD_SUCCESS=
 #export FM_CONFIG_ON_BUILD_ERROR=
 
+# Uncomment to increase the log verbosity
+#export FM_CONFIG_VERBOSE_LOGS=true
+
 # Uncomment to deploy the provided cmake find modules
 #export FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true
 

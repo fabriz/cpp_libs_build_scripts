@@ -22,6 +22,7 @@ beforeBuildCurrentArchitecture()
     elif [ ${FM_TARGET_BUILD_VARIANT} = "release" ]; then
         THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} variant=release"
     elif [ ${FM_TARGET_BUILD_VARIANT} = "profile" ]; then
+        # Don't use "variant=profile" because it also introduces -pg for gcc
         THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} variant=release debug-symbols=on"
     else
         error "Unsupported build variant: ${FM_TARGET_BUILD_VARIANT}."
@@ -33,7 +34,9 @@ beforeBuildCurrentArchitecture()
         THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} include=${FM_LIBS_INSTALL_INCLUDES} library-path=${FM_LIBS_INSTALL_LIBS}"
     fi
 
-#    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --debug-configuration --debug-building --debug-generators -d2"
+    if [ ${FM_CONFIG_VERBOSE_LOGS:-false} = true ]; then
+        THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} --debug-configuration --debug-building -d2"
+    fi
 
     if isLibraryInstalled "BZIP2"; then
         echo "Enabling support for library bzip2"

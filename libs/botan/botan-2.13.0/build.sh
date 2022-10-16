@@ -174,11 +174,11 @@ buildCurrentArchitecture__windows_msvc()
     sed -E -i.orig 's/LIB_FLAGS( +)=(.+)/LIB_FLAGS = \/Fd\"build\/botan.pdb\"/' ./Makefile
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    nmake > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    "${FM_CONFIG_NMAKE_COMMAND}" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    nmake install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    "${FM_CONFIG_NMAKE_COMMAND}" install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
     checkBuildStep
 
     copyFileIfPresent build/botan.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib

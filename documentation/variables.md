@@ -92,6 +92,7 @@ FM_CONFIG_LAN_TARBALL_CACHE_USE | LAN cache configuration mode. Possible values 
 FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD | Command to use to download a tarball from the LAN cache. Example: 'curl -u : -o "${DESTINATION_PATH}" "smb://server/libs_cache/${TARBALL_NAME}"'.
 FM_CONFIG_ON_BUILD_ERROR | Optional command to execute when the build completes with an error.
 FM_CONFIG_ON_BUILD_SUCCESS | Optional command to execute when the build completes successfully.
+FM_CONFIG_VERBOSE_LOGS | Set to true to increase the log verbosity
 FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES | Set to true to deploy the provided cmake find modules. Default: false
 FM_CONFIG_DISABLE_SSL_CERTIFICATE_VALIDATION | Set to true to disable certificate validation during downloads. Obviously, better to avoid if possible. Default: false
 
@@ -130,8 +131,8 @@ set FM_CONFIG_MSYS64_INSTALL_PATH=C:\msys64
 set FM_CONFIG_MSVC2015_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio 14.0
 set FM_CONFIG_MSVC2017_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional
 set FM_CONFIG_MSVC2019_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional
-
-
+set FM_CONFIG_USE_JOM=true
+set FM_CONFIG_JOM_INSTALL_PATH=C:\Qt\Tools\QtCreator\bin\jom
 
 
 --------------------------------------------------------------------------------------
@@ -174,7 +175,9 @@ FM_TARGET_TOOLCHAIN | Toolchain for the build target.
 FM_TARGET_PLATFORM | Platform for the build target.
 FM_TARGET_CMAKE_GENERATOR | CMake generator for the build target.
 FM_TARGET_CMAKE_TOOLCHAIN_FILE | CMake cross compile toolchain definition file.
-FM_TARGET_CMAKE_ARGUMENTS | Default arguments for CMake invocation for the build target.
+FM_TARGET_CMAKE_ARGUMENTS_GENERATE | Default arguments for CMake generate invocation for the build target.
+FM_TARGET_CMAKE_ARGUMENTS_BUILD | Default arguments for CMake build invocation for the build target.
+FM_TARGET_CMAKE_ARGUMENTS_INSTALL | Default arguments for CMake install invocation for the build target.
 FM_TARGET_HAS_PKGCONFIG | Is support for pkgconfig available to the toolchain for the build target? Possible values are true, false. Default: false
 FM_TARGET_CROSS_COMPILER_HOST | To enable cross compilation.
 FM_TARGET_IS_CROSS_COMPILING | Is cross compilation active for the build target?

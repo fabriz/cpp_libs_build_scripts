@@ -41,7 +41,7 @@ initToolchain()
     case ${FM_ARG_BUILD_VARIANT} in
         debug)
             LOCAL_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
-            LOCAL_BUILD_VARIANT_CFLAGS="-MDd -Zi"
+            LOCAL_BUILD_VARIANT_CFLAGS="-MDd"
         ;;
         release)
             LOCAL_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
@@ -49,7 +49,7 @@ initToolchain()
         ;;
         profile)
             LOCAL_BUILD_VARIANT="${FM_ARG_BUILD_VARIANT}"
-            LOCAL_BUILD_VARIANT_CFLAGS="-MD -Zi -O2 -DNDEBUG"
+            LOCAL_BUILD_VARIANT_CFLAGS="-MD -O2 -DNDEBUG"
         ;;
         *)
             error "Invalid build variant '${FM_ARG_BUILD_VARIANT}'."

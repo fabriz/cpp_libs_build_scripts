@@ -30,6 +30,10 @@ REM set FM_CONFIG_MSVC2017_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual 
 REM set FM_CONFIG_MSVC2019_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional
 REM set FM_CONFIG_MSVC2019_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community
 
+REM Use jom instead on nmake for Visual Studio builds
+REM set FM_CONFIG_USE_JOM=true
+REM set FM_CONFIG_JOM_INSTALL_PATH=C:\Qt\Tools\QtCreator\bin\jom
+
 REM LAN cache configuration
 REM set FM_CONFIG_LAN_TARBALL_CACHE_USE=(NO|YES|ONLY)
 REM set FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD=curl -u : -o "${DESTINATION_PATH}" "smb://SERVER/libs_cache/${TARBALL_NAME}"
@@ -43,6 +47,9 @@ set FM_CONFIG_DEPLOY_ROOT=/c/libs
 REM Optional commands to execute when the build completes
 REM set FM_CONFIG_ON_BUILD_SUCCESS=
 REM set FM_CONFIG_ON_BUILD_ERROR=
+
+REM Uncomment to increase the log verbosity
+REM set FM_CONFIG_VERBOSE_LOGS=true
 
 REM Uncomment to deploy the provided cmake find modules
 REM set FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true

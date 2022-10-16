@@ -15,10 +15,19 @@ set FM_TARGET_COMPILER=msvc
 set FM_TARGET_COMPILER_VERSION=14.2
 set FM_TARGET_TOOLCHAIN=windows_msvc
 set FM_TARGET_PLATFORM=windows_msvc2019
-set FM_TARGET_CMAKE_GENERATOR=NMake Makefiles
 set FM_TARGET_HAS_PKGCONFIG=false
 set FM_TARGET_ALL_ARCHITECTURES=x86_64
 set FM_TARGET_ALL_BUILD_VARIANTS=debug,release,profile
+
+if /i "%FM_CONFIG_USE_JOM%"=="true" (
+    echo Using jom instead of nmake
+    set FM_CONFIG_NMAKE_COMMAND=jom.exe
+    set FM_TARGET_CMAKE_GENERATOR=NMake Makefiles JOM
+    set "PATH=%FM_CONFIG_JOM_INSTALL_PATH%;%PATH%"
+) else (
+    set FM_CONFIG_NMAKE_COMMAND=nmake
+    set FM_TARGET_CMAKE_GENERATOR=NMake Makefiles
+)
 
 call "%FM_CONFIG_MSVC2019_INSTALL_PATH%\VC\Auxiliary\Build\vcvars64.bat"
 

@@ -91,7 +91,7 @@ buildCurrentArchitecture__windows_mingw()
 buildCurrentArchitecture__windows_msvc()
 {
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    nmake -f win32/Makefile.msc CFLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS} -Fd\"zlib.pdb\"" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    "${FM_CONFIG_NMAKE_COMMAND}" -f win32/Makefile.msc CFLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS} -Fd\"zlib.pdb\"" > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
