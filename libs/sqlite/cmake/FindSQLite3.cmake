@@ -38,6 +38,12 @@ if(SQLITE3_FOUND)
         
         if(CMAKE_DL_LIBS)
             target_link_libraries(SQLite3::SQLite3 INTERFACE ${CMAKE_DL_LIBS})
+            list(APPEND SQLITE3_LIBRARIES ${CMAKE_DL_LIBS})
         endif()
     endif()
+    
+    set(SQLite3_INCLUDE_DIRS ${SQLITE3_INCLUDE_DIRS})
+    set(SQLite3_LIBRARIES ${SQLITE3_LIBRARIES})
+    set(SQLite3_VERSION_STRING ${SQLITE3_VERSION_STRING})
+    set(SQLite3_VERSION ${SQLITE3_VERSION_STRING})
 endif()

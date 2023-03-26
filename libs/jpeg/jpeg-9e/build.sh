@@ -98,9 +98,40 @@ buildCurrentArchitecture__windows_mingw()
     checkBuildStep
 }
 
-#buildCurrentArchitecture__windows_msvc()
-#{
-#}
+buildCurrentArchitecture__windows_msvc()
+{
+    local BUILD_PLATFORM=""
+    if [ ${FM_TARGET_ARCHITECTURE} = "x86" ]; then
+        BUILD_PLATFORM="Win32"
+    else
+        BUILD_PLATFORM="x64"
+    fi
+
+    local BUILD_CONFIGURATION="Release"
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    nmake -f makefile.vs setup-v16 > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    devenv ./jpeg.sln -upgrade
+    devenv ./jpeg.sln -build "${BUILD_CONFIGURATION}|${BUILD_PLATFORM}" -project "jpeg" -out "${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE}"
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
+    createDirectory ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+
+    copyFile ./jconfig.h ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
+    copyFile ./jerror.h ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
+    copyFile ./jmorecfg.h ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
+    copyFile ./jpeglib.h ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/include
+
+    copyFile ./${BUILD_CONFIGURATION}/${BUILD_PLATFORM}/jpeg.lib ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    copyFileIfPresent ./${BUILD_CONFIGURATION}/${BUILD_PLATFORM}/jpeg.pdb ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib
+    checkBuildStep
+}
 
 
 buildLibrary "JPEG"

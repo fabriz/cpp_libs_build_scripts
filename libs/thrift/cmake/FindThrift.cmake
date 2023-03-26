@@ -25,6 +25,7 @@ debugMessage("THRIFT_INCLUDE_DIR: ${THRIFT_INCLUDE_DIR}")
 debugMessage("THRIFT_THRIFT_LIBRARY: ${THRIFT_THRIFT_LIBRARY}")
 debugMessage("THRIFT_THRIFTZ_LIBRARY: ${THRIFT_THRIFTZ_LIBRARY}")
 debugMessage("THRIFT_VERSION_STRING: ${THRIFT_VERSION_STRING}")
+debugMessage("THRIFT_DEPENDENCIES: ZLIB=${ZLIB_FOUND}, OpenSSL=${OPENSSL_FOUND}")
 
 set(Thrift_COMPONENTS
     Thrift
@@ -43,6 +44,7 @@ if(THRIFT_FOUND)
     set(THRIFT_INCLUDE_DIRS ${THRIFT_INCLUDE_DIR})
     set(THRIFT_THRIFT_LIBRARIES ${THRIFT_THRIFT_LIBRARY})
     set(THRIFT_THRIFTZ_LIBRARIES ${THRIFT_THRIFTZ_LIBRARY})
+    set(THRIFT_DEFINITIONS "-DTHRIFT_STATIC_DEFINE")
 
     if(THRIFT_THRIFT_FOUND AND NOT TARGET Thrift::Thrift)
         add_library(Thrift::Thrift UNKNOWN IMPORTED)
@@ -55,6 +57,8 @@ if(THRIFT_FOUND)
         if(OPENSSL_SSL_FOUND)
             set(THRIFT_SSL_FOUND TRUE)
             target_link_libraries(Thrift::Thrift INTERFACE OpenSSL::SSL)
+            list(APPEND THRIFT_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIRS})
+            list(APPEND THRIFT_THRIFT_LIBRARIES ${OPENSSL_SSL_LIBRARIES})
         endif()
     endif()
 
@@ -67,8 +71,11 @@ if(THRIFT_FOUND)
         
         if(ZLIB_FOUND)
             target_link_libraries(Thrift::Thriftz INTERFACE ZLIB::ZLIB)
+            list(APPEND THRIFT_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+            list(APPEND THRIFT_THRIFTZ_LIBRARIES ${ZLIB_LIBRARIES})
         endif()
         
         target_link_libraries(Thrift::Thriftz INTERFACE Thrift::Thrift)
+        list(APPEND THRIFT_THRIFTZ_LIBRARIES ${THRIFT_THRIFT_LIBRARIES})
     endif()
 endif()

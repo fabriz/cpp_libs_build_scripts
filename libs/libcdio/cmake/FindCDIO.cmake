@@ -77,6 +77,7 @@ if(CDIO_FOUND)
             target_link_libraries(CDIO::CDIO INTERFACE "-framework DiskArbitration" "-framework IOKit")
         elseif(MINGW)
             target_link_libraries(CDIO::CDIO INTERFACE winmm)
+            list(APPEND CDIO_CDIO_LIBRARIES winmm)
         endif()
     endif()
     
@@ -88,6 +89,7 @@ if(CDIO_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${CDIO_INCLUDE_DIR}")
         
         target_link_libraries(CDIO::CDIOXX INTERFACE CDIO::CDIO)
+        list(APPEND CDIO_CDIOXX_LIBRARIES ${CDIO_CDIO_LIBRARIES})
     endif()
     
     if(CDIO_ISO9660_FOUND AND NOT TARGET CDIO::ISO9660)
@@ -98,6 +100,7 @@ if(CDIO_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${CDIO_INCLUDE_DIR}")
         
         target_link_libraries(CDIO::ISO9660 INTERFACE CDIO::CDIO)
+        list(APPEND CDIO_ISO9660_LIBRARIES ${CDIO_CDIO_LIBRARIES})
     endif()
     
     if(CDIO_ISO9660XX_FOUND AND NOT TARGET CDIO::ISO9660XX)
@@ -108,6 +111,7 @@ if(CDIO_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${CDIO_INCLUDE_DIR}")
         
         target_link_libraries(CDIO::ISO9660XX INTERFACE CDIO::ISO9660)
+        list(APPEND CDIO_ISO9660XX_LIBRARIES ${CDIO_ISO9660_LIBRARIES})
     endif()
     
     if(CDIO_UDF_FOUND AND NOT TARGET CDIO::UDF)
@@ -118,6 +122,7 @@ if(CDIO_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${CDIO_INCLUDE_DIR}")
         
         target_link_libraries(CDIO::UDF INTERFACE CDIO::CDIO)
+        list(APPEND CDIO_UDF_LIBRARIES ${CDIO_CDIO_LIBRARIES})
     endif()
     
     if(CDIO_CDDA_FOUND AND NOT TARGET CDIO::CDDA)
@@ -128,6 +133,7 @@ if(CDIO_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${CDIO_INCLUDE_DIR}")
         
         target_link_libraries(CDIO::CDDA INTERFACE CDIO::CDIO)
+        list(APPEND CDIO_CDDA_LIBRARIES ${CDIO_CDIO_LIBRARIES})
     endif()
     
     if(CDIO_PARANOIA_FOUND AND NOT TARGET CDIO::PARANOIA)
@@ -138,5 +144,6 @@ if(CDIO_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${CDIO_INCLUDE_DIR}")
         
         target_link_libraries(CDIO::PARANOIA INTERFACE CDIO::CDDA)
+        list(APPEND CDIO_PARANOIA_LIBRARIES ${CDIO_CDDA_LIBRARIES})
     endif()
 endif()

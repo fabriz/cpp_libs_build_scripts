@@ -40,7 +40,7 @@ export FM_CONFIG_DEPLOY_ROOT=/Users/fabrizio/libs/libs
 #export FM_CONFIG_VERBOSE_LOGS=true
 
 # Uncomment to deploy the provided cmake find modules
-#export FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true
+export FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true
 
 # Uncomment to disable certificate validation
 #export FM_CONFIG_DISABLE_SSL_CERTIFICATE_VALIDATION=true

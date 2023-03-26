@@ -48,8 +48,3 @@ FM_LIBSET_LIBS=(
     wt/4.8.1
     libical/3.0.15
 )
-
-# neon/0.32.4 fails to build with windows_msvc
-if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
-    FM_LIBSET_LIBS=("${FM_LIBSET_LIBS[@]/neon\/0.32.4/neon\/0.32.2}")
-fi

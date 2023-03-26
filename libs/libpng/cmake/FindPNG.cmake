@@ -16,7 +16,7 @@ if(NOT ZLIB_FOUND)
 endif()
 
 find_path(PNG_INCLUDE_DIR NAMES png.h PATHS "${CPPLIBS_VARIANT_ROOT}/include" NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
-find_library(PNG_LIBRARY NAMES png PATHS "${CPPLIBS_VARIANT_ROOT}/lib" NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+find_library(PNG_LIBRARY NAMES png libpng_static PATHS "${CPPLIBS_VARIANT_ROOT}/lib" NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
 mark_as_advanced(PNG_INCLUDE_DIR PNG_LIBRARY)
 
 if(PNG_INCLUDE_DIR AND EXISTS "${PNG_INCLUDE_DIR}/png.h")
@@ -27,6 +27,7 @@ endif()
 debugMessage("PNG_INCLUDE_DIR: ${PNG_INCLUDE_DIR}")
 debugMessage("PNG_LIBRARY: ${PNG_LIBRARY}")
 debugMessage("PNG_VERSION_STRING: ${PNG_VERSION_STRING}")
+debugMessage("PNG_DEPENDENCIES: ZLIB=${ZLIB_FOUND}")
 
 find_package_handle_standard_args(PNG
     REQUIRED_VARS   PNG_LIBRARY PNG_INCLUDE_DIR
@@ -34,7 +35,8 @@ find_package_handle_standard_args(PNG
 
 if(PNG_FOUND)
     set(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
-    set(PNG_LIBRARIES ${PNG_LIBRARY})
+    set(PNG_LIBRARIES ${PNG_LIBRARY} ${ZLIB_LIBRARY})
+    set(PNG_DEFINITIONS "")
     
     if(NOT TARGET PNG::PNG)
         add_library(PNG::PNG UNKNOWN IMPORTED)
@@ -44,5 +46,7 @@ if(PNG_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${PNG_INCLUDE_DIR}")
         
         target_link_libraries(PNG::PNG INTERFACE ZLIB::ZLIB)
+        list(APPEND PNG_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+        list(APPEND PNG_LIBRARIES ${ZLIB_LIBRARIES})
     endif()
 endif()

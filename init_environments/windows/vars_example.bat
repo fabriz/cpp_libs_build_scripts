@@ -1,3 +1,8 @@
+REM Initialize the PATH variable with the required search paths
+REM This is important to avoid calling the wrong tools and also beacuse
+REM the allowed size of the environment is limited.
+set PATH=C:\Program Files\NASM;C:\Windows\system32
+
 REM Number of parallel jobs for make
 set FM_CONFIG_NUM_PROCESSES=%NUMBER_OF_PROCESSORS%
 
@@ -52,7 +57,7 @@ REM Uncomment to increase the log verbosity
 REM set FM_CONFIG_VERBOSE_LOGS=true
 
 REM Uncomment to deploy the provided cmake find modules
-REM set FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true
+set FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true
 
 REM Uncomment to disable certificate validation
 REM set FM_CONFIG_DISABLE_SSL_CERTIFICATE_VALIDATION=true

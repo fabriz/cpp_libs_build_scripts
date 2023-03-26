@@ -87,6 +87,10 @@ buildCurrentArchitecture__macos_clang()
 
 buildCurrentArchitecture__ios_clang()
 {
+    # TODO: Fix the project to allow proper build
+    sed -i.orig -e 's/ADD_SUBDIRECTORY(tests)/#ADD_SUBDIRECTORY(tests)/' \
+                -e 's/ADD_SUBDIRECTORY(examples)/#ADD_SUBDIRECTORY(examples)/' ./CMakeLists.txt
+
     local CROSS_COMPILATION_FLAGS="-DIMPORT_EXECUTABLES=${FM_ARG_BUILD_ROOT}/macos_clang_${FM_HOST_ARCHITECTURE}_release/source/${FM_MUSICBRAINZ_FULL_NAME}/${FM_HOST_ARCHITECTURE}/ImportExecutables.cmake"
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -121,9 +125,23 @@ buildCurrentArchitecture__windows_mingw()
     checkBuildStep
 }
 
-#buildCurrentArchitecture__windows_msvc()
-#{
-#}
+buildCurrentArchitecture__windows_msvc()
+{
+    export _CL_="${FM_TARGET_TOOLCHAIN_CXXFLAGS_CMAKE}"
+
+    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} -DBUILD_SHARED_LIBS=False > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_BUILD} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+    checkBuildStep
+
+    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_INSTALL} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+    checkBuildStep
+}
 
 
 buildLibrary "MUSICBRAINZ"

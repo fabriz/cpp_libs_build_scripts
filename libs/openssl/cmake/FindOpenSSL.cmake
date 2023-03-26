@@ -8,6 +8,8 @@
 
 include(${CMAKE_CURRENT_LIST_DIR}/CppLibsCommon.cmake)
 
+find_package(Threads QUIET)
+
 find_path(OPENSSL_INCLUDE_DIR NAMES openssl/opensslv.h PATHS "${CPPLIBS_VARIANT_ROOT}/include" NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
 find_library(OPENSSL_CRYPTO_LIBRARY NAMES crypto libcrypto PATHS "${CPPLIBS_VARIANT_ROOT}/lib" NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
 find_library(OPENSSL_SSL_LIBRARY NAMES ssl libssl PATHS "${CPPLIBS_VARIANT_ROOT}/lib" NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -40,6 +42,8 @@ if(OPENSSL_FOUND)
     set(OPENSSL_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIR})
     set(OPENSSL_CRYPTO_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY})
     set(OPENSSL_SSL_LIBRARIES ${OPENSSL_SSL_LIBRARY})
+    set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARIES})
+    set(OPENSSL_VERSION ${OPENSSL_VERSION_STRING})
     
     if(OPENSSL_CRYPTO_FOUND AND NOT TARGET OpenSSL::Crypto)
         add_library(OpenSSL::Crypto UNKNOWN IMPORTED)
@@ -50,12 +54,20 @@ if(OPENSSL_FOUND)
         
         if (MSVC)
             target_link_libraries(OpenSSL::Crypto INTERFACE crypt32 ws2_32)
+            list(APPEND OPENSSL_CRYPTO_LIBRARIES crypt32 ws2_32)
         elseif(MINGW)
             target_link_libraries(OpenSSL::Crypto INTERFACE crypt32)
+            list(APPEND OPENSSL_CRYPTO_LIBRARIES crypt32)
+        endif()
+        
+        if(THREADS_FOUND)
+            target_link_libraries(OpenSSL::Crypto INTERFACE Threads::Threads)
+            list(APPEND OPENSSL_CRYPTO_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
         endif()
 
         if(CMAKE_DL_LIBS)
             target_link_libraries(OpenSSL::Crypto INTERFACE ${CMAKE_DL_LIBS})
+            list(APPEND OPENSSL_CRYPTO_LIBRARIES ${CMAKE_DL_LIBS})
         endif()
     endif()
     
@@ -67,5 +79,6 @@ if(OPENSSL_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}")
         
         target_link_libraries(OpenSSL::SSL INTERFACE OpenSSL::Crypto)
+        set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARIES})
     endif()
 endif()

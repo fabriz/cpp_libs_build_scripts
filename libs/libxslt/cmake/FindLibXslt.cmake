@@ -27,6 +27,7 @@ endif()
 debugMessage("LIBXSLT_INCLUDE_DIR: ${LIBXSLT_INCLUDE_DIR}")
 debugMessage("LIBXSLT_LIBRARY: ${LIBXSLT_LIBRARY}")
 debugMessage("LIBXSLT_VERSION_STRING: ${LIBXSLT_VERSION_STRING}")
+debugMessage("LIBXSLT_DEPENDENCIES: LibXml2=${LIBXML2_FOUND}")
 
 find_package_handle_standard_args(LibXslt
     REQUIRED_VARS   LIBXSLT_LIBRARY LIBXSLT_INCLUDE_DIR
@@ -35,6 +36,7 @@ find_package_handle_standard_args(LibXslt
 if(LIBXSLT_FOUND)
     set(LIBXSLT_INCLUDE_DIRS ${LIBXSLT_INCLUDE_DIR})
     set(LIBXSLT_LIBRARIES ${LIBXSLT_LIBRARY})
+    set(LIBXSLT_DEFINITIONS "-DLIBXSLT_STATIC")
     
     if(NOT TARGET LibXslt::LibXslt)
         add_library(LibXslt::LibXslt UNKNOWN IMPORTED)
@@ -45,5 +47,8 @@ if(LIBXSLT_FOUND)
             INTERFACE_COMPILE_DEFINITIONS "LIBXSLT_STATIC")
         
         target_link_libraries(LibXslt::LibXslt INTERFACE LibXml2::LibXml2)
+        list(APPEND LIBXSLT_INCLUDE_DIRS ${LIBXML2_INCLUDE_DIRS})
+        list(APPEND LIBXSLT_LIBRARIES ${LIBXML2_LIBRARIES})
+        list(APPEND LIBXSLT_DEFINITIONS ${LIBXML2_DEFINITIONS})
     endif()
 endif()

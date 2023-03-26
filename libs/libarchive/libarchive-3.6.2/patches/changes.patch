@@ -1,0 +1,62 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 713e3bc..c93b33a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -9,7 +9,7 @@ endif()
+ #
+ PROJECT(libarchive C)
+ #
+-SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake")
++set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake")
+ if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${libarchive_BINARY_DIR}/bin)
+ endif()
+@@ -806,12 +806,12 @@ ENDIF(ENABLE_NETTLE)
+ # Find OpenSSL
+ # (Except on Mac, where OpenSSL is deprecated.)
+ #
+-IF(ENABLE_OPENSSL AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
++IF(ENABLE_OPENSSL)
+   FIND_PACKAGE(OpenSSL)
+   IF(OPENSSL_FOUND)
+     SET(HAVE_LIBCRYPTO 1)
+     INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})
+-    LIST(APPEND ADDITIONAL_LIBS ${OPENSSL_CRYPTO_LIBRARY})
++    LIST(APPEND ADDITIONAL_LIBS OpenSSL::Crypto)
+   ENDIF(OPENSSL_FOUND)
+ ELSE()
+   SET(OPENSSL_FOUND FALSE) # Override cached value
+@@ -930,7 +930,6 @@ main(int argc, char **argv)
+         IF ("${IMPLEMENTATION}" MATCHES "^OPENSSL$" AND OPENSSL_FOUND)
+           INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})
+ 	  LIST(APPEND ADDITIONAL_LIBS ${OPENSSL_LIBRARIES})
+-	   LIST(REMOVE_DUPLICATES ADDITIONAL_LIBS)
+         ENDIF ("${IMPLEMENTATION}" MATCHES "^OPENSSL$" AND OPENSSL_FOUND)
+       ENDIF (ARCHIVE_CRYPTO_${ALGORITHM}_${IMPLEMENTATION})
+       ENDIF(NOT ARCHIVE_CRYPTO_${ALGORITHM})
+diff --git a/libarchive/CMakeLists.txt b/libarchive/CMakeLists.txt
+index ff7ade0..00c2e17 100644
+--- a/libarchive/CMakeLists.txt
++++ b/libarchive/CMakeLists.txt
+@@ -242,12 +242,6 @@ ELSEIF(ARCHIVE_ACL_SUNOS)
+   LIST(APPEND libarchive_SOURCES archive_disk_acl_sunos.c)
+ ENDIF()
+ 
+-# Libarchive is a shared library
+-ADD_LIBRARY(archive SHARED ${libarchive_SOURCES} ${include_HEADERS})
+-TARGET_INCLUDE_DIRECTORIES(archive PUBLIC .)
+-TARGET_LINK_LIBRARIES(archive ${ADDITIONAL_LIBS})
+-SET_TARGET_PROPERTIES(archive PROPERTIES SOVERSION ${SOVERSION})
+-
+ # archive_static is a static library
+ ADD_LIBRARY(archive_static STATIC ${libarchive_SOURCES} ${include_HEADERS})
+ TARGET_LINK_LIBRARIES(archive_static ${ADDITIONAL_LIBS})
+@@ -260,7 +254,7 @@ ENDIF(NOT WIN32 OR CYGWIN)
+ 
+ IF(ENABLE_INSTALL)
+   # How to install the libraries
+-  INSTALL(TARGETS archive archive_static
++  INSTALL(TARGETS archive_static
+           RUNTIME DESTINATION bin
+           LIBRARY DESTINATION lib
+           ARCHIVE DESTINATION lib)

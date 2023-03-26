@@ -60,6 +60,9 @@ if(ICU_FOUND)
     set(ICU_IO_LIBRARIES ${ICU_IO_LIBRARY})
     set(ICU_TU_LIBRARIES ${ICU_TU_LIBRARY})
     set(ICU_TEST_LIBRARIES ${ICU_TEST_LIBRARY})
+    set(ICU_LIBRARIES ${ICU_TEST_LIBRARIES} ${ICU_TU_LIBRARIES} ${ICU_IO_LIBRARIES} ${ICU_I18N_LIBRARIES} ${ICU_UC_LIBRARIES} ${ICU_DATA_LIBRARIES})
+    set(ICU_VERSION ${ICU_VERSION_STRING})
+    set(ICU_DEFINITIONS "-DU_STATIC_IMPLEMENTATION")
     
     if(ICU_DATA_FOUND AND NOT TARGET ICU::data)
         add_library(ICU::data UNKNOWN IMPORTED)
@@ -78,6 +81,7 @@ if(ICU_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${ICU_INCLUDE_DIR}")
         
         target_link_libraries(ICU::uc INTERFACE ICU::data)
+        list(APPEND ICU_UC_LIBRARIES ${ICU_DATA_LIBRARIES})
     endif()
     
     if(ICU_I18N_FOUND AND NOT TARGET ICU::i18n)
@@ -88,6 +92,7 @@ if(ICU_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${ICU_INCLUDE_DIR}")
         
         target_link_libraries(ICU::i18n INTERFACE ICU::uc)
+        list(APPEND ICU_I18N_LIBRARIES ${ICU_UC_LIBRARIES})
     endif()
     
     if(ICU_IO_FOUND AND NOT TARGET ICU::io)
@@ -98,6 +103,7 @@ if(ICU_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${ICU_INCLUDE_DIR}")
         
         target_link_libraries(ICU::io INTERFACE ICU::i18n)
+        list(APPEND ICU_IO_LIBRARIES ${ICU_I18N_LIBRARIES})
     endif()
     
     if(ICU_TU_FOUND AND NOT TARGET ICU::tu)
@@ -108,6 +114,7 @@ if(ICU_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${ICU_INCLUDE_DIR}")
         
         target_link_libraries(ICU::tu INTERFACE ICU::i18n)
+        list(APPEND ICU_TU_LIBRARIES ${ICU_I18N_LIBRARIES})
     endif()
     
     if(ICU_TEST_FOUND AND NOT TARGET ICU::test)
@@ -118,5 +125,6 @@ if(ICU_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${ICU_INCLUDE_DIR}")
         
         target_link_libraries(ICU::test INTERFACE ICU::uc)
+        list(APPEND ICU_TEST_LIBRARIES ${ICU_UC_LIBRARIES})
     endif()
 endif()

@@ -33,6 +33,7 @@ find_package_handle_standard_args(LibLZMA
 if(LIBLZMA_FOUND)
     set(LIBLZMA_INCLUDE_DIRS ${LIBLZMA_INCLUDE_DIR})
     set(LIBLZMA_LIBRARIES ${LIBLZMA_LIBRARY})
+    set(LIBLZMA_DEFINITIONS "-DLZMA_API_STATIC")
     
     if(NOT TARGET LibLZMA::LibLZMA)
         add_library(LibLZMA::LibLZMA UNKNOWN IMPORTED)

@@ -26,6 +26,7 @@ endif()
 debugMessage("LIBZIP_INCLUDE_DIR: ${LIBZIP_INCLUDE_DIR}")
 debugMessage("LIBZIP_LIBRARY: ${LIBZIP_LIBRARY}")
 debugMessage("LIBZIP_VERSION_STRING: ${LIBZIP_VERSION_STRING}")
+debugMessage("LIBZIP_DEPENDENCIES: ZLIB=${ZLIB_FOUND}, BZip2=${BZIP2_FOUND}, LZMA=${LIBLZMA_FOUND}, ZSTD=${ZSTD_FOUND}, OpenSSL=${OPENSSL_FOUND}")
 
 find_package_handle_standard_args(LibZip
     REQUIRED_VARS   LIBZIP_LIBRARY LIBZIP_INCLUDE_DIR
@@ -34,6 +35,7 @@ find_package_handle_standard_args(LibZip
 if(LIBZIP_FOUND)
     set(LIBZIP_INCLUDE_DIRS ${LIBZIP_INCLUDE_DIR})
     set(LIBZIP_LIBRARIES ${LIBZIP_LIBRARY})
+    set(LIBZIP_DEFINITIONS "")
     
     if(NOT TARGET LibZip::LibZip)
         add_library(LibZip::LibZip UNKNOWN IMPORTED)
@@ -44,26 +46,38 @@ if(LIBZIP_FOUND)
 
         if(ZLIB_FOUND)
             target_link_libraries(LibZip::LibZip INTERFACE ZLIB::ZLIB)
+            list(APPEND LIBZIP_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+            list(APPEND LIBZIP_LIBRARIES ${ZLIB_LIBRARIES})
         endif()
         
         if(BZIP2_FOUND)
             target_link_libraries(LibZip::LibZip INTERFACE BZip2::BZip2)
+            list(APPEND LIBZIP_INCLUDE_DIRS ${BZIP2_INCLUDE_DIRS})
+            list(APPEND LIBZIP_LIBRARIES ${BZIP2_LIBRARIES})
         endif()
         
         if(LIBLZMA_FOUND)
             target_link_libraries(LibZip::LibZip INTERFACE LibLZMA::LibLZMA)
+            list(APPEND LIBZIP_INCLUDE_DIRS ${LIBLZMA_INCLUDE_DIRS})
+            list(APPEND LIBZIP_LIBRARIES ${LIBLZMA_LIBRARIES})
+            list(APPEND LIBZIP_DEFINITIONS ${LIBLZMA_DEFINITIONS})
         endif()
         
         if(ZSTD_FOUND)
             target_link_libraries(LibZip::LibZip INTERFACE ZSTD::ZSTD)
+            list(APPEND LIBZIP_INCLUDE_DIRS ${ZSTD_INCLUDE_DIRS})
+            list(APPEND LIBZIP_LIBRARIES ${ZSTD_LIBRARIES})
         endif()
         
         if(OPENSSL_FOUND)
             target_link_libraries(LibZip::LibZip INTERFACE OpenSSL::Crypto)
+            list(APPEND LIBZIP_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIRS})
+            list(APPEND LIBZIP_LIBRARIES ${OPENSSL_CRYPTO_LIBRARIES})
         endif()
 
         if(MINGW)
             target_link_libraries(LibZip::LibZip INTERFACE bcrypt)
+            list(APPEND LIBZIP_LIBRARIES bcrypt)
         endif()
         
     endif()

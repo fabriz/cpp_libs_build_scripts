@@ -30,11 +30,13 @@ initToolchain()
     case ${FM_ARG_ARCHITECTURE} in
         x86)
             FM_TARGET_ADDRESS_MODEL="32"
+            FM_TARGET_MACOS_PROCESSOR="x86"
             LOCAL_ARCHITECTURE_CFLAGS="-arch i386"
             LOCAL_ARCHITECTURE_ASMFLAGS="-arch i386"
         ;;
         x86_64)
             FM_TARGET_ADDRESS_MODEL="64"
+            FM_TARGET_MACOS_PROCESSOR="x86_64"
             LOCAL_ARCHITECTURE_CFLAGS="-arch x86_64"
             LOCAL_ARCHITECTURE_ASMFLAGS="-arch x86_64"
             if [ "${FM_HOST_ARCHITECTURE}" != "x86_64" ]; then
@@ -44,6 +46,7 @@ initToolchain()
         ;;
         arm64)
             FM_TARGET_ADDRESS_MODEL="64"
+            FM_TARGET_MACOS_PROCESSOR="arm64"
             LOCAL_ARCHITECTURE_CFLAGS="-arch arm64"
             LOCAL_ARCHITECTURE_ASMFLAGS="-arch arm64"
             if [ "${FM_HOST_ARCHITECTURE}" != "arm64" ]; then
@@ -74,6 +77,8 @@ initToolchain()
     export LDFLAGS="${FM_TARGET_TOOLCHAIN_LDFLAGS}"
     export ASMFLAGS="${FM_TARGET_TOOLCHAIN_ASMFLAGS}"
 
+    export FM_TARGET_MACOS_PROCESSOR
+    export FM_TARGET_IS_CROSS_COMPILING
     export FM_LIBS_INSTALL_PREFIX
     export CMAKE_GENERATOR="${FM_TARGET_CMAKE_GENERATOR}"
 }

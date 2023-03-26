@@ -24,6 +24,7 @@ endif()
 debugMessage("CURL_INCLUDE_DIR: ${CURL_INCLUDE_DIR}")
 debugMessage("CURL_LIBRARY: ${CURL_LIBRARY}")
 debugMessage("CURL_VERSION_STRING: ${CURL_VERSION_STRING}")
+debugMessage("CURL_DEPENDENCIES: ZLIB=${ZLIB_FOUND}, ZSTD=${ZSTD_FOUND}, OpenSSL=${OPENSSL_FOUND}")
 
 find_package_handle_standard_args(CURL
     REQUIRED_VARS   CURL_LIBRARY CURL_INCLUDE_DIR
@@ -32,37 +33,47 @@ find_package_handle_standard_args(CURL
 if(CURL_FOUND)
     set(CURL_INCLUDE_DIRS ${CURL_INCLUDE_DIR})
     set(CURL_LIBRARIES ${CURL_LIBRARY})
+    set(CURL_DEFINITIONS "-DCURL_STATICLIB")
 
-    if(NOT TARGET CURL::LibCurl)
-        add_library(CURL::LibCurl UNKNOWN IMPORTED)
+    if(NOT TARGET CURL::libcurl)
+        add_library(CURL::libcurl UNKNOWN IMPORTED)
 
-        set_target_properties(CURL::LibCurl PROPERTIES
+        set_target_properties(CURL::libcurl PROPERTIES
             IMPORTED_LOCATION             "${CURL_LIBRARY}"
             INTERFACE_INCLUDE_DIRECTORIES "${CURL_INCLUDE_DIR}"
             INTERFACE_COMPILE_DEFINITIONS "CURL_STATICLIB")
 
         if(ZLIB_FOUND)
-            target_link_libraries(CURL::LibCurl INTERFACE ZLIB::ZLIB)
+            target_link_libraries(CURL::libcurl INTERFACE ZLIB::ZLIB)
+            list(APPEND CURL_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+            list(APPEND CURL_LIBRARIES ${ZLIB_LIBRARIES})
         endif()
         
         if(ZSTD_FOUND)
-            target_link_libraries(CURL::LibCurl INTERFACE ZSTD::ZSTD)
+            target_link_libraries(CURL::libcurl INTERFACE ZSTD::ZSTD)
+            list(APPEND CURL_INCLUDE_DIRS ${ZSTD_INCLUDE_DIRS})
+            list(APPEND CURL_LIBRARIES ${ZSTD_LIBRARIES})
         endif()
 
         if(OPENSSL_FOUND)
-            target_link_libraries(CURL::LibCurl INTERFACE OpenSSL::Crypto OpenSSL::SSL)
+            target_link_libraries(CURL::libcurl INTERFACE OpenSSL::Crypto OpenSSL::SSL)
+            list(APPEND CURL_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIRS})
+            list(APPEND CURL_LIBRARIES ${OPENSSL_SSL_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARIES})
         endif()
 
         if(MACOS)
-            target_link_libraries(CURL::LibCurl INTERFACE "-framework LDAP" "-framework SystemConfiguration")
+            target_link_libraries(CURL::libcurl INTERFACE "-framework CoreFoundation" "-framework LDAP" "-framework SystemConfiguration")
         elseif(MINGW)
-            target_link_libraries(CURL::LibCurl INTERFACE crypt32 ws2_32 wldap32)
+            target_link_libraries(CURL::libcurl INTERFACE bcrypt crypt32 ws2_32 wldap32)
+            list(APPEND CURL_LIBRARIES bcrypt crypt32 ws2_32 wldap32)
         elseif(MSVC)
-            target_link_libraries(CURL::LibCurl INTERFACE wldap32 Normaliz)
+            target_link_libraries(CURL::libcurl INTERFACE wldap32 Normaliz)
+            list(APPEND CURL_LIBRARIES wldap32 Normaliz)
         endif()
 
         if(CMAKE_DL_LIBS)
-            target_link_libraries(CURL::LibCurl INTERFACE ${CMAKE_DL_LIBS})
+            target_link_libraries(CURL::libcurl INTERFACE ${CMAKE_DL_LIBS})
+            list(APPEND CURL_LIBRARIES ${CMAKE_DL_LIBS})
         endif()
 
     endif()

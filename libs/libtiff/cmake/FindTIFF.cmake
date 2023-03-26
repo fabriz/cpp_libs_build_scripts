@@ -9,6 +9,7 @@
 include(${CMAKE_CURRENT_LIST_DIR}/CppLibsCommon.cmake)
 
 find_package(ZLIB QUIET)
+find_package(Deflate QUIET)
 find_package(LibLZMA QUIET)
 find_package(ZSTD QUIET)
 find_package(JPEG QUIET)
@@ -28,14 +29,15 @@ debugMessage("TIFF_INCLUDE_DIR: ${TIFF_INCLUDE_DIR}")
 debugMessage("TIFF_LIBRARY: ${TIFF_LIBRARY}")
 debugMessage("TIFFXX_LIBRARY: ${TIFFXX_LIBRARY}")
 debugMessage("TIFF_VERSION_STRING: ${TIFF_VERSION_STRING}")
+debugMessage("TIFF_DEPENDENCIES: ZLIB=${ZLIB_FOUND}, Deflate=${DEFLATE_FOUND}, LibLZMA=${LIBLZMA_FOUND}, ZSTD=${ZSTD_FOUND}, JPEG=${JPEG_FOUND}, WebP=${WEBP_FOUND}")
 
 set(TIFF_COMPONENTS
     TIFF
-    TIFFXX)
+    CXX)
 
 validate_package_components(TIFF_COMPONENTS TIFF_FIND_COMPONENTS)
 check_package_component_items(TIFF REQUIRED_ITEMS TIFF_INCLUDE_DIR TIFF_LIBRARY)
-check_package_component_items(TIFFXX REQUIRED_ITEMS TIFF_INCLUDE_DIR TIFFXX_LIBRARY)
+check_package_component_items(CXX REQUIRED_ITEMS TIFF_INCLUDE_DIR TIFFXX_LIBRARY)
 
 find_package_handle_standard_args(TIFF
     REQUIRED_VARS   TIFF_INCLUDE_DIR TIFF_LIBRARY
@@ -45,6 +47,7 @@ find_package_handle_standard_args(TIFF
 if(TIFF_FOUND)
     set(TIFF_INCLUDE_DIRS ${TIFF_INCLUDE_DIR})
     set(TIFF_LIBRARIES ${TIFF_LIBRARY})
+    set(TIFF_DEFINITIONS "")
     set(TIFFXX_LIBRARIES ${TIFFXX_LIBRARY})
     
     if(TIFF_TIFF_FOUND AND NOT TARGET TIFF::TIFF)
@@ -56,36 +59,55 @@ if(TIFF_FOUND)
         
         if(ZLIB_FOUND)
             target_link_libraries(TIFF::TIFF INTERFACE ZLIB::ZLIB)
+            list(APPEND TIFF_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+            list(APPEND TIFF_LIBRARIES ${ZLIB_LIBRARIES})
+        endif()
+        
+        if(DEFLATE_FOUND)
+            target_link_libraries(TIFF::TIFF INTERFACE Deflate::Deflate)
+            list(APPEND TIFF_INCLUDE_DIRS ${DEFLATE_INCLUDE_DIRS})
+            list(APPEND TIFF_LIBRARIES ${DEFLATE_LIBRARIES})
         endif()
         
         if(LIBLZMA_FOUND)
             target_link_libraries(TIFF::TIFF INTERFACE LibLZMA::LibLZMA)
+            list(APPEND TIFF_INCLUDE_DIRS ${LIBLZMA_INCLUDE_DIRS})
+            list(APPEND TIFF_LIBRARIES ${LIBLZMA_LIBRARIES})
+            list(APPEND TIFF_DEFINITIONS ${LIBLZMA_DEFINITIONS})
         endif()
         
         if(ZSTD_FOUND)
             target_link_libraries(TIFF::TIFF INTERFACE ZSTD::ZSTD)
+            list(APPEND TIFF_INCLUDE_DIRS ${ZSTD_INCLUDE_DIRS})
+            list(APPEND TIFF_LIBRARIES ${ZSTD_LIBRARIES})
         endif()
         
         if(JPEG_FOUND)
             target_link_libraries(TIFF::TIFF INTERFACE JPEG::JPEG)
+            list(APPEND TIFF_INCLUDE_DIRS ${JPEG_INCLUDE_DIRS})
+            list(APPEND TIFF_LIBRARIES ${JPEG_LIBRARIES})
         endif()
         
         if(WEBP_ENCODE_FOUND)
             target_link_libraries(TIFF::TIFF INTERFACE WebP::Encode)
+            list(APPEND TIFF_INCLUDE_DIRS ${WEBP_INCLUDE_DIRS})
+            list(APPEND TIFF_LIBRARIES ${WEBP_ENCODE_LIBRARIES})
         endif()
         
         if(WEBP_DECODE_FOUND)
             target_link_libraries(TIFF::TIFF INTERFACE WebP::Decode)
+            list(APPEND TIFF_INCLUDE_DIRS ${WEBP_INCLUDE_DIRS})
+            list(APPEND TIFF_LIBRARIES ${WEBP_DECODE_LIBRARIES})
         endif()
     endif()
     
-    if(TIFF_TIFFXX_FOUND AND NOT TARGET TIFF::TIFFXX)
-        add_library(TIFF::TIFFXX UNKNOWN IMPORTED)
+    if(TIFF_CXX_FOUND AND NOT TARGET TIFF::CXX)
+        add_library(TIFF::CXX UNKNOWN IMPORTED)
         
-        set_target_properties(TIFF::TIFFXX PROPERTIES
+        set_target_properties(TIFF::CXX PROPERTIES
             IMPORTED_LOCATION             "${TIFFXX_LIBRARY}"
             INTERFACE_INCLUDE_DIRECTORIES "${TIFF_INCLUDE_DIR}")
         
-        target_link_libraries(TIFF::TIFFXX INTERFACE TIFF::TIFF)
+        target_link_libraries(TIFF::CXX INTERFACE TIFF::TIFF)
     endif()
 endif()

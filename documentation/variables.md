@@ -190,6 +190,7 @@ FM_TARGET_IOS_SDK_VERSION | Version of the iOS SDK.
 FM_TARGET_IOS_SYS_ROOT | Sys root of the iOS SDK.
 FM_TARGET_IOS_VERSION | iOS version in use (10.0, 13.0 ...)
 FM_TARGET_IOS_PROCESSOR | iOS processor target
+FM_TARGET_MACOS_PROCESSOR | macOS processor target
 
 
 Name | Description

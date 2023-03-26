@@ -25,6 +25,7 @@ find_package_handle_standard_args(JPEG
 if(JPEG_FOUND)
     set(JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
     set(JPEG_LIBRARIES ${JPEG_LIBRARY})
+    set(JPEG_VERSION ${JPEG_VERSION_STRING})
     
     if(NOT TARGET JPEG::JPEG)
         add_library(JPEG::JPEG UNKNOWN IMPORTED)

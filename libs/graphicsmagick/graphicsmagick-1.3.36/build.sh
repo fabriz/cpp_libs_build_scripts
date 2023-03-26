@@ -74,7 +74,7 @@ buildCurrentArchitecture__macos_clang()
 
 buildCurrentArchitecture__windows_mingw()
 {
-    export CPPFLAGS="-DLIBXML_STATIC=1 ${CPPFLAGS}"
+    export CPPFLAGS="${CPPFLAGS} -DLIBXML_STATIC=1"
     export LIBS="-lgdi32"
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "

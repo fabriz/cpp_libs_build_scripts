@@ -13,15 +13,6 @@ export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 
-beforeBuildCurrentArchitecture()
-{
-    if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
-        export _CL_="${FM_TARGET_TOOLCHAIN_CXXFLAGS_CMAKE} -DLZMA_API_STATIC"
-    else
-        export CPPFLAGS="${CPPFLAGS} -DLZMA_API_STATIC"
-    fi
-}
-
 buildCurrentArchitecture__linux_gcc()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -104,6 +95,8 @@ buildCurrentArchitecture__windows_mingw()
 
 buildCurrentArchitecture__windows_msvc()
 {
+    export _CL_="${FM_TARGET_TOOLCHAIN_CXXFLAGS_CMAKE}"
+
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
         -DBUILD_SHARED_LIBS=False -DENABLE_COMMONCRYPTO=False -DENABLE_GNUTLS=False -DENABLE_OPENSSL=True \

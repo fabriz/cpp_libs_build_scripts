@@ -1,0 +1,18 @@
+diff --git a/config.hw b/config.hw
+index a538dbd..5163f5b 100644
+--- a/config.hw
++++ b/config.hw
+@@ -51,6 +51,13 @@
+ #define NE_FMT_SIZE_T "u"
+ #define NE_FMT_SSIZE_T "d"
+ #endif
++
++#ifdef _USE_32BIT_TIME_T
++#define NE_FMT_TIME_T "d"
++#else
++#define NE_FMT_TIME_T "I64d"
++#endif
++
+ #define NE_FMT_OFF_T "ld"
+ #define NE_FMT_OFF64_T "I64d"
+ #define NE_FMT_NE_OFF_T NE_FMT_OFF_T

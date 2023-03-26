@@ -1,0 +1,22 @@
+diff --git a/neon.mak b/neon.mak
+index 4181e56..8e84f34 100644
+--- a/neon.mak
++++ b/neon.mak
+@@ -21,7 +21,7 @@ TARGET = .\libneon.lib
+ !ELSE
+ INTDIR = Debug
+ CFLAGS = /MDd /W3 /Gm /EHsc /Zi /Od /D "_DEBUG"
+-TARGET = .\libneonD.lib
++TARGET = .\libneon.lib
+ !ENDIF
+ 
+ NE_DEP_LIBS =
+@@ -147,7 +147,7 @@ IPV6_FLAGS = /D USE_GETADDRINFO
+ WIN32_DEFS = /D WIN32_LEAN_AND_MEAN /D NOUSER /D NOGDI /D NONLS /D NOCRYPT
+ 
+ CPP=cl.exe
+-CPP_PROJ = /c /nologo $(CFLAGS) $(WIN32_DEFS) $(NE_XML_FLAGS) $(OPENSSL_FLAGS) $(ZLIB_FLAGS) $(IPV6_FLAGS) /D "HAVE_CONFIG_H" /D BUILDING_NEON /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\"
++CPP_PROJ = /c /nologo $(CFLAGS) $(WIN32_DEFS) $(NE_XML_FLAGS) $(OPENSSL_FLAGS) $(ZLIB_FLAGS) $(IPV6_FLAGS) /D "HAVE_CONFIG_H" /D BUILDING_NEON /Fo"$(INTDIR)\\" /Fd"libneon.pdb"
+ LINK=link.exe
+ LIB32=$(LINK) -lib
+ LIB32_FLAGS=/nologo /out:$@

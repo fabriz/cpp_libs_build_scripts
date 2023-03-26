@@ -19,7 +19,8 @@ export FM_TARGET_PLATFORM=${FM_TARGET_IOS_SDK}_clang
 export FM_TARGET_CMAKE_GENERATOR="Unix Makefiles"
 export FM_TARGET_CMAKE_TOOLCHAIN_FILE="${FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY}/../../core/toolchains/cmake/ios.toolchain.cmake"
 export FM_TARGET_HAS_PKGCONFIG=false
-export FM_TARGET_ALL_ARCHITECTURES=arm64,armv7,armv7s,fat
+#export FM_TARGET_ALL_ARCHITECTURES=arm64,armv7,armv7s,fat
+export FM_TARGET_ALL_ARCHITECTURES=arm64,fat
 export FM_TARGET_ALL_BUILD_VARIANTS=release,debug,profile
 
 export FM_TARGET_TOOLCHAIN_COMMON_CFLAGS="-fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wextra -Wall -W"

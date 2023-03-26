@@ -8,7 +8,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 # Configuration script for libtiff 4.4.0
-# Library release date: 2022/05/27
+# Library release date: 2022/05/20
 
 export FM_LIBTIFF_NAME="tiff"
 export FM_LIBTIFF_VERSION="4.4.0"

@@ -79,44 +79,44 @@ buildCurrentArchitecture__android_clang()
     popd
 }
 
-buildCurrentArchitecture__macos_clang()
-{
-    local CROSS_COMPILER_HOST=""
-    if [ -n "${FM_TARGET_CROSS_COMPILER_HOST-}" ]; then
-        CROSS_COMPILER_HOST="--host=${FM_TARGET_CROSS_COMPILER_HOST}"
-    fi
+#buildCurrentArchitecture__macos_clang()
+#{
+#    local CROSS_COMPILER_HOST=""
+#    if [ -n "${FM_TARGET_CROSS_COMPILER_HOST-}" ]; then
+#        CROSS_COMPILER_HOST="--host=${FM_TARGET_CROSS_COMPILER_HOST}"
+#    fi
 
-    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure ${CROSS_COMPILER_HOST} --disable-shared --without-python --without-crypto \
-        --with-libxml-include-prefix="${FM_LIBS_INSTALL_INCLUDES}/libxml2" \
-        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
-    checkBuildStep
+#    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+#    ./configure ${CROSS_COMPILER_HOST} --disable-shared --without-python --without-crypto \
+#        --with-libxml-include-prefix="${FM_LIBS_INSTALL_INCLUDES}/libxml2" \
+#        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+#    checkBuildStep
 
-    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make -j${FM_ARG_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
-    checkBuildStep
+#    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+#    make -j${FM_ARG_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+#    checkBuildStep
 
-    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
-    checkBuildStep
-}
+#    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+#    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+#    checkBuildStep
+#}
 
-buildCurrentArchitecture__ios_clang()
-{
-    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared --without-python --without-crypto \
-        --with-libxml-include-prefix="${FM_LIBS_INSTALL_INCLUDES}/libxml2" \
-        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
-    checkBuildStep
+#buildCurrentArchitecture__ios_clang()
+#{
+#    prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+#    ./configure --host=${FM_TARGET_CROSS_COMPILER_HOST} --disable-shared --without-python --without-crypto \
+#        --with-libxml-include-prefix="${FM_LIBS_INSTALL_INCLUDES}/libxml2" \
+#        --prefix=${FM_CURRENT_ARCHITECTURE_STAGE_DIR} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+#    checkBuildStep
 
-    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make -j${FM_ARG_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
-    checkBuildStep
+#    prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+#    make -j${FM_ARG_NUM_PROCESSES} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_MAKE} 2>&1
+#    checkBuildStep
 
-    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
-    checkBuildStep
-}
+#    prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
+#    make install > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
+#    checkBuildStep
+#}
 
 buildCurrentArchitecture__windows_mingw()
 {
