@@ -1,0 +1,77 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 68da6c5..76c6f7c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -395,7 +395,7 @@ else()
+   find_package(PkgConfig)
+   # Check for required library. option -DLeptonica_DIR=path => cmake hint where
+   # to find leptonica
+-  find_package(Leptonica ${MINIMUM_LEPTONICA_VERSION} CONFIG)
++  find_package(Leptonica ${MINIMUM_LEPTONICA_VERSION})
+   if(NOT Leptonica_FOUND AND PKG_CONFIG_EXECUTABLE)
+     pkg_check_modules(Leptonica lept>=${MINIMUM_LEPTONICA_VERSION})
+     link_directories(${Leptonica_LIBRARY_DIRS})
+@@ -589,10 +589,10 @@ add_definitions(-D_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS=1)
+ 
+ include_directories(${CMAKE_CURRENT_BINARY_DIR})
+ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+-if(ANDROID_TOOLCHAIN)
+-  include_directories(${ANDROID_TOOLCHAIN}/sysroot/usr/include)
+-  add_compile_definitions(__ANDROID_API_FUTURE__)
+-endif()
++#if(ANDROID_TOOLCHAIN)
++#  include_directories(${ANDROID_TOOLCHAIN}/sysroot/usr/include)
++#  add_compile_definitions(__ANDROID_API_FUTURE__)
++#endif()
+ 
+ # ##############################################################################
+ # LIBRARY tesseract
+@@ -836,14 +836,10 @@ if(OpenCL_FOUND)
+   target_link_libraries(libtesseract PUBLIC OpenCL::OpenCL)
+ endif()
+ if(LibArchive_FOUND)
+-  target_link_libraries(libtesseract PUBLIC ${LibArchive_LIBRARIES})
++  target_link_libraries(libtesseract PUBLIC LibArchive::LibArchive)
+ endif(LibArchive_FOUND)
+ if(CURL_FOUND)
+-  if(NOT CURL_LIBRARIES)
+-    target_link_libraries(libtesseract PUBLIC CURL::libcurl)
+-  else()
+-    target_link_libraries(libtesseract PUBLIC ${CURL_LIBRARIES})
+-  endif()
++  target_link_libraries(libtesseract PUBLIC CURL::libcurl)
+ endif(CURL_FOUND)
+ 
+ set_target_properties(
+@@ -871,7 +867,7 @@ if(SW_BUILD)
+     FILE ${CMAKE_CURRENT_BINARY_DIR}/TesseractTargets.cmake
+     NAMESPACE Tesseract::)
+ else()
+-  target_link_libraries(libtesseract PUBLIC ${Leptonica_LIBRARIES})
++  target_link_libraries(libtesseract PUBLIC Leptonica::Leptonica)
+   export(
+     TARGETS libtesseract
+     FILE ${CMAKE_CURRENT_BINARY_DIR}/TesseractTargets.cmake
+@@ -886,14 +882,14 @@ if(WIN32
+   target_link_libraries(libtesseract PRIVATE ${OpenMP_LIBRARY})
+ endif()
+ 
+-if(ANDROID)
+-  add_definitions(-DANDROID)
+-  find_package(CpuFeaturesNdkCompat REQUIRED)
+-  target_include_directories(
+-    libtesseract
+-    PRIVATE "${CpuFeaturesNdkCompat_DIR}/../../../include/ndk_compat")
+-  target_link_libraries(libtesseract PRIVATE CpuFeatures::ndk_compat)
+-endif()
++#if(ANDROID)
++#  add_definitions(-DANDROID)
++#  find_package(CpuFeaturesNdkCompat REQUIRED)
++#  target_include_directories(
++#    libtesseract
++#    PRIVATE "${CpuFeaturesNdkCompat_DIR}/../../../include/ndk_compat")
++#  target_link_libraries(libtesseract PRIVATE CpuFeatures::ndk_compat)
++#endif()
+ 
+ # ##############################################################################
+ # EXECUTABLE tesseract

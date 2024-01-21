@@ -10,7 +10,7 @@
 # Number of parallel jobs for make
 export FM_CONFIG_NUM_PROCESSES=$(nproc)
 
-# C++ standard version (14|17)
+# C++ standard version (14|17|20)
 export FM_CONFIG_CXX_STANDARD=17
 
 # Paths of local tools
@@ -31,8 +31,9 @@ export FM_CONFIG_PATCH_COMMAND="$(which patch)"
 
 # LAN cache configuration
 #export FM_CONFIG_LAN_TARBALL_CACHE_USE=(NO|YES|ONLY)
+#export FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD='curl -o "${DESTINATION_PATH}" "https://SERVER_AND_PATH/${TARBALL_NAME}"'
 #export FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD='curl -u : -o "${DESTINATION_PATH}" "smb://SERVER/libs_cache/${TARBALL_NAME}"'
-#export FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD='smbclient '"'"'\\SERVER\libs_cache'"'"' --no-pass -c "get \\${FM_SOURCE_TARBALL_NAME} ${FM_TARGET_TARBALL_PATH}"'
+#export FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD='smbclient '"'"'\\SERVER\libs_cache'"'"' --no-pass -c "get \\${TARBALL_NAME} ${DESTINATION_PATH}"'
 
 # Working directories
 export FM_CONFIG_TARBALL_CACHE=/home/fabrizio/libs/cache
@@ -51,3 +52,6 @@ export FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true
 
 # Uncomment to disable certificate validation
 #export FM_CONFIG_DISABLE_SSL_CERTIFICATE_VALIDATION=true
+
+# Library specific configuration
+#export FM_OPC_UA_NODESETS=/home/fabrizio/github/OPCFoundation/UA-Nodeset

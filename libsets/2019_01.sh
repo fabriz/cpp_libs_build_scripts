@@ -16,7 +16,7 @@ FM_LIBSET_LIBS=(
     icu4c/63.1
     libzippp/2.1-1.5.1
     boost/1.69.0
-    botan/2.9.0
+    botan2/2.9.0
     libodb/2.4.0
     libodb-sqlite/2.4.0
     libodb-boost/2.4.0

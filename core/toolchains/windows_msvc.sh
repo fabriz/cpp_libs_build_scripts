@@ -73,7 +73,7 @@ initToolchain()
         14.0)
             # Nothing to do
         ;;
-        14.1|14.2)
+        14.1|14.2|14.3)
             LOCAL_COMMON_CFLAGS="${LOCAL_COMMON_CFLAGS} -Zc:inline -D_ENABLE_EXTENDED_ALIGNED_STORAGE"
             LOCAL_COMMON_CXXFLAGS="${LOCAL_COMMON_CXXFLAGS} -Zc:rvalueCast -Zc:referenceBinding -Zc:__cplusplus"
         ;;
@@ -88,6 +88,9 @@ initToolchain()
         ;;
         17)
             LOCAL_COMMON_CXXFLAGS="${LOCAL_COMMON_CXXFLAGS} -std:c++17"
+        ;;
+        20)
+            LOCAL_COMMON_CXXFLAGS="${LOCAL_COMMON_CXXFLAGS} -std:c++20"
         ;;
         *)
             error "Invalid C++ standard '${FM_CONFIG_CXX_STANDARD}'."

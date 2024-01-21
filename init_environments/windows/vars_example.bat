@@ -6,7 +6,7 @@ set PATH=C:\Program Files\NASM;C:\Windows\system32
 REM Number of parallel jobs for make
 set FM_CONFIG_NUM_PROCESSES=%NUMBER_OF_PROCESSORS%
 
-REM C++ standard version (14|17)
+REM C++ standard version (14|17|20)
 set FM_CONFIG_CXX_STANDARD=17
 
 REM Path of local tools
@@ -28,12 +28,9 @@ REM set FM_CONFIG_MINGW_64_INSTALL_PATH=C:\msys64\mingw64
 REM set FM_CONFIG_MINGW_32_INSTALL_PATH=C:\Qt\Tools\mingw810_32
 REM set FM_CONFIG_MINGW_64_INSTALL_PATH=C:\Qt\Tools\mingw810_64
 
-REM Visual Studio toolchains installation paths
-REM set FM_CONFIG_MSVC2015_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio 14.0
-REM set FM_CONFIG_MSVC2017_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional
-REM set FM_CONFIG_MSVC2017_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community
-REM set FM_CONFIG_MSVC2019_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional
-REM set FM_CONFIG_MSVC2019_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community
+REM Visual Studio toolchains configuration file path
+REM set FM_CONFIG_MSVC_VCVARSALL_BAT_PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat
+REM set FM_CONFIG_MSVC_VCVARSALL_BAT_PATH=C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat
 
 REM Use jom instead on nmake for Visual Studio builds
 REM set FM_CONFIG_USE_JOM=true
@@ -41,8 +38,9 @@ REM set FM_CONFIG_JOM_INSTALL_PATH=C:\Qt\Tools\QtCreator\bin\jom
 
 REM LAN cache configuration
 REM set FM_CONFIG_LAN_TARBALL_CACHE_USE=(NO|YES|ONLY)
+REM set FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD=curl -o "${DESTINATION_PATH}" "https://SERVER_AND_PATH/${TARBALL_NAME}"
 REM set FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD=curl -u : -o "${DESTINATION_PATH}" "smb://SERVER/libs_cache/${TARBALL_NAME}"
-REM set FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD=smbclient '"'"'\\SERVER\libs_cache'"'"' --no-pass -c "get \\${FM_SOURCE_TARBALL_NAME} ${FM_TARGET_TARBALL_PATH}"
+REM set FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD=smbclient '"'"'\\SERVER\libs_cache'"'"' --no-pass -c "get \\${TARBALL_NAME} ${DESTINATION_PATH}"
 
 REM Working directories
 set FM_CONFIG_TARBALL_CACHE=/c/libs_build/cache
@@ -61,3 +59,6 @@ set FM_CONFIG_DEPLOY_CMAKE_FIND_MODULES=true
 
 REM Uncomment to disable certificate validation
 REM set FM_CONFIG_DISABLE_SSL_CERTIFICATE_VALIDATION=true
+
+REM Library specific configuration
+REM set FM_OPC_UA_NODESETS=C:\github\OPCFoundation\UA-Nodeset

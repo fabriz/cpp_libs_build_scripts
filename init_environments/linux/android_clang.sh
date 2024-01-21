@@ -10,6 +10,8 @@
 export FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY}/vars.sh"
 
+export ANDROID_NDK_ROOT=${FM_CONFIG_ANDROID_NDK_INSTALL_PATH}
+
 export PATH=${FM_CONFIG_ANDROID_NDK_INSTALL_PATH}/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
 
 export FM_TARGET_OS_TYPE=android
@@ -33,6 +35,9 @@ case ${FM_CONFIG_CXX_STANDARD} in
     ;;
     17)
         export FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS="${FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS} -std=c++17"
+    ;;
+    20)
+        export FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS="${FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS} -std=c++20"
     ;;
     *)
         echo "ERROR: Invalid C++ standard '${FM_CONFIG_CXX_STANDARD}'."

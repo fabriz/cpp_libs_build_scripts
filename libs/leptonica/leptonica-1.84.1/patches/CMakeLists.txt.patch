@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 58c70f4..b218ab4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -43,8 +43,8 @@ project(
+   leptonica
+   LANGUAGES C
+   VERSION 1.84.1)
+-set(CMAKE_C_STANDARD 17)
+-set(CMAKE_C_STANDARD_REQUIRED ON)
++#set(CMAKE_C_STANDARD 17)
++#set(CMAKE_C_STANDARD_REQUIRED ON)
+ 
+ # Standard installation paths
+ include(GNUInstallDirs)

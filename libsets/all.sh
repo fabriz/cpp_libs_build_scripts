@@ -28,11 +28,11 @@ FM_LIBSET_LIBS=(
 #    boost/1.66.0
 #    boost/1.69.0
     boost/1.72.0
-#    botan/2.4.0
-#    botan/2.6.0
-#    botan/2.8.0
-#    botan/2.9.0
-    botan/2.13.0
+#    botan2/2.4.0
+#    botan2/2.6.0
+#    botan2/2.8.0
+#    botan2/2.9.0
+    botan2/2.13.0
     libodb/2.4.0
     libodb-sqlite/2.4.0
     libodb-boost/2.4.0

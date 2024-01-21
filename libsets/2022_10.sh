@@ -39,7 +39,7 @@ FM_LIBSET_LIBS=(
     zxing-cpp/1.4.0
     qrencode/4.1.1
     boost/1.80.0
-    botan/2.19.2
+    botan2/2.19.2
     argon2/2019.07.02
     libodb/2.4.0
     libodb-sqlite/2.4.0

@@ -29,7 +29,7 @@ FM_LIBSET_LIBS=(
     libwebp/1.1.0
     graphicsmagick/1.3.35
     boost/1.73.0
-    botan/2.15.0
+    botan2/2.15.0
     libodb/2.4.0
     libodb-sqlite/2.4.0
     libodb-boost/2.4.0

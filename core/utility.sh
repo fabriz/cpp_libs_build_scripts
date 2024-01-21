@@ -45,6 +45,12 @@ error()
     exit 1
 }
 
+pressAnyKeyToContinue()
+{
+    echo "Press any key to continue"
+    read -n 1 -s
+}
+
 pushd()
 {
     command pushd "$@" > /dev/null

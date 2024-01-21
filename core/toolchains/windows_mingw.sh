@@ -77,6 +77,9 @@ initToolchain()
         17)
             LOCAL_COMMON_CXXFLAGS="${LOCAL_COMMON_CXXFLAGS} -std=gnu++17"
         ;;
+        20)
+            LOCAL_COMMON_CXXFLAGS="${LOCAL_COMMON_CXXFLAGS} -std=gnu++20"
+        ;;
         *)
             error "Invalid C++ standard '${FM_CONFIG_CXX_STANDARD}'."
         ;;

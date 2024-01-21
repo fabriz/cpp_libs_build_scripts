@@ -1,0 +1,40 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b173aca..dba412d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -39,15 +39,17 @@ option(LIBZIPPP_GNUINSTALLDIRS "Install into directories taken from GNUInstallDi
+ 
+ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+ 
+-if(LIBZIPPP_CMAKE_CONFIG_MODE)
+-  set(LIBZIP_PKGNAME "libzip")
+-  set(fp_mode "CONFIG")
+-else()
+-  set(LIBZIP_PKGNAME "LIBZIP")
+-  set(fp_mode "MODULE")
+-endif()
+-
+-find_package(${LIBZIP_PKGNAME} ${fp_mode} REQUIRED)
++#if(LIBZIPPP_CMAKE_CONFIG_MODE)
++#  set(LIBZIP_PKGNAME "libzip")
++#  set(fp_mode "CONFIG")
++#else()
++#  set(LIBZIP_PKGNAME "LIBZIP")
++#  set(fp_mode "MODULE")
++#endif()
++#
++#find_package(${LIBZIP_PKGNAME} ${fp_mode} REQUIRED)
++
++find_package(LibZip REQUIRED)
+ 
+ if(LIBZIPPP_GNUINSTALLDIRS)
+   include(GNUInstallDirs)
+@@ -65,7 +67,7 @@ target_include_directories(libzippp
+ 
+ )
+ set_target_properties(libzippp PROPERTIES PREFIX "") # Avoid duplicate "lib" prefix
+-target_link_libraries(libzippp PRIVATE libzip::zip)
++target_link_libraries(libzippp PRIVATE LibZip::LibZip)
+ 
+ if(LIBZIPPP_ENABLE_ENCRYPTION)
+   target_compile_definitions(libzippp PUBLIC LIBZIPPP_WITH_ENCRYPTION)

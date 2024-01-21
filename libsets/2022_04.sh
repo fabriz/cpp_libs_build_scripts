@@ -38,7 +38,7 @@ FM_LIBSET_LIBS=(
     graphicsmagick/1.3.38
     zxing-cpp/1.3.0
     boost/1.79.0
-    botan/2.19.1
+    botan2/2.19.1
     libodb/2.4.0
     libodb-sqlite/2.4.0
     libodb-boost/2.4.0

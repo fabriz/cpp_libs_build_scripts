@@ -1,0 +1,51 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index cdd5495..dab6b6e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -223,7 +223,7 @@ if(ZLIB_SUPPORT)
+ else()
+   message(STATUS "  LERC support:                       Requested:${lerc} Availability:${LERC_FOUND} Support:${LERC_SUPPORT} (Depends on ZLIB Support)")
+ endif()
+-message(STATUS "  LZMA2 support:                      Requested:${lzma} Availability:${liblzma_FOUND} Support:${LZMA_SUPPORT}")
++message(STATUS "  LZMA2 support:                      Requested:${lzma} Availability:${LIBLZMA_FOUND} Support:${LZMA_SUPPORT}")
+ message(STATUS "  ZSTD support:                       Requested:${zstd} Availability:${ZSTD_USABLE} Support:${ZSTD_SUPPORT}")
+ message(STATUS "  WEBP support:                       Requested:${webp} Availability:${WebP_FOUND} Support:${WEBP_SUPPORT}")
+ message(STATUS "")
+diff --git a/cmake/LZMACodec.cmake b/cmake/LZMACodec.cmake
+index c51afe8..c848453 100644
+--- a/cmake/LZMACodec.cmake
++++ b/cmake/LZMACodec.cmake
+@@ -26,9 +26,9 @@
+ 
+ # liblzma2
+ set(LZMA_SUPPORT FALSE)
+-find_package(liblzma)
++find_package(LibLZMA)
+ 
+-option(lzma "use liblzma (required for LZMA2 compression)" ${LIBLZMA_FOUND})
++option(lzma "use LibLZMA (required for LZMA2 compression)" ${LIBLZMA_FOUND})
+ if (lzma AND LIBLZMA_FOUND)
+     set(LZMA_SUPPORT TRUE)
+ endif()
+diff --git a/libtiff/CMakeLists.txt b/libtiff/CMakeLists.txt
+index 9c8024e..9d33051 100644
+--- a/libtiff/CMakeLists.txt
++++ b/libtiff/CMakeLists.txt
+@@ -154,7 +154,7 @@ if(LERC_SUPPORT)
+   endif()
+ endif()
+ if(LZMA_SUPPORT)
+-  target_link_libraries(tiff PRIVATE liblzma::liblzma)
++  target_link_libraries(tiff PRIVATE LibLZMA::LibLZMA)
+   string(APPEND tiff_requires_private " liblzma")
+ endif()
+ if(ZSTD_SUPPORT)
+@@ -162,7 +162,7 @@ if(ZSTD_SUPPORT)
+   string(APPEND tiff_requires_private " libzstd")
+ endif()
+ if(WEBP_SUPPORT)
+-  target_link_libraries(tiff PRIVATE WebP::webp)
++  target_link_libraries(tiff PRIVATE WebP::WebP)
+   string(APPEND tiff_requires_private " libwebp")
+ endif()
+ if(CMath_LIBRARY)

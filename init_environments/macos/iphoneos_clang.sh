@@ -38,6 +38,9 @@ case ${FM_CONFIG_CXX_STANDARD} in
     17)
         export FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS="${FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS} -std=c++17"
     ;;
+    20)
+        export FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS="${FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS} -std=c++20"
+    ;;
     *)
         echo "ERROR: Invalid C++ standard '${FM_CONFIG_CXX_STANDARD}'."
         exit 1

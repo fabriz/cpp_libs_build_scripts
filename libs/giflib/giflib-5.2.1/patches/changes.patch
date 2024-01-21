@@ -1,0 +1,104 @@
+diff --git b/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..e37962b
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,30 @@
++#-----------------------------------------------------------------------------------------------------------------------
++# Copyright (C) 2021 Fabrizio Maj
++#
++# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
++# Refer to the licenses of the managed libraries for conditions on their use and distribution.
++# For details, see https://github.com/fabriz/cpp_libs_build_scripts
++#-----------------------------------------------------------------------------------------------------------------------
++
++cmake_minimum_required(VERSION 3.19)
++
++project(gif C)
++
++set(GIF_SOURCE_FILES
++	dgif_lib.c
++	egif_lib.c
++	gifalloc.c
++	gif_err.c
++	gif_font.c
++	gif_hash.c
++	openbsd-reallocarray.c
++)
++
++set(GIF_HEADER_FILES
++	gif_lib.h
++)
++
++add_library(gif ${GIF_SOURCE_FILES})
++
++install(TARGETS gif LIBRARY DESTINATION lib)
++install(FILES ${GIF_HEADER_FILES} DESTINATION include)
+diff --git a/Makefile b/Makefile
+index b2bf6de..57b978e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -61,27 +61,19 @@ UTILS = $(INSTALLABLE) \
+ 
+ LDLIBS=libgif.a -lm
+ 
+-all: libgif.so libgif.a libutil.so libutil.a $(UTILS)
++all: libgif.a libutil.a $(UTILS)
+ 	$(MAKE) -C doc
+ 
+ $(UTILS):: libgif.a libutil.a
+ 
+-libgif.so: $(OBJECTS) $(HEADERS)
+-	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,-soname -Wl,libgif.so.$(LIBMAJOR) -o libgif.so $(OBJECTS)
+-
+ libgif.a: $(OBJECTS) $(HEADERS)
+ 	$(AR) rcs libgif.a $(OBJECTS)
+ 
+-libutil.so: $(UOBJECTS) $(UHEADERS)
+-	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,-soname -Wl,libutil.so.$(LIBMAJOR) -o libutil.so $(UOBJECTS)
+-
+ libutil.a: $(UOBJECTS) $(UHEADERS)
+ 	$(AR) rcs libutil.a $(UOBJECTS)
+ 
+ clean:
+-	rm -f $(UTILS) $(TARGET) libgetarg.a libgif.a libgif.so libutil.a libutil.so *.o
+-	rm -f libgif.so.$(LIBMAJOR).$(LIBMINOR).$(LIBPOINT)
+-	rm -f libgif.so.$(LIBMAJOR)
++	rm -f $(UTILS) $(TARGET) libgetarg.a libgif.a libutil.a *.o
+ 	rm -fr doc/*.1 *.html doc/staging
+ 
+ check: all
+@@ -99,9 +91,6 @@ install-include:
+ install-lib:
+ 	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)"
+ 	$(INSTALL) -m 644 libgif.a "$(DESTDIR)$(LIBDIR)/libgif.a"
+-	$(INSTALL) -m 755 libgif.so "$(DESTDIR)$(LIBDIR)/libgif.so.$(LIBVER)"
+-	ln -sf libgif.so.$(LIBVER) "$(DESTDIR)$(LIBDIR)/libgif.so.$(LIBMAJOR)"
+-	ln -sf libgif.so.$(LIBMAJOR) "$(DESTDIR)$(LIBDIR)/libgif.so"
+ install-man:
+ 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man1"
+ 	$(INSTALL) -m 644 doc/*.1 "$(DESTDIR)$(MANDIR)/man1"
+@@ -112,7 +101,7 @@ uninstall-include:
+ 	rm -f "$(DESTDIR)$(INCDIR)/gif_lib.h"
+ uninstall-lib:
+ 	cd "$(DESTDIR)$(LIBDIR)" && \
+-		rm -f libgif.a libgif.so libgif.so.$(LIBMAJOR) libgif.so.$(LIBVER)
++		rm -f libgif.a
+ uninstall-man:
+ 	cd "$(DESTDIR)$(MANDIR)/man1" && rm -f $(shell cd doc >/dev/null && echo *.1)
+ 
+diff --git a/gif_hash.h b/gif_hash.h
+index 6a1b585..dadcf05 100644
+--- a/gif_hash.h
++++ b/gif_hash.h
+@@ -9,7 +9,10 @@ SPDX-License-Identifier: MIT
+ #ifndef _GIF_HASH_H_
+ #define _GIF_HASH_H_
+ 
++#ifndef _MSC_VER
+ #include <unistd.h>
++#endif
++
+ #include <stdint.h>
+ 
+ #define HT_SIZE			8192	   /* 12bits = 4096 or twice as big! */

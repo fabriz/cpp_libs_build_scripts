@@ -8,6 +8,7 @@
 
 include(${CMAKE_CURRENT_LIST_DIR}/CppLibsCommon.cmake)
 
+find_package(Iconv QUIET)
 find_package(ZLIB QUIET)
 find_package(LibLZMA QUIET)
 
@@ -25,7 +26,7 @@ endif()
 debugMessage("LIBXML2_INCLUDE_DIR: ${LIBXML2_INCLUDE_DIR}")
 debugMessage("LIBXML2_LIBRARY: ${LIBXML2_LIBRARY}")
 debugMessage("LIBXML2_VERSION_STRING: ${LIBXML2_VERSION_STRING}")
-debugMessage("LIBXML2_DEPENDENCIES: ZLIB=${ZLIB_FOUND}, LZMA=${LIBLZMA_FOUND}")
+debugMessage("LIBXML2_DEPENDENCIES: Iconv=${ICONV_FOUND} ZLIB=${ZLIB_FOUND}, LZMA=${LIBLZMA_FOUND}")
 
 find_package_handle_standard_args(LibXml2
     REQUIRED_VARS   LIBXML2_LIBRARY LIBXML2_INCLUDE_DIR
@@ -44,6 +45,12 @@ if(LIBXML2_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${LIBXML2_INCLUDE_DIR}"
             INTERFACE_COMPILE_DEFINITIONS "LIBXML_STATIC")
         
+        if(ICONV_FOUND)
+            target_link_libraries(LibXml2::LibXml2 INTERFACE Iconv::Iconv)
+            list(APPEND LIBXML2_INCLUDE_DIRS ${ICONV_INCLUDE_DIRS})
+            list(APPEND LIBXML2_LIBRARIES ${ICONV_LIBRARIES})
+        endif()
+            
         if(ZLIB_FOUND)
             target_link_libraries(LibXml2::LibXml2 INTERFACE ZLIB::ZLIB)
             list(APPEND LIBXML2_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
@@ -57,15 +64,9 @@ if(LIBXML2_FOUND)
             list(APPEND LIBXML2_DEFINITIONS ${LIBLZMA_DEFINITIONS})
         endif()
 
-        if(MACOS)
-            target_link_libraries(LibXml2::LibXml2 INTERFACE iconv)
-            list(APPEND LIBXML2_LIBRARIES iconv)
-        elseif(IOS)
-            target_link_libraries(LibXml2::LibXml2 INTERFACE iconv)
-            list(APPEND LIBXML2_LIBRARIES iconv)
-        elseif(MINGW)
-            target_link_libraries(LibXml2::LibXml2 INTERFACE iconv wsock32 ws2_32)
-            list(APPEND LIBXML2_LIBRARIES iconv wsock32 ws2_32)
+        if(MINGW)
+            target_link_libraries(LibXml2::LibXml2 INTERFACE wsock32 ws2_32)
+            list(APPEND LIBXML2_LIBRARIES wsock32 ws2_32)
         endif()
 
         if(MATH_LIBRARY)

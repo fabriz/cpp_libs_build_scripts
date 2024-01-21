@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5300b12..ac7e05a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -20,7 +20,7 @@ include(GNUInstallDirs)
+ 
+ # Set when installed via make install
+ set(open62541_TOOLS_DIR ${PROJECT_SOURCE_DIR}/tools)
+-set(open62541_NODESET_DIR ${PROJECT_SOURCE_DIR}/deps/ua-nodeset)
++set(open62541_NODESET_DIR ${PROJECT_SOURCE_DIR}/deps/ua-nodeset CACHE STRING "")
+ set(open62541_MQTT_DIR ${PROJECT_SOURCE_DIR}/deps/mqtt-c)
+ 
+ include(macros_internal)

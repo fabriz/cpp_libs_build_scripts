@@ -36,7 +36,7 @@ FM_LIBSET_LIBS=(
     libtiff/4.2.0
     graphicsmagick/1.3.36
     boost/1.76.0
-    botan/2.18.0
+    botan2/2.18.0
     libodb/2.4.0
     libodb-sqlite/2.4.0
     libodb-boost/2.4.0

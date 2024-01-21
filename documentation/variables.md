@@ -87,7 +87,7 @@ Options
 Name | Description
 ---- | -----------
 FM_CONFIG_NUM_PROCESSES | Number of parallel jobs to use during the build.
-FM_CONFIG_CXX_STANDARD | C++ standard version. Possible values are 14, 17 ...
+FM_CONFIG_CXX_STANDARD | C++ standard version. Possible values are 14, 17, 20 ...
 FM_CONFIG_LAN_TARBALL_CACHE_USE | LAN cache configuration mode. Possible values are NO, YES, ONLY. Default: NO
 FM_CONFIG_LAN_TARBALL_CACHE_GET_CMD | Command to use to download a tarball from the LAN cache. Example: 'curl -u : -o "${DESTINATION_PATH}" "smb://server/libs_cache/${TARBALL_NAME}"'.
 FM_CONFIG_ON_BUILD_ERROR | Optional command to execute when the build completes with an error.
@@ -128,9 +128,7 @@ Windows variables - to be updated
 set FM_CONFIG_MINGW_32_INSTALL_PATH=C:\Qt\Tools\mingw810_32
 set FM_CONFIG_MINGW_64_INSTALL_PATH=C:\Qt\Tools\mingw810_64
 set FM_CONFIG_MSYS64_INSTALL_PATH=C:\msys64
-set FM_CONFIG_MSVC2015_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio 14.0
-set FM_CONFIG_MSVC2017_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional
-set FM_CONFIG_MSVC2019_INSTALL_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional
+set FM_CONFIG_MSVC_VCVARSALL_BAT_PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat
 set FM_CONFIG_USE_JOM=true
 set FM_CONFIG_JOM_INSTALL_PATH=C:\Qt\Tools\QtCreator\bin\jom
 

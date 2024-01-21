@@ -17,7 +17,7 @@ FM_LIBSET_LIBS=(
     tinyxml2/8.0.0
     icu4c/67.1
     boost/1.73.0
-    botan/2.14.0
+    botan2/2.14.0
     libodb/2.4.0
     libodb-sqlite/2.4.0
     libodb-boost/2.4.0
