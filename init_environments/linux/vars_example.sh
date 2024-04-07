@@ -19,6 +19,7 @@ export FM_CONFIG_CURL_COMMAND="$(which curl)"
 export FM_CONFIG_PERL_COMMAND="$(which perl)"
 export FM_CONFIG_PYTHON_COMMAND="$(which python)"
 export FM_CONFIG_TAR_COMMAND="$(which tar)"
+export FM_CONFIG_UNZIP_COMMAND="$(which unzip)"
 export FM_CONFIG_PATCH_COMMAND="$(which patch)"
 
 # Android NDK path and API level

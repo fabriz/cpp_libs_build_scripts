@@ -7,7 +7,7 @@
 # For details, see https://github.com/fabriz/cpp_libs_build_scripts
 #-----------------------------------------------------------------------------------------------------------------------
 
-# Build script for libevent 2.1.12
+# Build script for wt 4.10.4
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
@@ -15,15 +15,30 @@ source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 
 beforeBuildCurrentArchitecture()
 {
-    configureCMakeOutOfSourceBuild
+    if [ ${FM_TARGET_TOOLCHAIN} = "windows_msvc" ]; then
+        # Avoid the "d" suffix for debug libraries and set flags for boost linking
+        sed -i.orig -e 's/DEBUG_LIB_POSTFIX "d"/DEBUG_LIB_POSTFIX ""/' \
+                    -e 's/-D_WIN32_WINNT=0x0600/-D_WIN32_WINNT=0x0600 -DBOOST_AUTO_LINK_SYSTEM/' ./CMakeLists.txt
+    else
+        # Avoid the "d" suffix for debug libraries
+        sed -i.orig 's/DEBUG_LIB_POSTFIX "d"/DEBUG_LIB_POSTFIX ""/' ./CMakeLists.txt
+    fi
 
-    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="-DEVENT__LIBRARY_TYPE=STATIC -DEVENT__DISABLE_BENCHMARK=True -DEVENT__DISABLE_TESTS=True -DEVENT__DISABLE_REGRESS=True -DEVENT__DISABLE_SAMPLES=True"
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/CMakeLists.txt
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/Wt/Dbo/CMakeLists.txt
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/Wt/Dbo/backend/CMakeLists.txt
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/fcgi/CMakeLists.txt
+    sed -i.orig -e 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' -e '/Android.C/d' ./src/http/CMakeLists.txt
+    sed -i.orig 's/DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}/DEBUG_POSTFIX "${DEBUG_LIB_POSTFIX}"/' ./src/isapi/CMakeLists.txt
 }
 
 buildCurrentArchitecture__linux_gcc()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DSHARED_LIBS=False -DBoost_USE_STATIC_LIBS=True -DCONNECTOR_FCGI=True -DCONNECTOR_HTTP=True -DMULTI_THREADED=True \
+        -DBUILD_EXAMPLES=False -DINSTALL_DOCUMENTATION=False -DENABLE_LIBWTTEST=False \
+        -DINSTALL_EXAMPLES=False -DINSTALL_RESOURCES=True > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -38,7 +53,10 @@ buildCurrentArchitecture__linux_gcc()
 buildCurrentArchitecture__android_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DSHARED_LIBS=False -DCONNECTOR_FCGI=True -DCONNECTOR_HTTP=True -DMULTI_THREADED=True \
+        -DBUILD_EXAMPLES=False -DINSTALL_DOCUMENTATION=False -DENABLE_LIBWTTEST=False \
+        -DINSTALL_EXAMPLES=False -DINSTALL_RESOURCES=True > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -53,7 +71,10 @@ buildCurrentArchitecture__android_clang()
 buildCurrentArchitecture__macos_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DSHARED_LIBS=False -DBoost_USE_STATIC_LIBS=True -DCONNECTOR_FCGI=True -DCONNECTOR_HTTP=True -DMULTI_THREADED=True \
+        -DBUILD_EXAMPLES=False -DINSTALL_DOCUMENTATION=False -DENABLE_LIBWTTEST=False \
+        -DINSTALL_EXAMPLES=False -DINSTALL_RESOURCES=True > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -68,7 +89,10 @@ buildCurrentArchitecture__macos_clang()
 buildCurrentArchitecture__ios_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DSHARED_LIBS=False -DBoost_USE_STATIC_LIBS=True -DCONNECTOR_FCGI=True -DCONNECTOR_HTTP=True -DMULTI_THREADED=True \
+        -DBUILD_EXAMPLES=False -DINSTALL_DOCUMENTATION=False -DENABLE_LIBWTTEST=False \
+        -DINSTALL_EXAMPLES=False -DINSTALL_RESOURCES=True > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -83,7 +107,10 @@ buildCurrentArchitecture__ios_clang()
 buildCurrentArchitecture__windows_mingw()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DSHARED_LIBS=False -DCONNECTOR_FCGI=True -DCONNECTOR_HTTP=True -DMULTI_THREADED=True -DWT_WRASTERIMAGE_IMPLEMENTATION=none \
+        -DBUILD_EXAMPLES=False -DINSTALL_DOCUMENTATION=False -DENABLE_LIBWTTEST=False \
+        -DINSTALL_EXAMPLES=False -DINSTALL_RESOURCES=True > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -97,10 +124,13 @@ buildCurrentArchitecture__windows_mingw()
 
 buildCurrentArchitecture__windows_msvc()
 {
-    export _CL_="${FM_TARGET_TOOLCHAIN_CXXFLAGS_CMAKE}"
+    export _CL_="${FM_TARGET_TOOLCHAIN_CXXFLAGS_CMAKE} -UUNICODE -U_UNICODE"
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DSHARED_LIBS=False -DBOOST_PREFIX=${FM_LIBS_INSTALL_PREFIX} -DCONNECTOR_FCGI=True -DCONNECTOR_HTTP=True -DMULTI_THREADED=True \
+        -DBUILD_EXAMPLES=False -DINSTALL_DOCUMENTATION=False -DENABLE_LIBWTTEST=False \
+        -DINSTALL_EXAMPLES=False -DINSTALL_RESOURCES=True > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -111,8 +141,8 @@ buildCurrentArchitecture__windows_msvc()
     "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_INSTALL} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
     checkBuildStep
 
-    /usr/bin/find ./CMakeFiles -name "*.pdb" -exec cp "{}" ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/ ';'
+    /usr/bin/find ./src -name "*.pdb" -exec cp "{}" ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/ ';'
 }
 
 
-buildLibrary "LIBEVENT"
+buildLibrary "WT"

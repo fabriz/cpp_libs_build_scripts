@@ -107,6 +107,7 @@ FM_CONFIG_PERL_WINDOWS_COMMAND | Path of the Windows perl executable
 FM_CONFIG_PYTHON_COMMAND | Path of the python executable
 FM_CONFIG_PYTHON_WINDOWS_COMMAND | Path of the Windows python executable
 FM_CONFIG_TAR_COMMAND | Path of the tar executable
+FM_CONFIG_UNZIP_COMMAND | Path of the unzip executable
 FM_CONFIG_PATCH_COMMAND | Path of the patch executable
 FM_CONFIG_LIPO_COMMAND | Path of the lipo executable (for macOS)
 

@@ -17,6 +17,7 @@ set FM_CONFIG_PERL_WINDOWS_COMMAND=C:\Strawberry\perl\bin\perl.exe
 set FM_CONFIG_PYTHON_COMMAND=/usr/bin/python
 set FM_CONFIG_PYTHON_WINDOWS_COMMAND=C:\Program Files\Python39\python.exe
 set FM_CONFIG_TAR_COMMAND=/usr/bin/tar
+set FM_CONFIG_UNZIP_COMMAND=/usr/bin/unzip
 set FM_CONFIG_PATCH_COMMAND=/usr/bin/patch
 
 REM MSYS environment installation path

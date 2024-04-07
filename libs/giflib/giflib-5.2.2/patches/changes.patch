@@ -1,0 +1,100 @@
+diff --git b/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..e37962b
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,30 @@
++#-----------------------------------------------------------------------------------------------------------------------
++# Copyright (C) 2021 Fabrizio Maj
++#
++# This file is part of the cpp_libs_build_scripts project, which is distributed under the MIT license.
++# Refer to the licenses of the managed libraries for conditions on their use and distribution.
++# For details, see https://github.com/fabriz/cpp_libs_build_scripts
++#-----------------------------------------------------------------------------------------------------------------------
++
++cmake_minimum_required(VERSION 3.19)
++
++project(gif C)
++
++set(GIF_SOURCE_FILES
++	dgif_lib.c
++	egif_lib.c
++	gifalloc.c
++	gif_err.c
++	gif_font.c
++	gif_hash.c
++	openbsd-reallocarray.c
++)
++
++set(GIF_HEADER_FILES
++	gif_lib.h
++)
++
++add_library(gif ${GIF_SOURCE_FILES})
++
++install(TARGETS gif LIBRARY DESTINATION lib)
++install(FILES ${GIF_HEADER_FILES} DESTINATION include)
+diff --git a/Makefile b/Makefile
+index 87966a9..b6b08e1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -87,7 +87,7 @@ LIBUTILSO	= libutil.$(SOEXTENSION)
+ LIBUTILSOMAJOR	= libutil.$(LIBMAJOR).$(SOEXTENSION)
+ endif
+ 
+-all: $(LIBGIFSO) libgif.a $(LIBUTILSO) libutil.a $(UTILS)
++all: libgif.a libutil.a $(UTILS)
+ ifeq ($(UNAME), Darwin)
+ else
+ 	$(MAKE) -C doc
+@@ -95,30 +95,14 @@ endif
+ 
+ $(UTILS):: libgif.a libutil.a
+ 
+-$(LIBGIFSO): $(OBJECTS) $(HEADERS)
+-ifeq ($(UNAME), Darwin)
+-	$(CC) $(CFLAGS) -dynamiclib -current_version $(LIBVER) $(OBJECTS) -o $(LIBGIFSO)
+-else
+-	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,-soname -Wl,$(LIBGIFSOMAJOR) -o $(LIBGIFSO) $(OBJECTS)
+-endif
+-
+ libgif.a: $(OBJECTS) $(HEADERS)
+ 	$(AR) rcs libgif.a $(OBJECTS)
+ 
+-$(LIBUTILSO): $(UOBJECTS) $(UHEADERS)
+-ifeq ($(UNAME), Darwin)
+-	$(CC) $(CFLAGS) -dynamiclib -current_version $(LIBVER) $(OBJECTS) -o $(LIBUTILSO)
+-else
+-	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,-soname -Wl,$(LIBUTILMAJOR) -o $(LIBUTILSO) $(UOBJECTS)
+-endif
+-
+ libutil.a: $(UOBJECTS) $(UHEADERS)
+ 	$(AR) rcs libutil.a $(UOBJECTS)
+ 
+ clean:
+-	rm -f $(UTILS) $(TARGET) libgetarg.a libgif.a $(LIBGIFSO) libutil.a $(LIBUTILSO) *.o
+-	rm -f $(LIBGIFSOVER)
+-	rm -f $(LIBGIFSOMAJOR)
++	rm -f $(UTILS) $(TARGET) libgetarg.a libgif.a libutil.a *.o
+ 	rm -fr doc/*.1 *.html doc/staging
+ 
+ check: all
+@@ -144,9 +128,6 @@ install-include:
+ install-lib:
+ 	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)"
+ 	$(INSTALL) -m 644 libgif.a "$(DESTDIR)$(LIBDIR)/libgif.a"
+-	$(INSTALL) -m 755 $(LIBGIFSO) "$(DESTDIR)$(LIBDIR)/$(LIBGIFSOVER)"
+-	ln -sf $(LIBGIFSOVER) "$(DESTDIR)$(LIBDIR)/$(LIBGIFSOMAJOR)"
+-	ln -sf $(LIBGIFSOMAJOR) "$(DESTDIR)$(LIBDIR)/$(LIBGIFSO)"
+ install-man:
+ 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man1"
+ 	$(INSTALL) -m 644 $(MANUAL_PAGES) "$(DESTDIR)$(MANDIR)/man1"
+@@ -157,7 +138,7 @@ uninstall-include:
+ 	rm -f "$(DESTDIR)$(INCDIR)/gif_lib.h"
+ uninstall-lib:
+ 	cd "$(DESTDIR)$(LIBDIR)" && \
+-		rm -f libgif.a $(LIBGIFSO) $(LIBGIFSOMAJOR) $(LIBGIFSOVER)
++		rm -f libgif.a
+ uninstall-man:
+ 	cd "$(DESTDIR)$(MANDIR)/man1" && rm -f $(shell cd doc >/dev/null && echo *.1)
+ 	cd "$(DESTDIR)$(MANDIR)/man7" && rm -f $(shell cd doc >/dev/null && echo *.7)

@@ -1,0 +1,13 @@
+diff --git a/boost/math/distributions/geometric.hpp b/boost/math/distributions/geometric.hpp
+index baff0e2..876d6a1 100644
+--- a/boost/math/distributions/geometric.hpp
++++ b/boost/math/distributions/geometric.hpp
+@@ -401,7 +401,7 @@ namespace boost
+       }
+       if(k == 0)
+       {
+-        return log(p); // success_fraction
++        return std::log(p); // success_fraction
+       }
+       //RealType q = 1 - p;  // Bad for small p
+       //RealType probability = 1 - std::pow(q, k+1);

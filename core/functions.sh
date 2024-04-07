@@ -34,8 +34,21 @@ decompressArchive()
         LOCAL_TAR_COMMAND="${FM_CONFIG_TAR_COMMAND}"
     fi
 
+    local LOCAL_UNZIP_COMMAND="unzip"
+    if [ -n "${FM_CONFIG_UNZIP_COMMAND-}" ]; then
+        LOCAL_UNZIP_COMMAND="${FM_CONFIG_UNZIP_COMMAND}"
+    fi
+
+    local LOCAL_ARCHIVE_EXTENSION="${LOCAL_ARCHIVE_SOURCE##*.}"
+    LOCAL_ARCHIVE_EXTENSION="${LOCAL_ARCHIVE_EXTENSION,,}"
+
     printf "Decompressing ${LOCAL_ARCHIVE_SOURCE} ... "
-    "${LOCAL_TAR_COMMAND}" "${LOCAL_CUSTOM_FLAGS}" -x -f ${LOCAL_ARCHIVE_SOURCE} -C ${LOCAL_ARCHIVE_DESTINATION}
+    if [ ${LOCAL_ARCHIVE_EXTENSION} = "zip" ]; then
+        "${LOCAL_UNZIP_COMMAND}" -q ${LOCAL_ARCHIVE_SOURCE} -d ${LOCAL_ARCHIVE_DESTINATION}
+    else
+        "${LOCAL_TAR_COMMAND}" "${LOCAL_CUSTOM_FLAGS}" -x -f ${LOCAL_ARCHIVE_SOURCE} -C ${LOCAL_ARCHIVE_DESTINATION}
+    fi
+
     if [ $? -ne 0 ]; then
         echo "FAILED"
         error "Cannot decompress file ${LOCAL_ARCHIVE_SOURCE} to ${LOCAL_ARCHIVE_DESTINATION}"

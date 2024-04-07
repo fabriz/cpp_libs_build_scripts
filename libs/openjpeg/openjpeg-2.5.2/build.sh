@@ -7,7 +7,7 @@
 # For details, see https://github.com/fabriz/cpp_libs_build_scripts
 #-----------------------------------------------------------------------------------------------------------------------
 
-# Build script for libevent 2.1.12
+# Build script for openjpeg 2.5.2
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
@@ -16,14 +16,13 @@ source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"
 beforeBuildCurrentArchitecture()
 {
     configureCMakeOutOfSourceBuild
-
-    THIS_SCRIPT_OPTIONAL_BUILD_FLAGS="-DEVENT__LIBRARY_TYPE=STATIC -DEVENT__DISABLE_BENCHMARK=True -DEVENT__DISABLE_TESTS=True -DEVENT__DISABLE_REGRESS=True -DEVENT__DISABLE_SAMPLES=True"
 }
 
 buildCurrentArchitecture__linux_gcc()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DBUILD_SHARED_LIBS=False -DBUILD_CODEC=False > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -38,7 +37,8 @@ buildCurrentArchitecture__linux_gcc()
 buildCurrentArchitecture__android_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DBUILD_SHARED_LIBS=False -DBUILD_CODEC=False > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -53,7 +53,8 @@ buildCurrentArchitecture__android_clang()
 buildCurrentArchitecture__macos_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DBUILD_SHARED_LIBS=False -DBUILD_CODEC=False > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -68,7 +69,8 @@ buildCurrentArchitecture__macos_clang()
 buildCurrentArchitecture__ios_clang()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DBUILD_SHARED_LIBS=False -DBUILD_CODEC=False > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -83,7 +85,8 @@ buildCurrentArchitecture__ios_clang()
 buildCurrentArchitecture__windows_mingw()
 {
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DBUILD_SHARED_LIBS=False -DBUILD_CODEC=False > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -100,7 +103,8 @@ buildCurrentArchitecture__windows_msvc()
     export _CL_="${FM_TARGET_TOOLCHAIN_CXXFLAGS_CMAKE}"
 
     prepareBuildStep "Configuring ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
-    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} ${THIS_SCRIPT_OPTIONAL_BUILD_FLAGS} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
+    "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_GENERATE} \
+        -DBUILD_SHARED_LIBS=False -DBUILD_CODEC=False > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_CONFIGURE} 2>&1
     checkBuildStep
 
     prepareBuildStep "Building ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
@@ -110,9 +114,7 @@ buildCurrentArchitecture__windows_msvc()
     prepareBuildStep "Staging ${FM_CURRENT_ARCHITECTURE_LIB_TAG} ... "
     "${FM_CONFIG_CMAKE_COMMAND}" ${FM_TARGET_CMAKE_ARGUMENTS_INSTALL} > ${FM_CURRENT_ARCHITECTURE_LOG_FILE_STAGE} 2>&1
     checkBuildStep
-
-    /usr/bin/find ./CMakeFiles -name "*.pdb" -exec cp "{}" ${FM_CURRENT_ARCHITECTURE_STAGE_DIR}/lib/ ';'
 }
 
 
-buildLibrary "LIBEVENT"
+buildLibrary "OPENJPEG"

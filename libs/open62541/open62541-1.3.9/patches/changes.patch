@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 5300b12..ac7e05a 100644
+index 7a051f1..aef89cc 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -20,7 +20,7 @@ include(GNUInstallDirs)
@@ -11,3 +11,19 @@ index 5300b12..ac7e05a 100644
  set(open62541_MQTT_DIR ${PROJECT_SOURCE_DIR}/deps/mqtt-c)
  
  include(macros_internal)
+@@ -1407,6 +1407,7 @@ if(UA_ENABLE_AMALGAMATION)
+     add_dependencies(open62541-amalgamation-header open62541-generator-namespace)
+ else()
+     add_library(open62541-object OBJECT ${lib_sources} ${internal_headers} ${exported_headers})
++    set_target_properties(open62541-object PROPERTIES COMPILE_PDB_NAME "open62541-object")
+ 
+     add_custom_target(open62541-code-generation DEPENDS
+                       open62541-generator-types
+@@ -1418,6 +1419,7 @@ else()
+     target_include_directories(open62541-object PRIVATE ${PROJECT_SOURCE_DIR}/src)
+ 
+     add_library(open62541-plugins OBJECT ${default_plugin_sources} ${ua_architecture_sources} ${exported_headers})
++    set_target_properties(open62541-plugins PROPERTIES COMPILE_PDB_NAME "open62541-plugins")
+     add_dependencies(open62541-plugins open62541-generator-types open62541-generator-transport open62541-generator-namespace)
+     target_include_directories(open62541-plugins PRIVATE ${PROJECT_SOURCE_DIR}/plugins)
+     target_include_directories(open62541-plugins PRIVATE ${PROJECT_BINARY_DIR}/src_generated)

@@ -1,0 +1,51 @@
+diff --git a/include/open62541pp/types/Builtin.h b/include/open62541pp/types/Builtin.h
+index 620faaa..4c8f890 100644
+--- a/include/open62541pp/types/Builtin.h
++++ b/include/open62541pp/types/Builtin.h
+@@ -9,13 +9,17 @@
+ 
+ // Workaround for GCC 7 with partial C++17 support
+ // https://github.com/open62541pp/open62541pp/issues/109
+-#if !__has_include(<filesystem>) && __has_include(<experimental/filesystem>)
+-#include <experimental/filesystem>
+-namespace fs = std::experimental::filesystem;
+-#else
+-#include <filesystem>
+-namespace fs = std::filesystem;
+-#endif
++//#if !__has_include(<filesystem>) && __has_include(<experimental/filesystem>)
++//#include <experimental/filesystem>
++//namespace fs = std::experimental::filesystem;
++//#else
++//#include <filesystem>
++//namespace fs = std::filesystem;
++//#endif
++
++#include <boost/filesystem.hpp>
++namespace fs = boost::filesystem;
++
+ 
+ #include "open62541pp/ErrorHandling.h"
+ #include "open62541pp/TypeWrapper.h"
+diff --git a/src/types/Builtin.cpp b/src/types/Builtin.cpp
+index ff7e330..d6b2bfb 100644
+--- a/src/types/Builtin.cpp
++++ b/src/types/Builtin.cpp
+@@ -120,7 +120,7 @@ ByteString ByteString::fromBase64([[maybe_unused]] std::string_view encoded) {
+ }
+ 
+ ByteString ByteString::fromFile(const fs::path& filepath) {
+-    std::ifstream fp(filepath, std::ios::binary);
++    std::ifstream fp(filepath.string(), std::ios::binary);
+     const std::vector<uint8_t> bytes(
+         (std::istreambuf_iterator<char>(fp)), (std::istreambuf_iterator<char>())
+     );
+@@ -139,7 +139,7 @@ std::string ByteString::toBase64() const {
+ }
+ 
+ void ByteString::toFile(const fs::path& filepath) const {
+-    std::ofstream fp(filepath, std::ios::binary);
++    std::ofstream fp(filepath.string(), std::ios::binary);
+     fp.write(reinterpret_cast<char*>(handle()->data), handle()->length);  // NOLINT
+ }
+ 
