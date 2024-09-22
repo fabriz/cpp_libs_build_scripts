@@ -7,7 +7,7 @@
 # For details, see https://github.com/fabriz/cpp_libs_build_scripts
 #-----------------------------------------------------------------------------------------------------------------------
 
-# Build script for mbedtls 3.6.0
+# Build script for mbedtls 3.6.1
 
 export FM_PATH_CURRENT_BUILD_SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${FM_PATH_CORE_SCRIPTS_DIRECTORY}/build_common.sh"

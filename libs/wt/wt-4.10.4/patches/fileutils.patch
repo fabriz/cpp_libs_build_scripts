@@ -1,0 +1,12 @@
+diff --git a/src/web/FileUtils.C b/src/web/FileUtils.C
+index 122e2a9..338bf35 100644
+--- a/src/web/FileUtils.C
++++ b/src/web/FileUtils.C
+@@ -6,6 +6,7 @@
+ 
+ #include "web/FileUtils.h"
+ 
++#include <boost/filesystem/directory.hpp>
+ #include <boost/filesystem/operations.hpp>
+ 
+ #include "web/WebUtils.h"

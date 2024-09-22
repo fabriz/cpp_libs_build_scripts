@@ -47,6 +47,6 @@ esac
 
 export FM_TARGET_COMPILER_VERSION="$(clang -dumpversion)"
 
-export FM_TARGET_BUILD_FLAGS_FOR_BOOST="--without-python"
+export FM_TARGET_BUILD_FLAGS_FOR_BOOST="--without-python --without-process boost.stacktrace.from_exception=off"
 
 source "${FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY}/start_bash.sh"
