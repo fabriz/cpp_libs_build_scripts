@@ -1,5 +1,5 @@
 diff --git a/win32/Makefile.msvc b/win32/Makefile.msvc
-index 5582afc..4f46ed3 100644
+index 5582afc..4ba3701 100644
 --- a/win32/Makefile.msvc
 +++ b/win32/Makefile.msvc
 @@ -57,7 +57,7 @@ CFLAGS = $(CFLAGS) /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE
@@ -7,7 +7,7 @@ index 5582afc..4f46ed3 100644
  LDFLAGS = /nologo
  LDFLAGS = $(LDFLAGS) /LIBPATH:$(BINDIR) /LIBPATH:$(LIBPREFIX)
 -LIBS =
-+LIBS = ws2_32.lib
++LIBS = ws2_32.lib bcrypt.lib
  
  # The archiver and its options.
  AR = lib.exe

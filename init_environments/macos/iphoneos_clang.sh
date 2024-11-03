@@ -49,4 +49,6 @@ esac
 
 export FM_TARGET_COMPILER_VERSION="$(xcrun -sdk ${FM_TARGET_IOS_SDK} clang -dumpversion)"
 
+export FM_TARGET_BUILD_FLAGS_FOR_BOOST="--without-process"
+
 source "${FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY}/start_bash.sh"

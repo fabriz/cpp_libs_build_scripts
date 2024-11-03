@@ -1,0 +1,13 @@
+diff --git a/include/open62541pp/detail/contextmap.hpp b/include/open62541pp/detail/contextmap.hpp
+index 7b53b5b..6295832 100644
+--- a/include/open62541pp/detail/contextmap.hpp
++++ b/include/open62541pp/detail/contextmap.hpp
+@@ -99,7 +99,7 @@ public:
+ 
+ private:
+     void assertLocked() const {
+-        assert(std::unique_lock(mutex_, std::defer_lock).try_lock() == false);
++        assert(std::unique_lock<std::mutex>(mutex_, std::defer_lock).try_lock() == false);
+     }
+ 
+     std::map<Key, std::unique_ptr<Item>> map_;

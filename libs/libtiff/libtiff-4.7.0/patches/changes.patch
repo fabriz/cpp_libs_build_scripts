@@ -1,0 +1,84 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 31ae5f6..0ca431c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -144,15 +144,15 @@ include(Release)
+ add_subdirectory(port)
+ add_subdirectory(libtiff)
+ if(tiff-tools)
+-  add_subdirectory(tools)
++  #add_subdirectory(tools)
+ endif()
+ if(tiff-tests)
+-  add_subdirectory(test)
++  #add_subdirectory(test)
+ endif()
+ if(tiff-contrib)
+-  add_subdirectory(contrib)
++  #add_subdirectory(contrib)
+ endif()
+-add_subdirectory(build)
++#add_subdirectory(build)
+ if(tiff-docs)
+   add_subdirectory(doc)
+ endif()
+@@ -221,7 +221,7 @@ if(ZLIB_SUPPORT)
+ else()
+   message(STATUS "  LERC support:                       Requested:${lerc} Availability:${LERC_FOUND} Support:${LERC_SUPPORT} (Depends on ZLIB Support)")
+ endif()
+-message(STATUS "  LZMA2 support:                      Requested:${lzma} Availability:${liblzma_FOUND} Support:${LZMA_SUPPORT}")
++message(STATUS "  LZMA2 support:                      Requested:${lzma} Availability:${LIBLZMA_FOUND} Support:${LZMA_SUPPORT}")
+ message(STATUS "  ZSTD support:                       Requested:${zstd} Availability:${ZSTD_USABLE} Support:${ZSTD_SUPPORT}")
+ message(STATUS "  WEBP support:                       Requested:${webp} Availability:${WebP_FOUND} Support:${WEBP_SUPPORT}")
+ message(STATUS "")
+diff --git a/cmake/LZMACodec.cmake b/cmake/LZMACodec.cmake
+index c51afe8..c848453 100644
+--- a/cmake/LZMACodec.cmake
++++ b/cmake/LZMACodec.cmake
+@@ -26,9 +26,9 @@
+ 
+ # liblzma2
+ set(LZMA_SUPPORT FALSE)
+-find_package(liblzma)
++find_package(LibLZMA)
+ 
+-option(lzma "use liblzma (required for LZMA2 compression)" ${LIBLZMA_FOUND})
++option(lzma "use LibLZMA (required for LZMA2 compression)" ${LIBLZMA_FOUND})
+ if (lzma AND LIBLZMA_FOUND)
+     set(LZMA_SUPPORT TRUE)
+ endif()
+diff --git a/cmake/WindowsSupport.cmake b/cmake/WindowsSupport.cmake
+index a60bba9..3ce85de 100644
+--- a/cmake/WindowsSupport.cmake
++++ b/cmake/WindowsSupport.cmake
+@@ -25,7 +25,7 @@
+ 
+ if(MSVC)
+     # Debug postfix
+-    set(CMAKE_DEBUG_POSTFIX "d")
++    set(CMAKE_DEBUG_POSTFIX "")
+ 
+     # disable deprecation warnings
+     add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
+diff --git a/libtiff/CMakeLists.txt b/libtiff/CMakeLists.txt
+index a8aa0c3..5edc068 100755
+--- a/libtiff/CMakeLists.txt
++++ b/libtiff/CMakeLists.txt
+@@ -173,7 +173,7 @@ if(LERC_SUPPORT)
+   endif()
+ endif()
+ if(LZMA_SUPPORT)
+-  target_link_libraries(tiff PRIVATE liblzma::liblzma)
++  target_link_libraries(tiff PRIVATE LibLZMA::LibLZMA)
+   string(APPEND tiff_requires_private " liblzma")
+ endif()
+ if(ZSTD_SUPPORT)
+@@ -181,7 +181,7 @@ if(ZSTD_SUPPORT)
+   string(APPEND tiff_requires_private " libzstd")
+ endif()
+ if(WEBP_SUPPORT)
+-  target_link_libraries(tiff PRIVATE WebP::webp)
++  target_link_libraries(tiff PRIVATE WebP::WebP)
+   string(APPEND tiff_requires_private " libwebp")
+ endif()
+ if(CMath_LIBRARY)

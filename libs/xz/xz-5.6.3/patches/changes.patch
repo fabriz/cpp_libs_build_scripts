@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ea1674b..1b4df5a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -162,7 +162,7 @@ endif()
+ #
+ # Avoid set(CMAKE_C_STANDARD_REQUIRED ON) because it's fine to decay
+ # to C99 if C11 isn't supported.
+-set(CMAKE_C_STANDARD 11)
++#set(CMAKE_C_STANDARD 11)
+ 
+ # Support 32-bit x86 assembly files.
+ if(NOT MSVC)

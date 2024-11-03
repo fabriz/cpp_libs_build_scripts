@@ -40,7 +40,7 @@ decompressArchive()
     fi
 
     local LOCAL_ARCHIVE_EXTENSION="${LOCAL_ARCHIVE_SOURCE##*.}"
-    LOCAL_ARCHIVE_EXTENSION="${LOCAL_ARCHIVE_EXTENSION,,}"
+    LOCAL_ARCHIVE_EXTENSION="$(echo ${LOCAL_ARCHIVE_EXTENSION} | tr '[:upper:]' '[:lower:]')"
 
     printf "Decompressing ${LOCAL_ARCHIVE_SOURCE} ... "
     if [ ${LOCAL_ARCHIVE_EXTENSION} = "zip" ]; then
