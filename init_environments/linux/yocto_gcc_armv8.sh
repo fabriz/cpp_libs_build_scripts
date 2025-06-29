@@ -12,10 +12,15 @@ source "${FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY}/vars.sh"
 
 source "${FM_CONFIG_YOCTO_ARMV8_ENVIRONMENT_INIT_SCRIPT}"
 
+export FM_TARGET_COMPILER_VERSION="$(${CC} -dumpversion)"
+if [ ${#FM_TARGET_COMPILER_VERSION} -le 2 ]; then
+    export FM_TARGET_COMPILER_VERSION="$(${CC} -dumpfullversion)"
+fi
+
 export FM_TARGET_OS_TYPE=linux
 export FM_TARGET_COMPILER=gcc
 export FM_TARGET_TOOLCHAIN=linux_gcc
-export FM_TARGET_PLATFORM=yocto_gcc
+export FM_TARGET_PLATFORM="yocto_gcc${FM_TARGET_COMPILER_VERSION}"
 export FM_TARGET_CMAKE_GENERATOR="Unix Makefiles"
 export FM_TARGET_CMAKE_TOOLCHAIN_FILE="${FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY}/../../core/toolchains/cmake/yocto.toolchain.cmake"
 export FM_TARGET_HAS_PKGCONFIG=true
@@ -54,11 +59,6 @@ case ${FM_CONFIG_CXX_STANDARD} in
         exit 1
     ;;
 esac
-
-export FM_TARGET_COMPILER_VERSION="$(${FM_TARGET_TOOLCHAIN_CC} -dumpversion)"
-if [ ${#FM_TARGET_COMPILER_VERSION} -le 2 ]; then
-    export FM_TARGET_COMPILER_VERSION="$(${FM_TARGET_TOOLCHAIN_CC} -dumpfullversion)"
-fi
 
 export FM_TARGET_BUILD_FLAGS_FOR_BOOST="--without-python"
 

@@ -7,7 +7,7 @@ REM Number of parallel jobs for make
 set FM_CONFIG_NUM_PROCESSES=%NUMBER_OF_PROCESSORS%
 
 REM C++ standard version (14|17|20)
-set FM_CONFIG_CXX_STANDARD=17
+set FM_CONFIG_CXX_STANDARD=20
 
 REM Path of local tools
 set FM_CONFIG_CMAKE_COMMAND=C:\Program Files\CMake\bin\cmake.exe

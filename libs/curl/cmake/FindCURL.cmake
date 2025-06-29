@@ -10,6 +10,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/CppLibsCommon.cmake)
 
 find_package(ZLIB QUIET)
 find_package(ZSTD QUIET)
+find_package(Brotli QUIET)
 find_package(OpenSSL QUIET)
 
 find_path(CURL_INCLUDE_DIR NAMES curl/curl.h PATHS "${CPPLIBS_VARIANT_ROOT}/include" NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -24,7 +25,7 @@ endif()
 debugMessage("CURL_INCLUDE_DIR: ${CURL_INCLUDE_DIR}")
 debugMessage("CURL_LIBRARY: ${CURL_LIBRARY}")
 debugMessage("CURL_VERSION_STRING: ${CURL_VERSION_STRING}")
-debugMessage("CURL_DEPENDENCIES: ZLIB=${ZLIB_FOUND}, ZSTD=${ZSTD_FOUND}, OpenSSL=${OPENSSL_FOUND}")
+debugMessage("CURL_DEPENDENCIES: ZLIB=${ZLIB_FOUND}, ZSTD=${ZSTD_FOUND}, Brotli=${BROTLI_FOUND}, OpenSSL=${OPENSSL_FOUND}")
 
 find_package_handle_standard_args(CURL
     REQUIRED_VARS   CURL_LIBRARY CURL_INCLUDE_DIR
@@ -53,6 +54,12 @@ if(CURL_FOUND)
             target_link_libraries(CURL::libcurl INTERFACE ZSTD::ZSTD)
             list(APPEND CURL_INCLUDE_DIRS ${ZSTD_INCLUDE_DIRS})
             list(APPEND CURL_LIBRARIES ${ZSTD_LIBRARIES})
+        endif()
+        
+        if(BROTLI_FOUND)
+            target_link_libraries(CURL::libcurl INTERFACE Brotli::Encode Brotli::Decode)
+            list(APPEND CURL_INCLUDE_DIRS ${BROTLI_INCLUDE_DIRS})
+            list(APPEND CURL_LIBRARIES ${BROTLI_ENCODE_LIBRARIES} ${BROTLI_DECODE_LIBRARIES})
         endif()
 
         if(OPENSSL_FOUND)

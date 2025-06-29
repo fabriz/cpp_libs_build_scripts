@@ -1,0 +1,49 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4c1f877..d095f34 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.17 FATAL_ERROR)
+ 
+ PROJECT(libarchive C)
+ #
+-SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake")
++SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake")
+ if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${libarchive_BINARY_DIR}/bin)
+ endif()
+@@ -841,14 +841,12 @@ ENDIF(ENABLE_NETTLE)
+ # Find OpenSSL
+ # (Except on Mac, where OpenSSL is deprecated.)
+ #
+-IF(ENABLE_OPENSSL AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
++IF(ENABLE_OPENSSL)
+   FIND_PACKAGE(OpenSSL)
+   IF(OPENSSL_FOUND)
+     SET(HAVE_LIBCRYPTO 1)
+     INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})
+-    LIST(APPEND ADDITIONAL_LIBS ${OPENSSL_CRYPTO_LIBRARY})
+-    SET(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY})
+-    SET(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
++    LIST(APPEND ADDITIONAL_LIBS OpenSSL::Crypto)
+     LA_CHECK_INCLUDE_FILE("openssl/evp.h" HAVE_OPENSSL_EVP_H)
+     LA_CHECK_INCLUDE_FILE("openssl/opensslv.h" HAVE_OPENSSL_OPENSSLV_H)
+     CHECK_FUNCTION_EXISTS(PKCS5_PBKDF2_HMAC_SHA1 HAVE_PKCS5_PBKDF2_HMAC_SHA1)
+@@ -978,7 +976,6 @@ main(int argc, char **argv)
+         IF ("${IMPLEMENTATION}" MATCHES "^OPENSSL$" AND OPENSSL_FOUND)
+           INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})
+ 	  LIST(APPEND ADDITIONAL_LIBS ${OPENSSL_LIBRARIES})
+-	   LIST(REMOVE_DUPLICATES ADDITIONAL_LIBS)
+         ENDIF ("${IMPLEMENTATION}" MATCHES "^OPENSSL$" AND OPENSSL_FOUND)
+       ENDIF (ARCHIVE_CRYPTO_${ALGORITHM}_${IMPLEMENTATION})
+       ENDIF(NOT ARCHIVE_CRYPTO_${ALGORITHM})
+diff --git a/build/cmake/CreatePkgConfigFile.cmake b/build/cmake/CreatePkgConfigFile.cmake
+index 50caa5e..bc5a43f 100644
+--- a/build/cmake/CreatePkgConfigFile.cmake
++++ b/build/cmake/CreatePkgConfigFile.cmake
+@@ -29,5 +29,5 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/build/pkgconfig/libarchive.pc.in
+ # And install it, of course ;).
+ IF(ENABLE_INSTALL)
+   INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/build/pkgconfig/libarchive.pc
+-          DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
++          DESTINATION "lib/pkgconfig")
+ ENDIF()

@@ -138,11 +138,41 @@ initToolchain()
     FM_TARGET_TOOLCHAIN_CXXFLAGS="${FM_TARGET_TOOLCHAIN_CFLAGS} ${LOCAL_COMMON_CXXFLAGS} ${LOCAL_ARCHITECTURE_CXXFLAGS} ${LOCAL_BUILD_VARIANT_CXXFLAGS} ${FM_TARGET_TOOLCHAIN_COMMON_CXXFLAGS-}"
     FM_TARGET_TOOLCHAIN_LDFLAGS="${LOCAL_COMMON_LDFLAGS} ${LOCAL_ARCHITECTURE_LDFLAGS} ${LOCAL_BUILD_VARIANT_LDFLAGS} ${FM_TARGET_TOOLCHAIN_COMMON_LDFLAGS-}"
 
-    FM_TARGET_TOOLCHAIN_AR="${LOCAL_CROSS_COMPILER_HOST}-ar"
     FM_TARGET_TOOLCHAIN_CC="${LOCAL_CROSS_COMPILER_ROOT_NAME}-clang"
     FM_TARGET_TOOLCHAIN_CXX="${LOCAL_CROSS_COMPILER_ROOT_NAME}-clang++"
+
+    FM_TARGET_TOOLCHAIN_AR="${LOCAL_CROSS_COMPILER_HOST}-ar"
+    local TMP_TEST_PATH=$(which ${FM_TARGET_TOOLCHAIN_AR})
+    if [ -z "${TMP_TEST_PATH-}" ]; then
+        TMP_TEST_PATH="$(which llvm-ar)"
+        if [ -z "${TMP_TEST_PATH-}" ]; then
+            error "ar tool not found"
+        else
+            FM_TARGET_TOOLCHAIN_AR="llvm-ar"
+        fi
+    fi
+
     FM_TARGET_TOOLCHAIN_NM="${LOCAL_CROSS_COMPILER_HOST}-nm"
+    local TMP_TEST_PATH=$(which ${FM_TARGET_TOOLCHAIN_NM})
+    if [ -z "${TMP_TEST_PATH-}" ]; then
+        TMP_TEST_PATH="$(which llvm-nm)"
+        if [ -z "${TMP_TEST_PATH-}" ]; then
+            error "ar tool not found"
+        else
+            FM_TARGET_TOOLCHAIN_NM="llvm-nm"
+        fi
+    fi
+
     FM_TARGET_TOOLCHAIN_RANLIB="${LOCAL_CROSS_COMPILER_HOST}-ranlib"
+    local TMP_TEST_PATH=$(which ${FM_TARGET_TOOLCHAIN_RANLIB})
+    if [ -z "${TMP_TEST_PATH-}" ]; then
+        TMP_TEST_PATH="$(which llvm-ranlib)"
+        if [ -z "${TMP_TEST_PATH-}" ]; then
+            error "ar tool not found"
+        else
+            FM_TARGET_TOOLCHAIN_RANLIB="llvm-ranlib"
+        fi
+    fi
 
     export AR="${FM_TARGET_TOOLCHAIN_AR}"
     export CC="${FM_TARGET_TOOLCHAIN_CC}"

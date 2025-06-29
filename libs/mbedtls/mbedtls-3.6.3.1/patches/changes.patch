@@ -1,0 +1,39 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fb3b679..a98a373 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -389,7 +389,7 @@ if(ENABLE_TESTING OR ENABLE_PROGRAMS)
+         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/library)
+     # Request C11, needed for memory poisoning tests
+-    set_target_properties(mbedtls_test PROPERTIES C_STANDARD 11)
++#    set_target_properties(mbedtls_test PROPERTIES C_STANDARD 11)
+ 
+     file(GLOB MBEDTLS_TEST_HELPER_FILES
+          ${CMAKE_CURRENT_SOURCE_DIR}/tests/src/test_helpers/*.c)
+diff --git a/programs/test/CMakeLists.txt b/programs/test/CMakeLists.txt
+index 4511cdb..023752b 100644
+--- a/programs/test/CMakeLists.txt
++++ b/programs/test/CMakeLists.txt
+@@ -90,7 +90,7 @@ foreach(exe IN LISTS executables_libs executables_mbedcrypto)
+     endif()
+ 
+     # Request C11, required for memory poisoning
+-    set_target_properties(${exe} PROPERTIES C_STANDARD 11)
++#    set_target_properties(${exe} PROPERTIES C_STANDARD 11)
+ 
+     # This emulates "if ( ... IN_LIST ... )" which becomes available in CMake 3.3
+     list(FIND executables_libs ${exe} exe_index)
+diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
+index aa8ae23..995f0a3 100644
+--- a/tests/CMakeLists.txt
++++ b/tests/CMakeLists.txt
+@@ -340,7 +340,7 @@ function(add_test_suite suite_name)
+         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../framework/tests/include
+         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../library)
+     # Request C11, which is needed for memory poisoning tests
+-    set_target_properties(test_suite_${data_name} PROPERTIES C_STANDARD 11)
++#    set_target_properties(test_suite_${data_name} PROPERTIES C_STANDARD 11)
+ 
+     if(${data_name} MATCHES ${SKIP_TEST_SUITES_REGEX})
+         message(STATUS "The test suite ${data_name} will not be executed.")

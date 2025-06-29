@@ -11,13 +11,13 @@
 export FM_CONFIG_NUM_PROCESSES=$(nproc)
 
 # C++ standard version (14|17|20)
-export FM_CONFIG_CXX_STANDARD=17
+export FM_CONFIG_CXX_STANDARD=20
 
 # Paths of local tools
 export FM_CONFIG_CMAKE_COMMAND="$(which cmake)"
 export FM_CONFIG_CURL_COMMAND="$(which curl)"
 export FM_CONFIG_PERL_COMMAND="$(which perl)"
-export FM_CONFIG_PYTHON_COMMAND="$(which python)"
+export FM_CONFIG_PYTHON_COMMAND="$(which python3)"
 export FM_CONFIG_TAR_COMMAND="$(which tar)"
 export FM_CONFIG_UNZIP_COMMAND="$(which unzip)"
 export FM_CONFIG_PATCH_COMMAND="$(which patch)"

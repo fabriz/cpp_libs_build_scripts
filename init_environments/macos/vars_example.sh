@@ -11,7 +11,7 @@
 export FM_CONFIG_NUM_PROCESSES=$(sysctl -n hw.logicalcpu)
 
 # C++ standard version (14|17|20)
-export FM_CONFIG_CXX_STANDARD=17
+export FM_CONFIG_CXX_STANDARD=20
 
 # Paths of local tools
 export FM_CONFIG_CMAKE_COMMAND="$(which cmake)"

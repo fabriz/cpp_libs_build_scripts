@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 32506cd..f7b5241 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -156,7 +156,7 @@ endif()
+ #
+ # Avoid set(CMAKE_C_STANDARD_REQUIRED ON) because it's fine to decay
+ # to C99 if C11 isn't supported.
+-set(CMAKE_C_STANDARD 11)
++#set(CMAKE_C_STANDARD 11)
+ 
+ # On Apple OSes, don't build executables as bundles:
+ set(CMAKE_MACOSX_BUNDLE OFF)

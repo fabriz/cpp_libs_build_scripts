@@ -1,0 +1,53 @@
+diff --git a/Makefile.in b/Makefile.in
+index d6787c5..b315667 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -149,7 +149,7 @@ install-memleak:
+ 	@echo "ERROR: purposes only; this copy of neon must not be installed."
+ 	@false
+ 
+-install-yes: install-lib install-headers install-config install-docs install-nls
++install-yes: install-lib install-headers install-config install-nls
+ 
+ # libtool does all the necessary magic here
+ install-lib: subdirs
+diff --git a/config.hw b/config.hw
+index 82bad51..ae3409d 100644
+--- a/config.hw
++++ b/config.hw
+@@ -51,6 +51,13 @@
+ #define NE_FMT_SIZE_T "u"
+ #define NE_FMT_SSIZE_T "d"
+ #endif
++
++#ifdef _USE_32BIT_TIME_T
++#define NE_FMT_TIME_T "d"
++#else
++#define NE_FMT_TIME_T "I64d"
++#endif
++
+ #define NE_FMT_OFF_T "ld"
+ #define NE_FMT_OFF64_T "I64d"
+ #define NE_FMT_NE_OFF_T NE_FMT_OFF_T
+diff --git a/neon.mak b/neon.mak
+index 4181e56..8e84f34 100644
+--- a/neon.mak
++++ b/neon.mak
+@@ -21,7 +21,7 @@ TARGET = .\libneon.lib
+ !ELSE
+ INTDIR = Debug
+ CFLAGS = /MDd /W3 /Gm /EHsc /Zi /Od /D "_DEBUG"
+-TARGET = .\libneonD.lib
++TARGET = .\libneon.lib
+ !ENDIF
+ 
+ NE_DEP_LIBS =
+@@ -147,7 +147,7 @@ IPV6_FLAGS = /D USE_GETADDRINFO
+ WIN32_DEFS = /D WIN32_LEAN_AND_MEAN /D NOUSER /D NOGDI /D NONLS /D NOCRYPT
+ 
+ CPP=cl.exe
+-CPP_PROJ = /c /nologo $(CFLAGS) $(WIN32_DEFS) $(NE_XML_FLAGS) $(OPENSSL_FLAGS) $(ZLIB_FLAGS) $(IPV6_FLAGS) /D "HAVE_CONFIG_H" /D BUILDING_NEON /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\"
++CPP_PROJ = /c /nologo $(CFLAGS) $(WIN32_DEFS) $(NE_XML_FLAGS) $(OPENSSL_FLAGS) $(ZLIB_FLAGS) $(IPV6_FLAGS) /D "HAVE_CONFIG_H" /D BUILDING_NEON /Fo"$(INTDIR)\\" /Fd"libneon.pdb"
+ LINK=link.exe
+ LIB32=$(LINK) -lib
+ LIB32_FLAGS=/nologo /out:$@

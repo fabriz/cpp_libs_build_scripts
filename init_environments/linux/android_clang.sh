@@ -16,8 +16,9 @@ export PATH=${FM_CONFIG_ANDROID_NDK_INSTALL_PATH}/toolchains/llvm/prebuilt/linux
 
 export FM_TARGET_OS_TYPE=android
 export FM_TARGET_COMPILER=clang
+export FM_TARGET_COMPILER_VERSION="$(clang -dumpversion)"
 export FM_TARGET_TOOLCHAIN=android_clang
-export FM_TARGET_PLATFORM="android_clang_api${FM_CONFIG_ANDROID_API_LEVEL}"
+export FM_TARGET_PLATFORM="android_clang${FM_TARGET_COMPILER_VERSION}_api${FM_CONFIG_ANDROID_API_LEVEL}"
 export FM_TARGET_CMAKE_GENERATOR="Unix Makefiles"
 export FM_TARGET_CMAKE_TOOLCHAIN_FILE="${FM_PATH_ENVIRONMENT_INIT_SCRIPT_DIRECTORY}/../../core/toolchains/cmake/android.toolchain.cmake"
 export FM_TARGET_HAS_PKGCONFIG=false
@@ -45,7 +46,6 @@ case ${FM_CONFIG_CXX_STANDARD} in
     ;;
 esac
 
-export FM_TARGET_COMPILER_VERSION="$(clang -dumpversion)"
 
 export FM_TARGET_BUILD_FLAGS_FOR_BOOST="--without-python --without-process boost.stacktrace.from_exception=off"
 
